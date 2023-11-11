@@ -6,6 +6,7 @@
 !.isort.cfg
 !setup.cfg
 *.orig
+*.json
 *.log
 *.pot
 __pycache__/*
