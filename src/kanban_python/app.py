@@ -143,15 +143,13 @@ def main(args):
     if args.new:
         controls.create_new_db(args=args)
 
-    controls.show()
-
     while True:
+        controls.show()
         user_input = interface.input_ask_for_action()
         if user_input == 1:
             controls.add_tasks_to_db()
-            controls.show()
         elif user_input == 2:
-            continue
+            controls.move_tasks_to_other_column()
         elif user_input == 3:
             break
 
@@ -163,7 +161,10 @@ def run():
 
     This function can be used as entry point to create console scripts with setuptools.
     """
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except KeyboardInterrupt:
+        print("\nbye bye")
 
 
 if __name__ == "__main__":

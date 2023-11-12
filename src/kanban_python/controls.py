@@ -1,19 +1,13 @@
 from json import dump, load
 from pathlib import Path
 
-from rich.console import Console
-
-from .interface import create_table, input_create_new_task
-from .utils import current_time_to_str
-
-DUMMY_TASK = {
-    "Title": "Test Task",
-    "Description": "Non-existent",
-    "Tag": "Cool Tag",
-    "Status": "ready",
-    "Date": current_time_to_str(),
-}
-DUMMY_DB = {i: DUMMY_TASK for i in range(1, 5)}
+from .interface import (
+    create_table,
+    input_ask_to_what_category_to_move,
+    input_ask_which_task_to_move,
+    input_create_new_task,
+)
+from .utils import DUMMY_DB, console
 
 
 def create_new_db(args: dict) -> None:
@@ -46,8 +40,9 @@ def add_tasks_to_db():
 
 def move_tasks_to_other_column():
     db_data = read_db()
-    new_id = str(max(int(i) for i in db_data.keys()) + 1)
-    db_data[new_id] = input_create_new_task()
+    selected_id = input_ask_which_task_to_move(data=db_data)
+    target_status = input_ask_to_what_category_to_move(data=db_data, id=selected_id)
+    db_data[selected_id]["Status"] = target_status
     save_db(data=db_data)
 
 
@@ -60,5 +55,4 @@ def read_db():
 def show():
     db_data = read_db()
     table = create_table(data=db_data)
-    console = Console()
     console.print(table)
