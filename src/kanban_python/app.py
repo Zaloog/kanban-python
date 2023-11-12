@@ -24,8 +24,7 @@ import argparse
 import logging
 import sys
 
-from kanban_python import __version__
-from kanban_python import controls
+from kanban_python import __version__, controls, interface
 
 __author__ = "Zaloog"
 __copyright__ = "Zaloog"
@@ -55,7 +54,6 @@ def fib(n):
     for _i in range(n - 1):
         a, b = b, a + b
     return a
-
 
 
 # ---- CLI ----
@@ -99,11 +97,11 @@ def parse_args(args):
     parser.add_argument(
         "-n",
         "--new",
-        nargs='?',
+        nargs="?",
         dest="new",
         help="initialize new .json store default locally with optional name",
         const="pykanban",
-        default='',
+        default="",
     )
     parser.add_argument(
         "-g",
@@ -146,6 +144,17 @@ def main(args):
         controls.create_new_db(args=args)
 
     controls.show()
+
+    while True:
+        user_input = interface.input_ask_for_action()
+        if user_input == 1:
+            controls.add_tasks_to_db()
+            controls.show()
+        elif user_input == 2:
+            continue
+        elif user_input == 3:
+            break
+
     _logger.info("Script ends here")
 
 
