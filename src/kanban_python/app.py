@@ -95,20 +95,10 @@ def parse_args(args):
         const=logging.DEBUG,
     )
     parser.add_argument(
-        "-n",
-        "--new",
         nargs="?",
-        dest="new",
-        help="initialize new .json store default locally with optional name",
-        const="pykanban",
-        default="",
-    )
-    parser.add_argument(
-        "-g",
-        "--global",
-        dest="globally",
-        help="global flag",
-        action="store_true",
+        choices=["init"],
+        dest="command",
+        help="initialize new .json store",
     )
     return parser.parse_args(args)
 
@@ -140,8 +130,10 @@ def main(args):
     _logger.debug("Starting crazy calculations...")
 
     # New database creation
-    if args.new:
-        controls.create_new_db(args=args)
+    if args.command == "init":
+        print("init yeah")
+        controls.create_new_db()
+        return
 
     while True:
         controls.show()
@@ -151,6 +143,7 @@ def main(args):
         elif user_input == 2:
             controls.move_tasks_to_other_column()
         elif user_input == 3:
+            controls.console.print("\n:wave:Stay Hard:wave:")
             break
 
     _logger.info("Script ends here")
@@ -164,7 +157,7 @@ def run():
     try:
         main(sys.argv[1:])
     except KeyboardInterrupt:
-        print("\nbye bye")
+        controls.console.print("\n:wave:Stay Hard:wave:")
 
 
 if __name__ == "__main__":

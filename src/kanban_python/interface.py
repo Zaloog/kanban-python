@@ -1,17 +1,23 @@
-from rich.prompt import IntPrompt, Prompt  # ,Confirm
+from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
 from .utils import console, create_task_strings_for_rows, current_time_to_str
 
 
 def create_table(data: dict):
-    table = Table(show_header=True, show_footer=False)
+    table = Table(
+        show_header=True,
+        show_footer=False,
+        caption="Tasks have the following Structure:"
+        + " [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]",
+    )
 
     for category in ["[red]Ready[/]", "[yellow]Doing[/]", "[green]Done[/]"]:
         table.add_column(
             header=category,
             header_style="bold",
             justify="left",
+            overflow="fold",
             min_width=40,
         )
 
@@ -40,7 +46,7 @@ def input_ask_for_action():
     return task
 
 
-def input_create_new_task():
+def input_create_new_task() -> dict:
     title = Prompt.ask(
         prompt="[1/4] Add Task Title",
     )
@@ -73,6 +79,42 @@ def input_create_new_task():
         "Creation_Date": current_time_to_str(),
     }
     return new_task
+
+
+def input_update_task(current_task: dict) -> dict:
+    title = Prompt.ask(
+        prompt="[1/4] Update Task Title",
+        show_default=True,
+        default=current_task["Title"],
+    )
+
+    description = Prompt.ask(
+        prompt="[2/4] Update Task Description",
+        show_default=True,
+        default=current_task["Description"],
+    )
+
+    tag = Prompt.ask(
+        prompt="[3/4] Update Tag", show_default=True, default=current_task["Tag"]
+    )
+
+    # reuse move prompt, take numbers
+    status = Prompt.ask(
+        prompt="[4/4] Update Status of Task",
+        show_choices=True,
+        choices=["ready", "doing"],
+        show_default=True,
+        default=current_task["Status"],
+    )
+
+    updated_task = {
+        "Title": title,
+        "Description": description,
+        "Status": status,
+        "Tag": tag.upper(),
+    }
+    current_task.update(updated_task)
+    return current_task
 
 
 def input_ask_which_task_to_move(data):
@@ -109,3 +151,10 @@ def input_ask_to_what_category_to_move(data, id):
         choices=["1", "2"],
     )
     return possible_status[int(new_status) - 1]
+
+
+def input_confirm_to_overwrite_db() -> bool:
+    console.print(":warning:  Existing [orange3]pykanban.json[/] found :warning:")
+    return Confirm.ask(
+        "Do you want to wipe it clean and start from scratch:question_mark:"
+    )

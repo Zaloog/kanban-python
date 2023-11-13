@@ -1,29 +1,32 @@
+import os
 from json import dump, load
-from pathlib import Path
 
 from .interface import (
     create_table,
     input_ask_to_what_category_to_move,
     input_ask_which_task_to_move,
+    input_confirm_to_overwrite_db,
     input_create_new_task,
 )
 from .utils import DUMMY_DB, console
 
+# from pathlib import Path
 
-def create_new_db(args: dict) -> None:
-    name = args.new
-    if args.globally:
-        name = Path.home() / name
 
-    with open(f"{name}.json", "w", encoding="utf-8") as f:
+def create_new_db() -> None:
+    if check_db_exists():
+        if not input_confirm_to_overwrite_db():
+            return
+
+    with open("pykanban.json", "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    # TODO check if db already exists
-    print(f"Created new {name}.json file to save tasks")
+    console.print("Created new pykanban.json file to save tasks")
+    # TODO Motivational Quote
 
 
-def check_db_exists(name: str) -> bool:
-    pass
+def check_db_exists() -> bool:
+    return os.path.exists("pykanban.json")
 
 
 def save_db(data):
