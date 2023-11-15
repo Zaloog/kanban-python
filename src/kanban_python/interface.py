@@ -55,7 +55,7 @@ def input_ask_for_action():
         "[yellow]Whats up!?[/], how can I help you being productive today :rocket:?"
     )
     console.print("\t[1] :clipboard: [green]Create new Task[/]")
-    console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Update Task[/]")
+    console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Update/Check Task[/]")
     console.print("\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]")
     action = IntPrompt.ask(
         prompt="Choose wisely :books:",
@@ -99,7 +99,7 @@ def input_create_new_task() -> dict:
     new_task = {
         "Title": title,
         "Description": description,
-        "Status": "Ready" if status == 1 else "Doing",
+        "Status": "Ready" if status == "1" else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
     }
@@ -150,16 +150,18 @@ def input_ask_to_what_status_to_move(current_task):
     current_status = current_task["Status"]
     task_title = current_task["Title"]
     col_dict = read_config()["settings.columns.visible"]
-    possible_status = [cat for cat in col_dict if current_status != cat]
+    possible_status = [cat for cat in col_dict]
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
     for idx, status in enumerate(possible_status, start=1):
         console.print(f"\t[{idx}] {COLUMN_COLOR_DICT[status]}")
 
     new_status = IntPrompt.ask(
-        prompt="[2/2] New Status of Task?",
+        prompt="New Status of Task?",
         show_choices=False,
         choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
+        default=str(possible_status.index(current_status) + 1),
+        show_default=True,
     )
     return possible_status[int(new_status) - 1]
 
@@ -189,6 +191,7 @@ def input_ask_for_change_board():
     answer = IntPrompt.ask(
         prompt="Which board to activate",
         choices=[f"{i}" for i, _ in enumerate(boards, start=1)],
+        show_choices=False,
     )
     return boards[int(answer) - 1]
 

@@ -41,7 +41,7 @@ def create_new_db() -> None:
         if not check_if_board_name_exists_in_config(new_name):
             break
         console.print(
-            f":warning:  Board '{new_name}' already exists, choose a different name"
+            f":warning:  Board '{new_name}' already exists, choose a different Name."
         )
     if OVERWRITTEN_FLAG:
         delete_current_folder_board_from_config()
