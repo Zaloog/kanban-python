@@ -1,11 +1,15 @@
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
+from .config import get_active_db_name, get_list_of_current_boards
 from .utils import console, create_task_strings_for_rows, current_time_to_str
 
 
 def create_table(data: dict):
+    table_name = get_active_db_name()
     table = Table(
+        title=f"[blue]{table_name}[/]",
+        highlight=True,
         show_header=True,
         show_footer=False,
         caption="Tasks have the following Structure:"
@@ -33,7 +37,7 @@ def input_ask_for_action():
     )
     console.print("\t[1] :clipboard: [green]Create new Task[/]")
     console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Move Task[/]")
-    console.print("\t[3] :cross_mark: [bold red]Close Kanban Board[/]")
+    console.print("\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]")
     task = IntPrompt.ask(
         prompt="Choose wisely :books:",
         choices=[
@@ -63,18 +67,20 @@ def input_create_new_task() -> dict:
         default="OTHER",
     )
 
-    status = Prompt.ask(
+    console.print("\t[1] [red]Ready[/]")
+    console.print("\t[2] [yellow]Doing[/]")
+    status = IntPrompt.ask(
         prompt="[4/4] Status of Task",
-        show_choices=True,
-        choices=["ready", "doing"],
+        show_choices=False,
+        choices=["1", "2"],
         show_default=True,
-        default="ready",
+        default="1",
     )
 
     new_task = {
         "Title": title,
         "Description": description,
-        "Status": status,
+        "Status": "ready" if status == 1 else "doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
     }
@@ -158,3 +164,25 @@ def input_confirm_to_overwrite_db() -> bool:
     return Confirm.ask(
         "Do you want to wipe it clean and start from scratch:question_mark:"
     )
+
+
+def input_confirm_set_board_active(name) -> bool:
+    return Confirm.ask(
+        f"Do you want to set the Board '{name}' as active:question_mark:"
+    )
+
+
+def input_ask_for_new_board_name():
+    return Prompt.ask(prompt="What should the new board be called?")
+
+
+def input_ask_for_change_board():
+    boards = [b for b in get_list_of_current_boards()]
+    for idx, board in enumerate(boards, start=1):
+        console.print(f"[{idx}] {board}")
+
+    answer = IntPrompt.ask(
+        prompt="Which board to activate",
+        choices=[f"{i}" for i, _ in enumerate(boards, start=1)],
+    )
+    return boards[int(answer) - 1]

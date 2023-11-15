@@ -20,17 +20,13 @@ References:
     - https://pip.pypa.io/en/stable/reference/pip_install
 """
 
-import argparse
-import logging
 import sys
 
-from kanban_python import __version__, controls, interface
+from kanban_python import cli_parser, controls, interface
 
 __author__ = "Zaloog"
 __copyright__ = "Zaloog"
 __license__ = "MIT"
-
-_logger = logging.getLogger(__name__)
 
 
 # ---- Python API ----
@@ -62,59 +58,6 @@ def fib(n):
 # executable/script.
 
 
-def parse_args(args):
-    """Parse command line parameters
-
-    Args:
-      args (List[str]): command line parameters as list of strings
-          (for example  ``["--help"]``).
-
-    Returns:
-      :obj:`argparse.Namespace`: command line parameters namespace
-    """
-    parser = argparse.ArgumentParser(description="Just a Fibonacci demonstration")
-    parser.add_argument(
-        "--version",
-        action="version",
-        version=f"kanban-python {__version__}",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="loglevel",
-        help="set loglevel to INFO",
-        action="store_const",
-        const=logging.INFO,
-    )
-    parser.add_argument(
-        "-vv",
-        "--very-verbose",
-        dest="loglevel",
-        help="set loglevel to DEBUG",
-        action="store_const",
-        const=logging.DEBUG,
-    )
-    parser.add_argument(
-        nargs="?",
-        choices=["init"],
-        dest="command",
-        help="initialize new .json store",
-    )
-    return parser.parse_args(args)
-
-
-def setup_logging(loglevel):
-    """Setup basic logging
-
-    Args:
-      loglevel (int): minimum loglevel for emitting messages
-    """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-    )
-
-
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
 
@@ -125,28 +68,26 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
-    args = parse_args(args)
-    setup_logging(args.loglevel)
-    _logger.debug("Starting crazy calculations...")
+    args = cli_parser.parse_args(args)
+    cli_parser.setup_logging(args.loglevel)
 
     # New database creation
     if args.command == "init":
-        print("init yeah")
+        controls.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
         controls.create_new_db()
         return
 
     while True:
         controls.show()
         user_input = interface.input_ask_for_action()
+
         if user_input == 1:
             controls.add_tasks_to_db()
         elif user_input == 2:
             controls.move_tasks_to_other_column()
         elif user_input == 3:
-            controls.console.print("\n:wave:Stay Hard:wave:")
-            break
-
-    _logger.info("Script ends here")
+            controls.change_kanban_board()
+            # controls.console.print("\n:wave:Stay Hard:wave:")
 
 
 def run():

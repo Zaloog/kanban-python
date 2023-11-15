@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from rich.console import Console
@@ -9,11 +10,15 @@ def current_time_to_str():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
+def check_db_exists() -> bool:
+    return os.path.exists("pykanban.json")
+
+
 def create_task_strings_for_rows(data):
     ready, doing, done = "", "", ""
 
     for id, task in data.items():
-        task_id = f" [[cyan]{id}[/]]\t"
+        task_id = f"[[cyan]{id}[/]]" if int(id) > 9 else f"[[cyan]0{id}[/]]"
         task_tag = f'([orange3]{task.get("Tag")}[/])'
         task_title = f' [white]{task["Title"]}[/]\n'
         task_total_str = task_id + task_tag + task_title
