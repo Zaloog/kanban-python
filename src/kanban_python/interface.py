@@ -1,8 +1,14 @@
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import get_active_db_name, get_list_of_current_boards, read_config
+from .config import (
+    get_active_db_name,
+    get_list_of_current_boards,
+    read_config,
+    save_config,
+)
 from .utils import (
+    CAPTION_STRING,
     COLUMN_COLOR_DICT,
     console,
     create_task_strings_for_rows,
@@ -10,27 +16,31 @@ from .utils import (
 )
 
 
+# Board
+#####################################################################################
 def create_table(data: dict):
+    config = read_config()
+    footer_setting = config["settings.general"]["Show_Footer"]
+
     table_name = get_active_db_name()
     table = Table(
         title=f"[blue]{table_name}[/]",
         highlight=True,
         show_header=True,
-        show_footer=False,
-        caption="Tasks have the following Structure:"
-        + " [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]",
+        show_footer=True if footer_setting == "True" else False,
+        caption=CAPTION_STRING,
     )
 
-    config = read_config()
     columns_dict = config["settings.columns.visible"]
 
     visible_columns = [col for col, vis in columns_dict.items() if vis == "True"]
-    for category in [COLUMN_COLOR_DICT[col] for col in visible_columns]:
+    for i, category in enumerate([COLUMN_COLOR_DICT[col] for col in visible_columns]):
         table.add_column(
             header=category,
             header_style="bold",
             justify="left",
             overflow="fold",
+            footer="pykanban" if i == 0 else "",
             min_width=int(config["settings.general"]["Column_Min_Width"]),
         )
 
@@ -145,8 +155,7 @@ def input_ask_to_what_status_to_move(current_task):
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
     for idx, status in enumerate(possible_status, start=1):
         console.print(f"\t[{idx}] {COLUMN_COLOR_DICT[status]}")
-    # console.print(f"\t[1] {COLUMN_COLOR_DICT[possible_status[0]]}")
-    # console.print(f"\t[2] {COLUMN_COLOR_DICT[possible_status[1]]}")
+
     new_status = IntPrompt.ask(
         prompt="[2/2] New Status of Task?",
         show_choices=False,
@@ -182,3 +191,42 @@ def input_ask_for_change_board():
         choices=[f"{i}" for i, _ in enumerate(boards, start=1)],
     )
     return boards[int(answer) - 1]
+
+
+# Config Settings
+#####################################################################################
+def input_change_settings():
+    config = read_config()
+    updated_col_config = input_change_column_settings(config)
+    config["settings.columns.visible"] = updated_col_config
+
+    updated_general_config = input_change_general_settings(config)
+    config["settings.general"] = updated_general_config
+    save_config(config)
+
+
+def input_change_column_settings(config):
+    current_column_dict = config["settings.columns.visible"]
+    # updated_column_dict = {}
+    for col, vis in current_column_dict.items():
+        new_visible = Confirm.ask(
+            prompt=f"Should Column {COLUMN_COLOR_DICT[col]} be visible?",
+            default=True if vis == "True" else False,
+            show_default=True,
+        )
+        # updated_column_dict[col] = 'True' if new_visible else False
+        current_column_dict[col] = "True" if new_visible else "False"
+
+    return current_column_dict
+
+
+def input_change_general_settings(config):
+    current_general_dict = config["settings.general"]
+    footer_visible = Confirm.ask(
+        prompt="Should Footer be visible?",
+        default=True if current_general_dict["Show_Footer"] == "True" else False,
+        show_default=True,
+    )
+    current_general_dict["Show_Footer"] = "True" if footer_visible else "False"
+
+    return current_general_dict

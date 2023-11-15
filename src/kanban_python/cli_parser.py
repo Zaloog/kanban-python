@@ -4,7 +4,7 @@ import sys
 
 from kanban_python import __version__
 
-_logger = logging.getLogger(__name__)
+# _logger = logging.getLogger(__name__)
 
 
 def setup_logging(loglevel):
@@ -53,8 +53,10 @@ def parse_args(args):
     )
     parser.add_argument(
         nargs="?",
-        choices=["init"],
+        choices=["init", "configure"],
         dest="command",
-        help="initialize new .json store",
+        help="""
+        initialize new board or configure current settings
+                """,
     )
     return parser.parse_args(args)

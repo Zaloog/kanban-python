@@ -8,7 +8,11 @@ CONFIG_PATH = Path.home() / "pykanban.ini"
 
 
 def create_init_config():
-    config["settings.general"] = {"Active_Board": "", "Column_Min_Width": 40}
+    config["settings.general"] = {
+        "Active_Board": "",
+        "Column_Min_Width": 40,
+        "Show_Footer": "True",
+    }
     config["settings.columns.visible"] = {
         "Ready": True,
         "Doing": True,
@@ -81,6 +85,11 @@ def delete_current_folder_board_from_config():
 def check_if_board_name_exists_in_config(boardname):
     config = read_config()
     return boardname in config["kanban_boards"]
+
+
+def check_if_current_active_board_in_board_list():
+    active_board = get_active_db_name()
+    return check_if_board_name_exists_in_config(active_board)
 
 
 if __name__ == "__main__":

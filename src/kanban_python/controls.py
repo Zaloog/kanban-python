@@ -4,6 +4,7 @@ from .config import (
     add_new_board_to_config,
     check_config_exists,
     check_if_board_name_exists_in_config,
+    check_if_current_active_board_in_board_list,
     create_init_config,
     delete_current_folder_board_from_config,
     get_active_db_path,
@@ -15,6 +16,7 @@ from .interface import (
     input_ask_for_change_board,
     input_ask_for_new_board_name,
     input_ask_which_task_to_update,
+    input_change_settings,
     input_confirm_set_board_active,
     input_confirm_to_overwrite_db,
     input_create_new_task,
@@ -78,6 +80,13 @@ def read_db(path: str = None) -> dict:
 
 
 def show():
+    if not check_if_current_active_board_in_board_list():
+        console.print(
+            "Hmm, The current active board is not in the list of kanban boards."
+        )
+        change_kanban_board()
+        show()
+        return
     db_data = read_db()
     table = create_table(data=db_data)
     console.print(table)
@@ -98,3 +107,7 @@ def update_task_from_db():
 
 def get_user_action():
     return input_ask_for_action()
+
+
+def change_settings():
+    input_change_settings()

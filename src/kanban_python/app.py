@@ -76,6 +76,12 @@ def main(args):
         utils.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
         controls.create_new_db()
         return
+    if args.command == "configure":
+        utils.console.print(
+            ":hammer_and_wrench:  Changing Settings :hammer_and_wrench:"
+        )
+        controls.change_settings()
+        return
 
     while True:
         controls.show()

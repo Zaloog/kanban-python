@@ -7,6 +7,8 @@ from rich.console import Console
 console = Console()
 
 QUOTES = ["\n:wave:Stay Hard:wave:", "\n:wave:See you later:wave:"]
+CAPTION_STRING = "Tasks have the following Structure:\
+     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]"
 
 COLUMN_COLOR_DICT = {
     "Ready": "[red]Ready[/]",
