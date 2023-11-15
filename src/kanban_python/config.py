@@ -8,7 +8,14 @@ CONFIG_PATH = Path.home() / "pykanban.ini"
 
 
 def create_init_config():
-    config["settings"] = {"Columns": ["Ready", "Doing", "Done"], "Active_Board": ""}
+    config["settings.general"] = {"Active_Board": "", "Column_Min_Width": 40}
+    config["settings.columns.visible"] = {
+        "Ready": True,
+        "Doing": True,
+        "Done": True,
+        "Deleted": False,
+        "Archived": False,
+    }
     config["kanban_boards"] = {}
     save_config(config)
 
@@ -24,7 +31,7 @@ def read_config():
 
 
 # check if board name exists
-def add_new_board(board_name):
+def add_new_board_to_config(board_name):
     config = read_config()
     config["kanban_boards"][board_name] = str(Path.cwd())
     save_config(config)
@@ -32,7 +39,7 @@ def add_new_board(board_name):
 
 def set_board_to_active(board_name):
     config = read_config()
-    config["settings"]["Active_Board"] = board_name
+    config["settings.general"]["Active_Board"] = board_name
     save_config(config)
 
 
@@ -42,7 +49,7 @@ def check_config_exists() -> bool:
 
 def get_active_db_name():
     config = read_config()
-    return config["settings"]["Active_Board"]
+    return config["settings.general"]["Active_Board"]
 
 
 def get_active_db_path():
@@ -56,14 +63,25 @@ def get_list_of_current_boards():
     return config["kanban_boards"].keys()
 
 
-if __name__ == "__main__":
-    if not check_config_exists():
-        create_init_config()
+def delete_selected_board_from_config(boardname):
+    config = read_config()
+    config["kanban_boards"].pop(boardname)
+    save_config(config)
 
-    board_name = "lalala"
-    print(Path.cwd())
-    print(read_config()["settings"]["Columns"])
-    print(read_config()["settings"]["Active_Board"])
-    add_new_board(board_name=board_name)
-    print([i for i in read_config()["kanban_boards"]])
-    set_board_to_active(board_name=board_name)
+
+def delete_current_folder_board_from_config():
+    config = read_config()
+    curr_path = str(Path.cwd())
+    for b_name, b_path in config["kanban_boards"].items():
+        if b_path == curr_path:
+            config["kanban_boards"].pop(b_name)
+    save_config(config)
+
+
+def check_if_board_name_exists_in_config(boardname):
+    config = read_config()
+    return boardname in config["kanban_boards"]
+
+
+if __name__ == "__main__":
+    print(check_if_board_name_exists_in_config("Desktop13"))

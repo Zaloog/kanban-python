@@ -1,8 +1,13 @@
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import get_active_db_name, get_list_of_current_boards
-from .utils import console, create_task_strings_for_rows, current_time_to_str
+from .config import get_active_db_name, get_list_of_current_boards, read_config
+from .utils import (
+    COLUMN_COLOR_DICT,
+    console,
+    create_task_strings_for_rows,
+    current_time_to_str,
+)
 
 
 def create_table(data: dict):
@@ -16,13 +21,17 @@ def create_table(data: dict):
         + " [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]",
     )
 
-    for category in ["[red]Ready[/]", "[yellow]Doing[/]", "[green]Done[/]"]:
+    config = read_config()
+    columns_dict = config["settings.columns.visible"]
+
+    visible_columns = [col for col, vis in columns_dict.items() if vis == "True"]
+    for category in [COLUMN_COLOR_DICT[col] for col in visible_columns]:
         table.add_column(
             header=category,
             header_style="bold",
             justify="left",
             overflow="fold",
-            min_width=40,
+            min_width=int(config["settings.general"]["Column_Min_Width"]),
         )
 
     ready, doing, done = create_task_strings_for_rows(data=data)
@@ -36,9 +45,9 @@ def input_ask_for_action():
         "[yellow]Whats up!?[/], how can I help you being productive today :rocket:?"
     )
     console.print("\t[1] :clipboard: [green]Create new Task[/]")
-    console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Move Task[/]")
+    console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Update Task[/]")
     console.print("\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]")
-    task = IntPrompt.ask(
+    action = IntPrompt.ask(
         prompt="Choose wisely :books:",
         choices=[
             "1",
@@ -47,7 +56,7 @@ def input_ask_for_action():
         ],
         show_choices=False,
     )
-    return task
+    return action
 
 
 def input_create_new_task() -> dict:
@@ -64,11 +73,11 @@ def input_create_new_task() -> dict:
     tag = Prompt.ask(
         prompt="[3/4] Add a Tag",
         show_default=True,
-        default="OTHER",
+        default="ETC",
     )
 
-    console.print("\t[1] [red]Ready[/]")
-    console.print("\t[2] [yellow]Doing[/]")
+    console.print(f"\t[1] {COLUMN_COLOR_DICT['Ready']}")
+    console.print(f"\t[2] {COLUMN_COLOR_DICT['Doing']}")
     status = IntPrompt.ask(
         prompt="[4/4] Status of Task",
         show_choices=False,
@@ -80,7 +89,7 @@ def input_create_new_task() -> dict:
     new_task = {
         "Title": title,
         "Description": description,
-        "Status": "ready" if status == 1 else "doing",
+        "Status": "Ready" if status == 1 else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
     }
@@ -93,26 +102,15 @@ def input_update_task(current_task: dict) -> dict:
         show_default=True,
         default=current_task["Title"],
     )
-
     description = Prompt.ask(
         prompt="[2/4] Update Task Description",
         show_default=True,
         default=current_task["Description"],
     )
-
     tag = Prompt.ask(
         prompt="[3/4] Update Tag", show_default=True, default=current_task["Tag"]
     )
-
-    # reuse move prompt, take numbers
-    status = Prompt.ask(
-        prompt="[4/4] Update Status of Task",
-        show_choices=True,
-        choices=["ready", "doing"],
-        show_default=True,
-        default=current_task["Status"],
-    )
-
+    status = input_ask_to_what_status_to_move(current_task)
     updated_task = {
         "Title": title,
         "Description": description,
@@ -123,38 +121,36 @@ def input_update_task(current_task: dict) -> dict:
     return current_task
 
 
-def input_ask_which_task_to_move(data):
-    possible_task_ids = [ids for ids, task in data.items() if task["Status"] != "done"]
-    task_id_to_move = Prompt.ask(
-        prompt="[1/2] Which task from "
-        + "[bold red]Ready[/]|[yellow]Doing[/]"
-        + " do you want to move?",
-        choices=possible_task_ids,
+def input_ask_which_task_to_update(data):
+    columns_dict = read_config()["settings.columns.visible"]
+
+    visible_cols = [col for col, vis in columns_dict.items() if vis == "True"]
+    choice_task_ids = [
+        id for id, task in data.items() if task["Status"] in visible_cols
+    ]
+    task_id_to_update = IntPrompt.ask(
+        prompt="Which Task to update?",
+        choices=choice_task_ids,
         show_choices=False,
     )
-    return task_id_to_move
+    return str(task_id_to_update)
 
 
-def input_ask_to_what_category_to_move(data, id):
-    current_status = data[id]["Status"]
-    color_dict = {
-        "ready": "[red]ready[/]",
-        "doing": "[yellow]doing[/]",
-        "done": "[green]done[/]",
-    }
-    possible_status = [
-        cat for cat in ["ready", "doing", "done"] if current_status != cat
-    ]
+def input_ask_to_what_status_to_move(current_task):
+    current_status = current_task["Status"]
+    task_title = current_task["Title"]
+    col_dict = read_config()["settings.columns.visible"]
+    possible_status = [cat for cat in col_dict if current_status != cat]
 
-    console.print(
-        f'Updating Status of Task [[cyan]{id}[/]] "[white]{data[id]["Title"]}[/]"'
-    )
-    console.print(f"\t[1] {color_dict[possible_status[0]]}")
-    console.print(f"\t[2] {color_dict[possible_status[1]]}")
+    console.print(f'Updating Status of Task "[white]{task_title}[/]"')
+    for idx, status in enumerate(possible_status, start=1):
+        console.print(f"\t[{idx}] {COLUMN_COLOR_DICT[status]}")
+    # console.print(f"\t[1] {COLUMN_COLOR_DICT[possible_status[0]]}")
+    # console.print(f"\t[2] {COLUMN_COLOR_DICT[possible_status[1]]}")
     new_status = IntPrompt.ask(
         prompt="[2/2] New Status of Task?",
         show_choices=False,
-        choices=["1", "2"],
+        choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
     )
     return possible_status[int(new_status) - 1]
 

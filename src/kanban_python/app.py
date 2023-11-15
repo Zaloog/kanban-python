@@ -22,7 +22,7 @@ References:
 
 import sys
 
-from kanban_python import cli_parser, controls, interface
+from kanban_python import cli_parser, controls, utils
 
 __author__ = "Zaloog"
 __copyright__ = "Zaloog"
@@ -73,18 +73,18 @@ def main(args):
 
     # New database creation
     if args.command == "init":
-        controls.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
+        utils.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
         controls.create_new_db()
         return
 
     while True:
         controls.show()
-        user_input = interface.input_ask_for_action()
+        user_input = controls.get_user_action()
 
         if user_input == 1:
             controls.add_tasks_to_db()
         elif user_input == 2:
-            controls.move_tasks_to_other_column()
+            controls.update_task_from_db()
         elif user_input == 3:
             controls.change_kanban_board()
             # controls.console.print("\n:wave:Stay Hard:wave:")
@@ -98,7 +98,7 @@ def run():
     try:
         main(sys.argv[1:])
     except KeyboardInterrupt:
-        controls.console.print("\n:wave:Stay Hard:wave:")
+        utils.console.print(utils.get_motivational_quote())
 
 
 if __name__ == "__main__":
