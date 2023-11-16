@@ -38,7 +38,7 @@ def create_table(data: dict):
         caption=CAPTION_STRING,
     )
 
-    for i, category in enumerate([COLUMN_COLOR_DICT[col] for col in vis_cols]):
+    for i, category in enumerate([COLUMN_COLOR_DICT.get(col, col) for col in vis_cols]):
         table.add_column(
             header=category + f"\t({len(status_dict[vis_cols[i]])} Task/s)",
             header_style="bold",
@@ -58,10 +58,16 @@ def input_ask_for_action():
     console.print(
         "[yellow]Whats up!?[/], how can I help you being productive today :rocket:?"
     )
-    console.print("\t[1] :clipboard: [green]Create new Task[/]")
-    console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Update/Check Task[/]")
-    console.print("\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]")
-    console.print("\t[4] :cross_mark: [red]Delete Kanban Board[/]")
+    console.print(
+        "\t[1] :clipboard: [green]Create new Task[/]"
+        + 2 * "\t"
+        + "[2] :clockwise_vertical_arrows: [bold blue]Update/Check Task[/]"
+    )
+    console.print(
+        "\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]"
+        + "\t"
+        + "[4] :cross_mark: [red]Delete Kanban Board[/]"
+    )
     console.print("\t[5] :hammer_and_wrench:  [grey69]Show Current Settings[/]")
     action = IntPrompt.ask(
         prompt="Choose wisely :books:",
@@ -159,7 +165,7 @@ def input_ask_to_what_status_to_move(current_task):
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
     for idx, status in enumerate(possible_status, start=1):
-        console.print(f"\t[{idx}] {COLUMN_COLOR_DICT[status]}")
+        console.print(f"\t[{idx}] {COLUMN_COLOR_DICT.get(status, status)}")
 
     new_status = IntPrompt.ask(
         prompt="New Status of Task?",
@@ -234,7 +240,7 @@ def input_change_column_settings(config):
     current_column_dict = config["settings.columns.visible"]
     for col, vis in current_column_dict.items():
         new_visible = Confirm.ask(
-            prompt=f"Should Column {COLUMN_COLOR_DICT[col]} be visible?",
+            prompt=f"Should Column {COLUMN_COLOR_DICT.get(col,col)} be visible?",
             default=True if vis == "True" else False,
             show_default=True,
         )

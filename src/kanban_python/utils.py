@@ -78,5 +78,5 @@ DUMMY_TASK = {
 DUMMY_DB = {1: DUMMY_TASK}
 
 FOOTER_FIRST = "kanban-python [grey35](by Zaloog)[/]"
-FOOTER_LAST = __version__
+FOOTER_LAST = f"version {__version__}"
 FOOTER = [FOOTER_FIRST, FOOTER_LAST]
