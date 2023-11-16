@@ -93,7 +93,10 @@ def main(args):
             controls.update_task_from_db()
         elif user_input == 3:
             controls.change_kanban_board()
-            # controls.console.print("\n:wave:Stay Hard:wave:")
+        elif user_input == 4:
+            controls.delete_kanban_board()
+        elif user_input == 5:
+            controls.show_settings()
 
 
 def run():

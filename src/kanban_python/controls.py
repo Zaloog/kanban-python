@@ -6,23 +6,34 @@ from .config import (
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
     create_init_config,
+    delete_board_from_config,
     delete_current_folder_board_from_config,
     get_active_db_path,
     set_board_to_active,
 )
 from .interface import (
+    create_config_table,
     create_table,
     input_ask_for_action,
     input_ask_for_change_board,
+    input_ask_for_delete_board,
     input_ask_for_new_board_name,
     input_ask_which_task_to_update,
     input_change_settings,
+    input_confirm_change_current_settings,
+    input_confirm_delete_board,
     input_confirm_set_board_active,
     input_confirm_to_overwrite_db,
     input_create_new_task,
     input_update_task,
 )
-from .utils import DUMMY_DB, check_db_exists, console
+from .utils import (
+    DUMMY_DB,
+    check_db_exists,
+    check_if_there_are_visible_tasks_in_board,
+    console,
+    delete_json_file,
+)
 
 
 def create_new_db() -> None:
@@ -82,7 +93,8 @@ def read_db(path: str = None) -> dict:
 def show():
     if not check_if_current_active_board_in_board_list():
         console.print(
-            "Hmm, The current active board is not in the list of kanban boards."
+            "[yellow]Hmm, Something went wrong.[/] "
+            + "The current active board is not in the list of kanban boards."
         )
         change_kanban_board()
         show()
@@ -97,8 +109,18 @@ def change_kanban_board():
     set_board_to_active(board_name=new_active_board)
 
 
+def delete_kanban_board():
+    board_to_delete = input_ask_for_delete_board()
+    if input_confirm_delete_board(board_to_delete):
+        delete_json_file(board_to_delete)
+        delete_board_from_config(board_to_delete)
+
+
 def update_task_from_db():
     db_data = read_db()
+    if not check_if_there_are_visible_tasks_in_board(db_data):
+        console.print(":cross_mark:[red]No Tasks available on this Kanban board[/]")
+        return
     selected_id = input_ask_which_task_to_update(db_data)
     updated_task = input_update_task(current_task=db_data[selected_id])
     db_data[selected_id] = updated_task
@@ -111,3 +133,10 @@ def get_user_action():
 
 def change_settings():
     input_change_settings()
+
+
+def show_settings():
+    settings_table = create_config_table()
+    console.print(settings_table)
+    if input_confirm_change_current_settings():
+        change_settings()

@@ -2,7 +2,7 @@ import configparser
 import os
 from pathlib import Path
 
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(default_section=None)
 config.optionxform = str
 CONFIG_PATH = Path.home() / "pykanban.ini"
 
@@ -34,7 +34,6 @@ def read_config():
     return config
 
 
-# check if board name exists
 def add_new_board_to_config(board_name):
     config = read_config()
     config["kanban_boards"][board_name] = str(Path.cwd())
@@ -92,5 +91,22 @@ def check_if_current_active_board_in_board_list():
     return check_if_board_name_exists_in_config(active_board)
 
 
+def get_list_of_visible_columns():
+    config = read_config()
+    columns_dict = config["settings.columns.visible"]
+    return [col for col, vis in columns_dict.items() if vis == "True"]
+
+
+def get_dict_of_all_columns():
+    config = read_config()
+    return config["settings.columns.visible"]
+
+
+def delete_board_from_config(board_name):
+    config = read_config()
+    config["kanban_boards"].pop(board_name)
+    save_config(config)
+
+
 if __name__ == "__main__":
-    print(check_if_board_name_exists_in_config("Desktop13"))
+    pass

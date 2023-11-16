@@ -1,22 +1,12 @@
-import os
 from datetime import datetime
+from pathlib import Path
 from random import choice
 
 from rich.console import Console
 
+from .config import get_list_of_visible_columns, read_config
+
 console = Console()
-
-QUOTES = ["\n:wave:Stay Hard:wave:", "\n:wave:See you later:wave:"]
-CAPTION_STRING = "Tasks have the following Structure:\
-     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]"
-
-COLUMN_COLOR_DICT = {
-    "Ready": "[red]Ready[/]",
-    "Doing": "[yellow]Doing[/]",
-    "Done": "[green]Done[/]",
-    "Deleted": "[deep_pink4]Deleted[/]",
-    "Archived": "[dark_goldenrod]Archived[/]",
-}
 
 
 def get_motivational_quote():
@@ -28,7 +18,7 @@ def current_time_to_str():
 
 
 def check_db_exists() -> bool:
-    return os.path.exists("pykanban.json")
+    return Path("pykanban.json").exists()
 
 
 def create_task_strings_for_rows(data):
@@ -48,6 +38,35 @@ def create_task_strings_for_rows(data):
 
     return ready, doing, done
 
+
+def check_if_there_are_visible_tasks_in_board(data):
+    visible_columns = get_list_of_visible_columns()
+    for task in data.values():
+        if task["Status"] in visible_columns:
+            return True
+    return False
+
+
+def delete_json_file(boardname):
+    config = read_config()
+    path = Path(config["kanban_boards"][boardname] + "/pykanban.json")
+    try:
+        path.unlink()
+    except FileExistsError:
+        console.print("File already deleted")
+
+
+QUOTES = ["\n:wave:Stay Hard:wave:", "\n:wave:See you later:wave:"]
+CAPTION_STRING = "Tasks have the following Structure:\
+     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]"
+
+COLUMN_COLOR_DICT = {
+    "Ready": "[red]Ready[/]",
+    "Doing": "[yellow]Doing[/]",
+    "Done": "[green]Done[/]",
+    "Deleted": "[deep_pink4]Deleted[/]",
+    "Archived": "[dark_goldenrod]Archived[/]",
+}
 
 DUMMY_TASK = {
     "Title": "Welcome Task",

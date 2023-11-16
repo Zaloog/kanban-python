@@ -3,7 +3,9 @@ from rich.table import Table
 
 from .config import (
     get_active_db_name,
+    get_dict_of_all_columns,
     get_list_of_current_boards,
+    get_list_of_visible_columns,
     read_config,
     save_config,
 )
@@ -31,16 +33,14 @@ def create_table(data: dict):
         caption=CAPTION_STRING,
     )
 
-    columns_dict = config["settings.columns.visible"]
-
-    visible_columns = [col for col, vis in columns_dict.items() if vis == "True"]
+    visible_columns = get_list_of_visible_columns()
     for i, category in enumerate([COLUMN_COLOR_DICT[col] for col in visible_columns]):
         table.add_column(
             header=category,
             header_style="bold",
             justify="left",
             overflow="fold",
-            footer="pykanban" if i == 0 else "",
+            footer="kanban-python" if i == 0 else "",
             min_width=int(config["settings.general"]["Column_Min_Width"]),
         )
 
@@ -57,12 +57,16 @@ def input_ask_for_action():
     console.print("\t[1] :clipboard: [green]Create new Task[/]")
     console.print("\t[2] :clockwise_vertical_arrows: [bold blue]Update/Check Task[/]")
     console.print("\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]")
+    console.print("\t[4] :cross_mark: [red]Delete Kanban Board[/]")
+    console.print("\t[5] :hammer_and_wrench:  [grey69]Show Current Settings[/]")
     action = IntPrompt.ask(
         prompt="Choose wisely :books:",
         choices=[
             "1",
             "2",
             "3",
+            "4",
+            "5",
         ],
         show_choices=False,
     )
@@ -132,9 +136,7 @@ def input_update_task(current_task: dict) -> dict:
 
 
 def input_ask_which_task_to_update(data):
-    columns_dict = read_config()["settings.columns.visible"]
-
-    visible_cols = [col for col, vis in columns_dict.items() if vis == "True"]
+    visible_cols = get_list_of_visible_columns()
     choice_task_ids = [
         id for id, task in data.items() if task["Status"] in visible_cols
     ]
@@ -147,9 +149,8 @@ def input_ask_which_task_to_update(data):
 
 
 def input_ask_to_what_status_to_move(current_task):
-    current_status = current_task["Status"]
     task_title = current_task["Title"]
-    col_dict = read_config()["settings.columns.visible"]
+    col_dict = get_dict_of_all_columns()
     possible_status = [cat for cat in col_dict]
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
@@ -160,8 +161,6 @@ def input_ask_to_what_status_to_move(current_task):
         prompt="New Status of Task?",
         show_choices=False,
         choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
-        default=str(possible_status.index(current_status) + 1),
-        show_default=True,
     )
     return possible_status[int(new_status) - 1]
 
@@ -196,6 +195,25 @@ def input_ask_for_change_board():
     return boards[int(answer) - 1]
 
 
+def input_ask_for_delete_board() -> int:
+    boards = [b for b in get_list_of_current_boards()]
+    for idx, board in enumerate(boards, start=1):
+        console.print(f"[{idx}] {board}")
+
+    answer = IntPrompt.ask(
+        prompt="Which board to delete",
+        choices=[f"{i}" for i, _ in enumerate(boards, start=1)],
+        show_choices=False,
+    )
+    return boards[int(answer) - 1]
+
+
+def input_confirm_delete_board(name) -> bool:
+    return Confirm.ask(
+        f"Are you sure you want to delete the Board '{name}':question_mark:"
+    )
+
+
 # Config Settings
 #####################################################################################
 def input_change_settings():
@@ -210,14 +228,12 @@ def input_change_settings():
 
 def input_change_column_settings(config):
     current_column_dict = config["settings.columns.visible"]
-    # updated_column_dict = {}
     for col, vis in current_column_dict.items():
         new_visible = Confirm.ask(
             prompt=f"Should Column {COLUMN_COLOR_DICT[col]} be visible?",
             default=True if vis == "True" else False,
             show_default=True,
         )
-        # updated_column_dict[col] = 'True' if new_visible else False
         current_column_dict[col] = "True" if new_visible else "False"
 
     return current_column_dict
@@ -233,3 +249,37 @@ def input_change_general_settings(config):
     current_general_dict["Show_Footer"] = "True" if footer_visible else "False"
 
     return current_general_dict
+
+
+def input_confirm_change_current_settings():
+    return Confirm.ask(
+        prompt="Do you want to change :hammer_and_wrench: [grey69]Settings[/]?",
+        default=False,
+        show_default=True,
+    )
+
+
+def create_config_table():
+    config = read_config()
+    settings_table = Table(
+        title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
+        highlight=True,
+        show_header=True,
+        caption="pykanban.ini file is located in your [light_green]$Home[/] Directory",
+    )
+    for col in ["Option", "Current Value"]:
+        settings_table.add_column(
+            header=col,
+            header_style="bold",
+            justify="left",
+            overflow="fold",
+            min_width=30,
+        )
+    for section in config:
+        if section:
+            settings_table.add_section()
+            settings_table.add_row(f"[blue]{section}[/]", "")
+        for key, val in config[section].items():
+            settings_table.add_row(key, val)
+
+    return settings_table
