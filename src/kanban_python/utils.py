@@ -4,6 +4,8 @@ from random import choice
 
 from rich.console import Console
 
+from kanban_python import __version__
+
 from .config import get_list_of_visible_columns, read_config
 
 console = Console()
@@ -21,22 +23,20 @@ def check_db_exists() -> bool:
     return Path("pykanban.json").exists()
 
 
-def create_task_strings_for_rows(data):
-    ready, doing, done = "", "", ""
+def create_status_dict_for_rows(data):
+    visible_columns = get_list_of_visible_columns()
+    status_dict = {col: [] for col in visible_columns}
 
     for id, task in data.items():
+        if not task["Status"] in visible_columns:
+            continue
         task_id = f"[[cyan]{id}[/]]" if int(id) > 9 else f"[[cyan]0{id}[/]]"
         task_tag = f'([orange3]{task.get("Tag")}[/])'
-        task_title = f' [white]{task["Title"]}[/]\n'
+        task_title = f' [white]{task["Title"]}[/]'
         task_total_str = task_id + task_tag + task_title
-        if task["Status"] == "Ready":
-            ready += task_total_str
-        if task["Status"] == "Doing":
-            doing += task_total_str
-        if task["Status"] == "Done":
-            done += task_total_str
+        status_dict[task["Status"]].append(task_total_str)
 
-    return ready, doing, done
+    return status_dict
 
 
 def check_if_there_are_visible_tasks_in_board(data):
@@ -76,3 +76,7 @@ DUMMY_TASK = {
     "Creation_Date": current_time_to_str(),
 }
 DUMMY_DB = {1: DUMMY_TASK}
+
+FOOTER_FIRST = "kanban-python [grey35](by Zaloog)[/]"
+FOOTER_LAST = __version__
+FOOTER = [FOOTER_FIRST, FOOTER_LAST]

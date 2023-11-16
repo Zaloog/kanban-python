@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
@@ -12,8 +14,9 @@ from .config import (
 from .utils import (
     CAPTION_STRING,
     COLUMN_COLOR_DICT,
+    FOOTER,
     console,
-    create_task_strings_for_rows,
+    create_status_dict_for_rows,
     current_time_to_str,
 )
 
@@ -23,6 +26,8 @@ from .utils import (
 def create_table(data: dict):
     config = read_config()
     footer_setting = config["settings.general"]["Show_Footer"]
+    status_dict = create_status_dict_for_rows(data=data)
+    vis_cols = get_list_of_visible_columns()
 
     table_name = get_active_db_name()
     table = Table(
@@ -33,19 +38,18 @@ def create_table(data: dict):
         caption=CAPTION_STRING,
     )
 
-    visible_columns = get_list_of_visible_columns()
-    for i, category in enumerate([COLUMN_COLOR_DICT[col] for col in visible_columns]):
+    for i, category in enumerate([COLUMN_COLOR_DICT[col] for col in vis_cols]):
         table.add_column(
-            header=category,
+            header=category + f"\t({len(status_dict[vis_cols[i]])} Task/s)",
             header_style="bold",
             justify="left",
             overflow="fold",
-            footer="kanban-python" if i == 0 else "",
+            footer=FOOTER[0] if i == 0 else FOOTER[1] if i == len(vis_cols) - 1 else "",
             min_width=int(config["settings.general"]["Column_Min_Width"]),
         )
 
-    ready, doing, done = create_task_strings_for_rows(data=data)
-    table.add_row(ready, doing, done)
+    for row_tasks in zip_longest(*status_dict.values()):
+        table.add_row(*row_tasks)
 
     return table
 
