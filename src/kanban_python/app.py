@@ -22,7 +22,7 @@ References:
 
 import sys
 
-from kanban_python import cli_parser, controls, utils
+from kanban_python import cli_parser, config, controls, utils
 
 __author__ = "Zaloog"
 __copyright__ = "Zaloog"
@@ -70,6 +70,11 @@ def main(args):
     """
     args = cli_parser.parse_args(args)
     cli_parser.setup_logging(args.loglevel)
+
+    if not config.check_config_exists():
+        config.create_init_config()
+        utils.console.print("Created new [orange3]pykanban.ini[/] file @Home Directory")
+        return
 
     # New database creation
     if args.command == "init":

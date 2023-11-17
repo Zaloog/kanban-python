@@ -8,3 +8,7 @@
 """
 
 # import pytest
+
+# @pytest.fixture
+# def create_dummy_conf():
+# from kanban_python.config import create_init_config

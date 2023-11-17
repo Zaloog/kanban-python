@@ -1,16 +1,75 @@
 import configparser
-import os
 from pathlib import Path
 
-config = configparser.ConfigParser(default_section=None)
-config.optionxform = str
 CONFIG_PATH = Path.home() / "pykanban.ini"
 
 
+class KanbanConfig:
+    def __init__(self, path=CONFIG_PATH) -> None:
+        self.configpath = path
+        self.config = configparser.ConfigParser(default_section=None)
+        self.config.optionxform = str
+        print("invoke class")
+        self.config.read(path)
+
+    def __repr__(self) -> str:
+        output = ""
+        for sec in self.config:
+            if sec:
+                output += 15 * "-"
+                output += f"Section: {sec}"
+                output += 15 * "-" + "\n"
+            for key, val in self.config[sec].items():
+                output += f"{key}: {val}\n"
+        return output
+
+    def save(self):
+        with open(self.configpath, "w") as self.configfile:
+            self.config.write(self.configfile)
+
+    @property
+    def active_board(self) -> str:
+        return self.config["settings.general"]["Active_Board"]
+
+    @active_board.setter
+    def active_board(self, new_board):
+        self.config["settings.general"]["Active_Board"] = new_board
+        self.save()
+
+    @property
+    def kanban_boards(self) -> list:
+        return [board for board in self.config["kanban_boards"]]
+
+    @property
+    def active_board_path(self) -> str:
+        return self.config["kanban_boards"][self.active_board]
+
+    @property
+    def show_footer(self):
+        return self.config["settings.general"]["Show_Footer"]
+
+    @property
+    def col_min_width(self) -> int:
+        return int(self.config["settings.general"]["Column_Min_Width"])
+
+    @property
+    def kanban_boards_dict(self) -> dict:
+        return self.config["settings.columns.visible"]
+
+    @property
+    def vis_cols(self) -> list:
+        return [c for c, v in self.kanban_boards_dict.items() if v == "True"]
+
+
+cfg = KanbanConfig(path=CONFIG_PATH)
+
+
 def create_init_config():
+    config = configparser.ConfigParser(default_section=None)
+    config.optionxform = str
     config["settings.general"] = {
         "Active_Board": "",
-        "Column_Min_Width": 40,
+        "Column_Min_Width": 35,
         "Show_Footer": "True",
     }
     config["settings.columns.visible"] = {
@@ -21,92 +80,53 @@ def create_init_config():
         "Archived": False,
     }
     config["kanban_boards"] = {}
-    save_config(config)
-
-
-def save_config(config):
     with open(CONFIG_PATH, "w") as configfile:
         config.write(configfile)
 
 
-def read_config():
-    config.read(CONFIG_PATH)
-    return config
-
-
 def add_new_board_to_config(board_name):
-    config = read_config()
-    config["kanban_boards"][board_name] = str(Path.cwd())
-    save_config(config)
+    cfg.config["kanban_boards"][board_name] = str(Path.cwd())
+    cfg.save()
 
 
 def set_board_to_active(board_name):
-    config = read_config()
-    config["settings.general"]["Active_Board"] = board_name
-    save_config(config)
-
-
-def check_config_exists() -> bool:
-    return os.path.exists(CONFIG_PATH)
+    cfg.config["settings.general"]["Active_Board"] = board_name
+    cfg.save()
 
 
 def get_active_db_name():
-    config = read_config()
-    return config["settings.general"]["Active_Board"]
+    return cfg.active_board
 
 
 def get_active_db_path():
-    config = read_config()
-    active_board = get_active_db_name()
-    return config["kanban_boards"][active_board]
-
-
-def get_list_of_current_boards():
-    config = read_config()
-    return config["kanban_boards"].keys()
+    return cfg.active_board_path
 
 
 def delete_selected_board_from_config(boardname):
-    config = read_config()
-    config["kanban_boards"].pop(boardname)
-    save_config(config)
+    cfg.config["kanban_boards"].pop(boardname)
+    cfg.save()
 
 
 def delete_current_folder_board_from_config():
-    config = read_config()
     curr_path = str(Path.cwd())
-    for b_name, b_path in config["kanban_boards"].items():
+    for b_name, b_path in cfg.kanban_boards_dict.items():
         if b_path == curr_path:
-            config["kanban_boards"].pop(b_name)
-    save_config(config)
+            cfg.config["kanban_boards"].pop(b_name)
+    cfg.save()
 
 
 def check_if_board_name_exists_in_config(boardname):
-    config = read_config()
-    return boardname in config["kanban_boards"]
+    return boardname in cfg.kanban_boards
 
 
 def check_if_current_active_board_in_board_list():
-    active_board = get_active_db_name()
-    return check_if_board_name_exists_in_config(active_board)
-
-
-def get_list_of_visible_columns():
-    config = read_config()
-    columns_dict = config["settings.columns.visible"]
-    return [col for col, vis in columns_dict.items() if vis == "True"]
-
-
-def get_dict_of_all_columns():
-    config = read_config()
-    return config["settings.columns.visible"]
+    return check_if_board_name_exists_in_config(cfg.active_board)
 
 
 def delete_board_from_config(board_name):
-    config = read_config()
-    config["kanban_boards"].pop(board_name)
-    save_config(config)
+    cfg.config["kanban_boards"].pop(board_name)
+    cfg.save()
 
 
-if __name__ == "__main__":
-    pass
+def check_config_exists() -> bool:
+    return Path(Path.home() / CONFIG_PATH).exists()

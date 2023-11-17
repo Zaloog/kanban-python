@@ -3,17 +3,10 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import (
-    get_active_db_name,
-    get_dict_of_all_columns,
-    get_list_of_current_boards,
-    get_list_of_visible_columns,
-    read_config,
-    save_config,
-)
+from .config import cfg
 from .utils import (
     CAPTION_STRING,
-    COLUMN_COLOR_DICT,
+    COLOR_DICT,
     FOOTER,
     console,
     create_status_dict_for_rows,
@@ -24,28 +17,29 @@ from .utils import (
 # Board
 #####################################################################################
 def create_table(data: dict):
-    config = read_config()
-    footer_setting = config["settings.general"]["Show_Footer"]
-    status_dict = create_status_dict_for_rows(data=data)
-    vis_cols = get_list_of_visible_columns()
+    status_dict = create_status_dict_for_rows(data=data, vis_cols=cfg.vis_cols)
 
-    table_name = get_active_db_name()
+    table_name = cfg.active_board
     table = Table(
         title=f"[blue]{table_name}[/]",
         highlight=True,
         show_header=True,
-        show_footer=True if footer_setting == "True" else False,
+        show_footer=True if cfg.show_footer == "True" else False,
         caption=CAPTION_STRING,
     )
 
-    for i, category in enumerate([COLUMN_COLOR_DICT.get(col, col) for col in vis_cols]):
+    for i, category in enumerate([COLOR_DICT.get(col, col) for col in cfg.vis_cols]):
         table.add_column(
-            header=category + f"\t({len(status_dict[vis_cols[i]])} Task/s)",
+            header=category + f"\t({len(status_dict[cfg.vis_cols[i]])} Task/s)",
             header_style="bold",
             justify="left",
             overflow="fold",
-            footer=FOOTER[0] if i == 0 else FOOTER[1] if i == len(vis_cols) - 1 else "",
-            min_width=int(config["settings.general"]["Column_Min_Width"]),
+            footer=FOOTER[0]
+            if i == 0
+            else FOOTER[1]
+            if i == len(cfg.vis_cols) - 1
+            else "",
+            min_width=cfg.col_min_width,
         )
 
     for row_tasks in zip_longest(*status_dict.values()):
@@ -100,8 +94,8 @@ def input_create_new_task() -> dict:
         default="ETC",
     )
 
-    console.print(f"\t[1] {COLUMN_COLOR_DICT['Ready']}")
-    console.print(f"\t[2] {COLUMN_COLOR_DICT['Doing']}")
+    console.print(f"\t[1] {COLOR_DICT['Ready']}")
+    console.print(f"\t[2] {COLOR_DICT['Doing']}")
     status = IntPrompt.ask(
         prompt="[4/4] Status of Task",
         show_choices=False,
@@ -110,10 +104,12 @@ def input_create_new_task() -> dict:
         default="1",
     )
 
+    print(status)
+    print(type(status))
     new_task = {
         "Title": title,
         "Description": description,
-        "Status": "Ready" if status == "1" else "Doing",
+        "Status": "Ready" if str(status) == "1" else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
     }
@@ -146,9 +142,8 @@ def input_update_task(current_task: dict) -> dict:
 
 
 def input_ask_which_task_to_update(data):
-    visible_cols = get_list_of_visible_columns()
     choice_task_ids = [
-        id for id, task in data.items() if task["Status"] in visible_cols
+        id for id, task in data.items() if task["Status"] in cfg.vis_cols
     ]
     task_id_to_update = IntPrompt.ask(
         prompt="Which Task to update?",
@@ -160,12 +155,11 @@ def input_ask_which_task_to_update(data):
 
 def input_ask_to_what_status_to_move(current_task):
     task_title = current_task["Title"]
-    col_dict = get_dict_of_all_columns()
-    possible_status = [cat for cat in col_dict]
+    possible_status = [cat for cat in cfg.kanban_boards_dict]
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
     for idx, status in enumerate(possible_status, start=1):
-        console.print(f"\t[{idx}] {COLUMN_COLOR_DICT.get(status, status)}")
+        console.print(f"\t[{idx}] {COLOR_DICT.get(status, status)}")
 
     new_status = IntPrompt.ask(
         prompt="New Status of Task?",
@@ -193,7 +187,7 @@ def input_ask_for_new_board_name():
 
 
 def input_ask_for_change_board():
-    boards = [b for b in get_list_of_current_boards()]
+    boards = [b for b in cfg.kanban_boards]
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
 
@@ -206,7 +200,7 @@ def input_ask_for_change_board():
 
 
 def input_ask_for_delete_board() -> int:
-    boards = [b for b in get_list_of_current_boards()]
+    boards = [b for b in cfg.kanban_boards]
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
 
@@ -227,20 +221,20 @@ def input_confirm_delete_board(name) -> bool:
 # Config Settings
 #####################################################################################
 def input_change_settings():
-    config = read_config()
-    updated_col_config = input_change_column_settings(config)
-    config["settings.columns.visible"] = updated_col_config
+    # config = read_config()
+    updated_col_config = input_change_column_settings(cfg.config)
+    cfg.config["settings.columns.visible"] = updated_col_config
 
-    updated_general_config = input_change_general_settings(config)
-    config["settings.general"] = updated_general_config
-    save_config(config)
+    updated_general_config = input_change_general_settings(cfg.config)
+    cfg.config["settings.general"] = updated_general_config
+    cfg.save()
 
 
 def input_change_column_settings(config):
     current_column_dict = config["settings.columns.visible"]
     for col, vis in current_column_dict.items():
         new_visible = Confirm.ask(
-            prompt=f"Should Column {COLUMN_COLOR_DICT.get(col,col)} be visible?",
+            prompt=f"Should Column {COLOR_DICT.get(col,col)} be visible?",
             default=True if vis == "True" else False,
             show_default=True,
         )
@@ -270,7 +264,6 @@ def input_confirm_change_current_settings():
 
 
 def create_config_table():
-    config = read_config()
     settings_table = Table(
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
         highlight=True,
@@ -285,11 +278,11 @@ def create_config_table():
             overflow="fold",
             min_width=30,
         )
-    for section in config:
+    for section in cfg.config:
         if section:
             settings_table.add_section()
             settings_table.add_row(f"[blue]{section}[/]", "")
-        for key, val in config[section].items():
+        for key, val in cfg.config[section].items():
             settings_table.add_row(key, val)
 
     return settings_table
