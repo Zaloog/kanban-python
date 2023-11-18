@@ -7,10 +7,9 @@ CONFIG_PATH = Path.home() / "pykanban.ini"
 class KanbanConfig:
     def __init__(self, path=CONFIG_PATH) -> None:
         self.configpath = path
-        self.config = configparser.ConfigParser(default_section=None)
-        self.config.optionxform = str
-        print("invoke class")
-        self.config.read(path)
+        self._config = configparser.ConfigParser(default_section=None)
+        self._config.optionxform = str
+        self._config.read(path)
 
     def __repr__(self) -> str:
         output = ""
@@ -27,9 +26,19 @@ class KanbanConfig:
         with open(self.configpath, "w") as self.configfile:
             self.config.write(self.configfile)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.save()
+
+    @property
+    def config(self):
+        return self._config
+
     @property
     def active_board(self) -> str:
-        return self.config["settings.general"]["Active_Board"]
+        return self._config["settings.general"]["Active_Board"]
 
     @active_board.setter
     def active_board(self, new_board):
@@ -38,7 +47,16 @@ class KanbanConfig:
 
     @property
     def kanban_boards(self) -> list:
-        return [board for board in self.config["kanban_boards"]]
+        return [board for board in self._config["kanban_boards"]]
+
+    @property
+    def kanban_boards_dict(self) -> dict:
+        return self._config["kanban_boards"]
+
+    @kanban_boards_dict.setter
+    def kanban_boards_dict(self, board_name) -> dict:
+        self.config["kanban_boards"][board_name] = str(Path.cwd())
+        self.save()
 
     @property
     def active_board_path(self) -> str:
@@ -48,17 +66,27 @@ class KanbanConfig:
     def show_footer(self):
         return self.config["settings.general"]["Show_Footer"]
 
+    @show_footer.setter
+    def show_footer(self, visible):
+        self.config["settings.general"]["Show_Footer"] = visible
+        self.save()
+
     @property
     def col_min_width(self) -> int:
         return int(self.config["settings.general"]["Column_Min_Width"])
 
     @property
-    def kanban_boards_dict(self) -> dict:
+    def kanban_columns_dict(self) -> dict:
         return self.config["settings.columns.visible"]
+
+    @kanban_columns_dict.setter
+    def kanban_columns_dict(self, updated_dict) -> dict:
+        self.config["settings.columns.visible"] = updated_dict
+        self.save()
 
     @property
     def vis_cols(self) -> list:
-        return [c for c, v in self.kanban_boards_dict.items() if v == "True"]
+        return [c for c, v in self.kanban_columns_dict.items() if v == "True"]
 
 
 cfg = KanbanConfig(path=CONFIG_PATH)
@@ -84,29 +112,6 @@ def create_init_config():
         config.write(configfile)
 
 
-def add_new_board_to_config(board_name):
-    cfg.config["kanban_boards"][board_name] = str(Path.cwd())
-    cfg.save()
-
-
-def set_board_to_active(board_name):
-    cfg.config["settings.general"]["Active_Board"] = board_name
-    cfg.save()
-
-
-def get_active_db_name():
-    return cfg.active_board
-
-
-def get_active_db_path():
-    return cfg.active_board_path
-
-
-def delete_selected_board_from_config(boardname):
-    cfg.config["kanban_boards"].pop(boardname)
-    cfg.save()
-
-
 def delete_current_folder_board_from_config():
     curr_path = str(Path.cwd())
     for b_name, b_path in cfg.kanban_boards_dict.items():
@@ -130,3 +135,7 @@ def delete_board_from_config(board_name):
 
 def check_config_exists() -> bool:
     return Path(Path.home() / CONFIG_PATH).exists()
+
+
+def check_current_path_exists_for_board() -> bool:
+    return cfg.active_board_path == str(Path.cwd())

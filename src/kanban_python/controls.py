@@ -1,15 +1,14 @@
 from json import dump, load
 
 from .config import (
-    add_new_board_to_config,
+    cfg,
     check_config_exists,
+    check_current_path_exists_for_board,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
     create_init_config,
     delete_board_from_config,
     delete_current_folder_board_from_config,
-    get_active_db_path,
-    set_board_to_active,
 )
 from .interface import (
     create_config_table,
@@ -54,23 +53,26 @@ def create_new_db() -> None:
         console.print(
             f":warning:  Board '{new_name}' already exists, choose a different Name."
         )
-    if OVERWRITTEN_FLAG:
-        delete_current_folder_board_from_config()
 
-    add_new_board_to_config(board_name=new_name)
+    # check if path already exists
+    # if yes delete previous entry in cfg
+    if OVERWRITTEN_FLAG or check_current_path_exists_for_board():
+        delete_current_folder_board_from_config()
+        cfg.active_board = new_name
+
+    cfg.kanban_boards_dict = new_name
 
     with open("pykanban.json", "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    if input_confirm_set_board_active(name=new_name):
-        set_board_to_active(board_name=new_name)
-
     console.print("Created new [orange3]pykanban.json[/] file to save tasks")
-    # TODO Motivational Quote
+
+    if input_confirm_set_board_active(name=new_name):
+        cfg.active_board = new_name
 
 
 def save_db(data):
-    path = get_active_db_path()
+    path = cfg.active_board_path
     with open(f"{path}/pykanban.json", "w", encoding="utf-8") as f:
         dump(data, f, ensure_ascii=False, indent=4)
 
@@ -84,17 +86,26 @@ def add_tasks_to_db():
 
 def read_db(path: str = None) -> dict:
     if not path:
-        path = get_active_db_path()
-    with open(f"{path}/pykanban.json", "r") as file:
-        data = load(file)
-    return data
+        path = cfg.active_board_path
+
+    try:
+        with open(f"{path}/pykanban.json", "r") as file:
+            data = load(file)
+            return data
+    except FileNotFoundError:
+        console.print(":warning: No [orange3]pykanban.json[/] file here anymore.")
+        change_kanban_board()
+    console.print("[red]Seems like the previous pykanban.json file was deleted[/]")
+    console.print("Create new [orange3]pykanban.json[/] file here.")
+    create_new_db()
+    return read_db()
 
 
 def show():
     if not check_if_current_active_board_in_board_list():
         console.print(
             "[yellow]Hmm, Something went wrong.[/] "
-            + "The current active board is not in the list of kanban boards."
+            + f"The active board '{cfg.active_board}' is not in the list of boards."
         )
         change_kanban_board()
         show()
@@ -106,7 +117,7 @@ def show():
 
 def change_kanban_board():
     new_active_board = input_ask_for_change_board()
-    set_board_to_active(board_name=new_active_board)
+    cfg.active_board = new_active_board
 
 
 def delete_kanban_board():

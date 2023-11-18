@@ -21,7 +21,7 @@ def create_table(data: dict):
 
     table_name = cfg.active_board
     table = Table(
-        title=f"[blue]{table_name}[/]",
+        title=f"[blue]Active Board: {table_name}[/]",
         highlight=True,
         show_header=True,
         show_footer=True if cfg.show_footer == "True" else False,
@@ -104,8 +104,6 @@ def input_create_new_task() -> dict:
         default="1",
     )
 
-    print(status)
-    print(type(status))
     new_task = {
         "Title": title,
         "Description": description,
@@ -155,7 +153,7 @@ def input_ask_which_task_to_update(data):
 
 def input_ask_to_what_status_to_move(current_task):
     task_title = current_task["Title"]
-    possible_status = [cat for cat in cfg.kanban_boards_dict]
+    possible_status = [cat for cat in cfg.kanban_columns_dict]
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
     for idx, status in enumerate(possible_status, start=1):
@@ -221,38 +219,34 @@ def input_confirm_delete_board(name) -> bool:
 # Config Settings
 #####################################################################################
 def input_change_settings():
-    # config = read_config()
-    updated_col_config = input_change_column_settings(cfg.config)
-    cfg.config["settings.columns.visible"] = updated_col_config
+    updated_col_config = input_change_column_settings()
+    cfg.kanban_columns_dict = updated_col_config
 
-    updated_general_config = input_change_general_settings(cfg.config)
-    cfg.config["settings.general"] = updated_general_config
-    cfg.save()
+    footer_visible = input_change_footer_settings()
+    cfg.show_footer = "True" if footer_visible else "False"
 
 
-def input_change_column_settings(config):
-    current_column_dict = config["settings.columns.visible"]
-    for col, vis in current_column_dict.items():
+def input_change_column_settings():
+    updated_column_dict = {}
+    for col, vis in cfg.kanban_columns_dict.items():
         new_visible = Confirm.ask(
             prompt=f"Should Column {COLOR_DICT.get(col,col)} be visible?",
             default=True if vis == "True" else False,
             show_default=True,
         )
-        current_column_dict[col] = "True" if new_visible else "False"
+        updated_column_dict[col] = "True" if new_visible else "False"
 
-    return current_column_dict
+    return updated_column_dict
 
 
-def input_change_general_settings(config):
-    current_general_dict = config["settings.general"]
+def input_change_footer_settings():
     footer_visible = Confirm.ask(
         prompt="Should Footer be visible?",
-        default=True if current_general_dict["Show_Footer"] == "True" else False,
+        default=True if cfg.show_footer == "True" else False,
         show_default=True,
     )
-    current_general_dict["Show_Footer"] = "True" if footer_visible else "False"
 
-    return current_general_dict
+    return footer_visible
 
 
 def input_confirm_change_current_settings():
