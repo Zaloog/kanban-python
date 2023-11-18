@@ -8,6 +8,7 @@ from .utils import (
     CAPTION_STRING,
     COLOR_DICT,
     FOOTER,
+    calculate_time_delta_str,
     console,
     create_status_dict_for_rows,
     current_time_to_str,
@@ -114,32 +115,67 @@ def input_create_new_task() -> dict:
     return new_task
 
 
-def input_update_task(current_task: dict) -> dict:
-    title = Prompt.ask(
+def input_update_task_title(current_title) -> str:
+    return Prompt.ask(
         prompt="[1/4] Update Task Title",
         show_default=True,
-        default=current_task["Title"],
+        default=current_title,
     )
-    description = Prompt.ask(
+
+
+def input_update_task_description(current_desc) -> str:
+    return Prompt.ask(
         prompt="[2/4] Update Task Description",
         show_default=True,
-        default=current_task["Description"],
+        default=current_desc,
     )
-    tag = Prompt.ask(
-        prompt="[3/4] Update Tag", show_default=True, default=current_task["Tag"]
+
+
+def input_update_task_tag(current_tag) -> str:
+    return Prompt.ask(
+        prompt="[3/4] Update Tag",
+        show_default=True,
+        default=current_tag,
     )
-    status = input_ask_to_what_status_to_move(current_task)
+
+
+def input_update_task(current_task: dict) -> dict:
+    title = input_update_task_title(current_task["Title"])
+    description = input_update_task_description(current_task["Description"])
+    tag = input_update_task_tag(current_task["Tag"])
+    status = input_ask_to_what_status_to_move(current_task["Title"])
+
+    if (status == "Doing") and (current_task["Status"] != "Doing"):
+        start_doing = current_time_to_str()
+        stop_doing = current_task.get("Complete_Time", "")
+        duration = current_task.get("Duration", 0)
+    elif (status != "Doing") and (current_task["Status"] == "Doing"):
+        start_doing = current_task.get("Begin_Time", "")
+        stop_doing = current_time_to_str()
+        duration = calculate_time_delta_str(
+            start_time_str=current_task.get("Begin_Time", ""), end_time_str=stop_doing
+        ) + current_task.get("Duration", 0)
+
+    if status == "Done":
+        console.print(
+            f":sparkle: Congrats, you just completed '{title}'"
+            + f" after {duration} minutes :muscle:"
+        )
+
     updated_task = {
         "Title": title,
         "Description": description,
         "Status": status,
         "Tag": tag.upper(),
+        "Begin_Time": start_doing,
+        "Complete_Time": stop_doing,
+        "Duration": duration,
     }
     current_task.update(updated_task)
     return current_task
 
 
-def input_ask_which_task_to_update(data):
+def input_ask_which_task_to_update(data: dict) -> str:
     choice_task_ids = [
         id for id, task in data.items() if task["Status"] in cfg.vis_cols
     ]
@@ -151,8 +187,7 @@ def input_ask_which_task_to_update(data):
     return str(task_id_to_update)
 
 
-def input_ask_to_what_status_to_move(current_task):
-    task_title = current_task["Title"]
+def input_ask_to_what_status_to_move(task_title):
     possible_status = [cat for cat in cfg.kanban_columns_dict]
 
     console.print(f'Updating Status of Task "[white]{task_title}[/]"')
@@ -180,11 +215,11 @@ def input_confirm_set_board_active(name) -> bool:
     )
 
 
-def input_ask_for_new_board_name():
+def input_ask_for_new_board_name() -> str:
     return Prompt.ask(prompt="What should the new board be called?")
 
 
-def input_ask_for_change_board():
+def input_ask_for_change_board() -> str:
     boards = [b for b in cfg.kanban_boards]
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")

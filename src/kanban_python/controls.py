@@ -89,9 +89,8 @@ def read_db(path: str = None) -> dict:
         path = cfg.active_board_path
 
     try:
-        with open(f"{path}/pykanban.json", "r") as file:
-            data = load(file)
-            return data
+        data = read_single_board(path)
+        return data
     except FileNotFoundError:
         console.print(":warning: No [orange3]pykanban.json[/] file here anymore.")
         change_kanban_board()
@@ -99,6 +98,12 @@ def read_db(path: str = None) -> dict:
     console.print("Create new [orange3]pykanban.json[/] file here.")
     create_new_db()
     return read_db()
+
+
+def read_single_board(path):
+    with open(f"{path}/pykanban.json", "r") as file:
+        data = load(file)
+    return data
 
 
 def show():
@@ -123,13 +128,13 @@ def change_kanban_board():
 def delete_kanban_board():
     board_to_delete = input_ask_for_delete_board()
     if input_confirm_delete_board(board_to_delete):
-        delete_json_file(board_to_delete)
+        delete_json_file(cfg.kanban_boards_dict, board_to_delete)
         delete_board_from_config(board_to_delete)
 
 
 def update_task_from_db():
     db_data = read_db()
-    if not check_if_there_are_visible_tasks_in_board(db_data):
+    if not check_if_there_are_visible_tasks_in_board(db_data, cfg.vis_cols):
         console.print(":cross_mark:[red]No Tasks available on this Kanban board[/]")
         return
     selected_id = input_ask_which_task_to_update(db_data)

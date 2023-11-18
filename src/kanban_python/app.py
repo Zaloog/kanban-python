@@ -74,6 +74,7 @@ def main(args):
     if not config.check_config_exists():
         config.create_init_config()
         utils.console.print("Created new [orange3]pykanban.ini[/] file @Home Directory")
+        utils.console.print("Use 'kanban init' to create kanban boards")
         return
 
     # New database creation
@@ -82,10 +83,7 @@ def main(args):
         controls.create_new_db()
         return
     if args.command == "configure":
-        utils.console.print(
-            ":hammer_and_wrench:  Changing Settings :hammer_and_wrench:"
-        )
-        controls.change_settings()
+        controls.show_settings()
         return
 
     while True:
