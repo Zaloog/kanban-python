@@ -26,14 +26,8 @@ class KanbanConfig:
         with open(self.configpath, "w") as self.configfile:
             self.config.write(self.configfile)
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self):
-        self.save()
-
     @property
-    def config(self):
+    def config(self) -> configparser.ConfigParser:
         return self._config
 
     @property
@@ -47,14 +41,14 @@ class KanbanConfig:
 
     @property
     def kanban_boards(self) -> list:
-        return [board for board in self._config["kanban_boards"]]
+        return [board for board in self.config["kanban_boards"]]
 
     @property
     def kanban_boards_dict(self) -> dict:
-        return self._config["kanban_boards"]
+        return self.config["kanban_boards"]
 
     @kanban_boards_dict.setter
-    def kanban_boards_dict(self, board_name) -> dict:
+    def kanban_boards_dict(self, board_name: str) -> dict:
         self.config["kanban_boards"][board_name] = str(Path.cwd())
         self.save()
 
@@ -92,7 +86,7 @@ class KanbanConfig:
 cfg = KanbanConfig(path=CONFIG_PATH)
 
 
-def create_init_config():
+def create_init_config(path=CONFIG_PATH):
     config = configparser.ConfigParser(default_section=None)
     config.optionxform = str
     config["settings.general"] = {
@@ -108,34 +102,33 @@ def create_init_config():
         "Archived": False,
     }
     config["kanban_boards"] = {}
-    with open(CONFIG_PATH, "w") as configfile:
+    with open(path, "w") as configfile:
         config.write(configfile)
 
 
-def delete_current_folder_board_from_config():
-    curr_path = str(Path.cwd())
+def delete_current_folder_board_from_config(curr_path: str = str(Path.cwd())) -> None:
     for b_name, b_path in cfg.kanban_boards_dict.items():
         if b_path == curr_path:
             cfg.config["kanban_boards"].pop(b_name)
     cfg.save()
 
 
-def check_if_board_name_exists_in_config(boardname):
+def check_if_board_name_exists_in_config(boardname: str, cfg=cfg) -> bool:
     return boardname in cfg.kanban_boards
 
 
-def check_if_current_active_board_in_board_list():
+def check_if_current_active_board_in_board_list(cfg=cfg) -> bool:
     return check_if_board_name_exists_in_config(cfg.active_board)
 
 
-def delete_board_from_config(board_name):
+def delete_board_from_config(board_name, cfg=cfg) -> None:
     cfg.config["kanban_boards"].pop(board_name)
     cfg.save()
 
 
-def check_config_exists() -> bool:
-    return Path(Path.home() / CONFIG_PATH).exists()
+def check_config_exists(path=CONFIG_PATH) -> bool:
+    return path.exists()
 
 
-def check_current_path_exists_for_board() -> bool:
-    return cfg.active_board_path == str(Path.cwd())
+def check_current_path_exists_for_board(cfg=cfg, path=str(Path.cwd())) -> bool:
+    return path in cfg.kanban_boards_dict.values()

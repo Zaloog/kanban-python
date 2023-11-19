@@ -9,6 +9,8 @@
 
 import pytest
 
+from kanban_python import config
+
 
 @pytest.fixture
 def start_time_str():
@@ -32,3 +34,12 @@ def test_task():
         "Duration": "0",
         "Creation_Date": "",
     }
+
+
+@pytest.fixture
+def test_config(tmp_path):
+    conf_path = tmp_path / "pykanban.ini"
+    config.create_init_config(conf_path)
+
+    cfg = config.KanbanConfig(path=conf_path)
+    return cfg
