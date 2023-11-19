@@ -53,16 +53,13 @@ def check_if_there_are_visible_tasks_in_board(data: dict, vis_cols: list) -> boo
     return False
 
 
-def delete_json_file(board_dict, boardname: str) -> None:
-    path = Path(board_dict[boardname] + "/pykanban.json")
+def delete_json_file(db_path: str) -> None:
+    path = Path(db_path, "pykanban.json")
     try:
         path.unlink()
+        console.print(f"File under {path} was now removed")
     except FileNotFoundError:
         console.print("File already deleted")
-
-
-def calculate_duration(start, end):
-    return end - start
 
 
 QUOTES = [
@@ -85,7 +82,7 @@ COLOR_DICT = {
 
 DUMMY_TASK = {
     "Title": "Welcome Task",
-    "Description": "Welcome to kanban-python, I hope this helps you being productive",
+    "Description": "Welcome to kanban-python, I hope this helps your productivity",
     "Tag": "HI",
     "Status": "Ready",
     "Begin_Time": "",
@@ -93,7 +90,7 @@ DUMMY_TASK = {
     "Duration": "0",
     "Creation_Date": current_time_to_str(),
 }
-DUMMY_DB = {i: DUMMY_TASK for i in range(1, 200)}
+DUMMY_DB = {1: DUMMY_TASK}
 
 FOOTER_FIRST = "kanban-python [grey35](by Zaloog)[/]"
 FOOTER_LAST = f"version {__version__}"
