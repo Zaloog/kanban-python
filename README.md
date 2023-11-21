@@ -32,7 +32,7 @@ and display nice looking tables to the terminal.
 
 - *configfile*: A `pykanban.ini` file gets created on first initialization in your `Home`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards
-  - Image
+![configfile](https://github.com/Zaloog/kanban-python/blob/main/images/image_config.PNG)
 
 - *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
 which stores all tasks for that board.
@@ -59,6 +59,7 @@ There are 3 commands available after installation of kanban-python:
   ```
 Is used to create a new kanban board i.e. it asks for a name and then creates a `pykanban.json` file with a Welcome Task.
 On first use, it will also create the `pykanban.ini` configfile automatically.
+![init_file](https://github.com/Zaloog/kanban-python/blob/main/images/image_kanban_init.PNG)
 
 ### Interact with Tasks/Boards
   ```bash
@@ -66,11 +67,13 @@ On first use, it will also create the `pykanban.ini` configfile automatically.
   ```
 This is your main command to interact with your boards and tasks. It also gives the option to show the current settings and adjust them.
 Adjusting the settings can also be done directly by using the 3rd command which is:
+![kanban](https://github.com/Zaloog/kanban-python/blob/main/images/image_kanban.PNG)
 
 ### Change Settings
   ```bash
   kanban configure
   ```
+![settings](https://github.com/Zaloog/kanban-python/blob/main/images/image_kanban_configure.PNG)
 
 <!-- pyscaffold-notes -->
 
