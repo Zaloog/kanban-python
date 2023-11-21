@@ -129,8 +129,6 @@ def delete_kanban_board():
     board_to_delete = input_ask_for_delete_board()
     if input_confirm_delete_board(board_to_delete):
         board_to_delete_path = cfg.kanban_boards_dict[board_to_delete]
-        print(board_to_delete_path)
-        print(type(board_to_delete_path))
 
         delete_json_file(board_to_delete_path)
         delete_board_from_config(board_to_delete)

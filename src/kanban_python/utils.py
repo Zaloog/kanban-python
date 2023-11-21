@@ -66,8 +66,8 @@ def move_first_done_task_to_archive(data: dict):
     return first_task_id, updated_task
 
 
-def delete_json_file(db_path: str) -> None:
-    path = Path(db_path, "pykanban.json")
+def delete_json_file(db_path) -> None:
+    path = Path(db_path / "pykanban.json")
     try:
         path.unlink()
         console.print(f"File under {path} was now removed")
