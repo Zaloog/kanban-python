@@ -32,6 +32,7 @@ and display nice looking tables to the terminal.
 
 - *configfile*: A `pykanban.ini` file gets created on first initialization in your `Home`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards
+
 ![configfile](https://github.com/Zaloog/kanban-python/blob/main/images/image_config.PNG)
 
 - *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
@@ -69,11 +70,21 @@ This is your main command to interact with your boards and tasks. It also gives 
 Adjusting the settings can also be done directly by using the 3rd command which is:
 ![kanban](https://github.com/Zaloog/kanban-python/blob/main/images/image_kanban.PNG)
 
+Use `Ctrl-C` to exit the application at any time. :warning: If you exit in the middle of creating/updating a task,
+or changing settings, your progress wont be saved.
+
 ### Change Settings
   ```bash
   kanban configure
   ```
 ![settings](https://github.com/Zaloog/kanban-python/blob/main/images/image_kanban_configure.PNG)
+
+To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new columnname + visibility status
+under the `settings.columns.visible` section.
+
+
+## Feedback and Issues
+Feel free to reach out and share your feedback, or open an Issue, if something doesnt work as expected.
 
 <!-- pyscaffold-notes -->
 
