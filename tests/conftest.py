@@ -43,3 +43,42 @@ def test_config(tmp_path):
 
     cfg = config.KanbanConfig(path=conf_path)
     return cfg
+
+
+@pytest.fixture
+def mock_confirm(monkeypatch):
+    confirm_responses = []
+
+    def mock_confirm_ask(message):
+        response = confirm_responses.pop(0)
+        return response
+
+    monkeypatch.setattr("rich.prompt.Confirm.ask", mock_confirm_ask)
+
+    return confirm_responses
+
+
+@pytest.fixture
+def mock_ask(monkeypatch):
+    prompt_responses = []
+
+    def mock_prompt_ask(message):
+        response = prompt_responses.pop(0)
+        return response
+
+    monkeypatch.setattr("rich.prompt.Prompt.ask", mock_prompt_ask)
+
+    return prompt_responses
+
+
+@pytest.fixture
+def mock_int_ask(monkeypatch):
+    confirm_responses = []
+
+    def mock_intprompt_ask(message, choices, show_choices):
+        response = confirm_responses.pop(0)
+        return response
+
+    monkeypatch.setattr("rich.prompt.Intprompt.ask", mock_intprompt_ask)
+
+    return confirm_responses

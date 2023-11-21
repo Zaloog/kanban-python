@@ -29,9 +29,11 @@ from .interface import (
 from .utils import (
     DUMMY_DB,
     check_db_exists,
+    check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
     console,
     delete_json_file,
+    move_first_done_task_to_archive,
 )
 
 
@@ -54,8 +56,6 @@ def create_new_db() -> None:
             f":warning:  Board '{new_name}' already exists, choose a different Name."
         )
 
-    # check if path already exists
-    # if yes delete previous entry in cfg
     if OVERWRITTEN_FLAG or check_current_path_exists_for_board():
         delete_current_folder_board_from_config()
         cfg.active_board = new_name
@@ -144,6 +144,10 @@ def update_task_from_db():
     selected_id = input_ask_which_task_to_update(db_data)
     updated_task = input_update_task(current_task=db_data[selected_id])
     db_data[selected_id] = updated_task
+
+    while not check_if_done_col_leq_X(cfg=cfg, data=db_data):
+        first_task_id, archive_task = move_first_done_task_to_archive(data=db_data)
+        db_data[first_task_id] = archive_task
     save_db(data=db_data)
 
 

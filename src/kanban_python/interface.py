@@ -17,7 +17,7 @@ from .utils import (
 
 # Board
 #####################################################################################
-def create_table(data: dict):
+def create_table(data: dict) -> Table:
     status_dict = create_status_dict_for_rows(data=data, vis_cols=cfg.vis_cols)
 
     table_name = cfg.active_board
@@ -111,6 +111,7 @@ def input_create_new_task() -> dict:
         "Status": "Ready" if str(status) == "1" else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
+        "Begin_Time": current_time_to_str() if str(status) == "2" else "",
     }
     return new_task
 
@@ -155,8 +156,13 @@ def input_update_task(current_task: dict) -> dict:
         duration = calculate_time_delta_str(
             start_time_str=current_task.get("Begin_Time", ""), end_time_str=stop_doing
         ) + current_task.get("Duration", 0)
+    else:
+        start_doing = current_task.get("Begin_Time", "")
+        stop_doing = current_task.get("Complete_Time", "")
+        duration = current_task.get("Duration", 0)
 
     if status == "Done":
+        print(cfg)
         console.print(
             f":sparkle: Congrats, you just completed '{title}'"
             + f" after {duration} minutes :muscle:"
@@ -258,7 +264,9 @@ def input_change_settings():
     cfg.kanban_columns_dict = updated_col_config
 
     footer_visible = input_change_footer_settings()
+    done_limit = input_change_done_limit_settings()
     cfg.show_footer = "True" if footer_visible else "False"
+    cfg.done_limit = done_limit
 
 
 def input_change_column_settings():
@@ -282,6 +290,17 @@ def input_change_footer_settings():
     )
 
     return footer_visible
+
+
+def input_change_done_limit_settings():
+    done_limit = IntPrompt.ask(
+        prompt=f"What should the Limit of Tasks in {COLOR_DICT.get('Done','Done')} "
+        + f"Column be, before moving to {COLOR_DICT.get('Archived','Archived')}?",
+        default=cfg.done_limit,
+        show_default=True,
+    )
+
+    return str(done_limit)
 
 
 def input_confirm_change_current_settings():

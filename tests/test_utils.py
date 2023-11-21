@@ -24,6 +24,31 @@ def test_calculate_time_delta_str(start_time_str, end_time_str):
     assert delta == 2.50
 
 
+@pytest.mark.parametrize(
+    "num_tasks, expected_result",
+    [
+        (1, True),
+        (0, True),
+        (11, False),
+    ],
+)
+def test_check_if_done_col_leq_x(test_config, num_tasks, expected_result):
+    cfg = test_config
+    test_data = {i: {"Status": "Done"} for i in range(num_tasks)}
+    result = utils.check_if_done_col_leq_X(cfg=cfg, data=test_data)
+
+    assert result is expected_result
+
+
+@pytest.mark.parametrize("first_task_id", [1, 2, 3])
+def test_move_first_done_task_to_archive(first_task_id):
+    test_data = {i: {"Status": "Done"} for i in range(first_task_id, 15)}
+    idx, task = utils.move_first_done_task_to_archive(data=test_data)
+
+    assert first_task_id == idx
+    assert task["Status"] == "Archived"
+
+
 def test_check_db_exists(tmp_path):
     os.chdir(tmp_path)
 

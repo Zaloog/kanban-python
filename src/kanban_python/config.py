@@ -82,6 +82,15 @@ class KanbanConfig:
     def vis_cols(self) -> list:
         return [c for c, v in self.kanban_columns_dict.items() if v == "True"]
 
+    @property
+    def done_limit(self) -> int:
+        return int(self.config["settings.general"]["Done_Limit"])
+
+    @done_limit.setter
+    def done_limit(self, new_limit: int) -> None:
+        self.config["settings.general"]["Done_Limit"] = new_limit
+        self.save()
+
 
 cfg = KanbanConfig(path=CONFIG_PATH)
 
@@ -92,6 +101,7 @@ def create_init_config(path=CONFIG_PATH):
     config["settings.general"] = {
         "Active_Board": "",
         "Column_Min_Width": 35,
+        "Done_Limit": 10,
         "Show_Footer": "True",
     }
     config["settings.columns.visible"] = {
@@ -106,7 +116,9 @@ def create_init_config(path=CONFIG_PATH):
         config.write(configfile)
 
 
-def delete_current_folder_board_from_config(curr_path: str = str(Path.cwd())) -> None:
+def delete_current_folder_board_from_config(
+    cfg=cfg, curr_path: str = str(Path.cwd())
+) -> None:
     for b_name, b_path in cfg.kanban_boards_dict.items():
         if b_path == curr_path:
             cfg.config["kanban_boards"].pop(b_name)
@@ -118,7 +130,7 @@ def check_if_board_name_exists_in_config(boardname: str, cfg=cfg) -> bool:
 
 
 def check_if_current_active_board_in_board_list(cfg=cfg) -> bool:
-    return check_if_board_name_exists_in_config(cfg.active_board)
+    return check_if_board_name_exists_in_config(cfg=cfg, boardname=cfg.active_board)
 
 
 def delete_board_from_config(board_name, cfg=cfg) -> None:

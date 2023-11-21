@@ -46,11 +46,24 @@ def create_status_dict_for_rows(data: dict, vis_cols: list) -> dict:
     return status_dict
 
 
+def check_if_done_col_leq_X(cfg, data: dict) -> bool:
+    done_col_idxs = [idx for idx, t in data.items() if t["Status"] == "Done"]
+    return len(done_col_idxs) <= cfg.done_limit
+
+
 def check_if_there_are_visible_tasks_in_board(data: dict, vis_cols: list) -> bool:
     for task in data.values():
         if task["Status"] in vis_cols:
             return True
     return False
+
+
+def move_first_done_task_to_archive(data: dict):
+    first_task_id = [idx for idx, t in data.items() if t["Status"] == "Done"][0]
+    updated_task = data[first_task_id]
+    updated_task["Status"] = "Archived"
+
+    return first_task_id, updated_task
 
 
 def delete_json_file(db_path: str) -> None:
@@ -92,6 +105,9 @@ DUMMY_TASK = {
 }
 DUMMY_DB = {1: DUMMY_TASK}
 
-FOOTER_FIRST = "kanban-python [grey35](by Zaloog)[/]"
-FOOTER_LAST = f"version {__version__}"
+FOOTER_LINK = "[link=https://github.com/Zaloog/kanban-python][blue]kanban-python[/]"
+FOOTER_AUTHOR = "[/link][grey35] (by Zaloog)[/]"
+FOOTER_FIRST = FOOTER_LINK + FOOTER_AUTHOR
+
+FOOTER_LAST = f"version [blue]{__version__}[/]"
 FOOTER = [FOOTER_FIRST, FOOTER_LAST]
