@@ -87,7 +87,7 @@ def test_check_if_there_are_visible_tasks_in_board(test_task, vis_col, expected_
 
 
 @pytest.mark.parametrize(
-    "file_there, output", [(True, "was now removed"), (False, "File already deleted")]
+    "file_there, output", [(True, "removed"), (False, "File already deleted")]
 )
 def test_delete_json_file(tmp_path, capsys, file_there, output):
     db_file_path = tmp_path / "pykanban.json"
