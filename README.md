@@ -44,7 +44,7 @@ More column can be added manually in the `pykanban.ini`, also the visibility can
 - *time-tracking*: for each task it is tracked, how long it was in the
  <span style="color:green">Doing</span> column, based on the moments when you update the task status.
  The initial Task structure on creation looks as follows:
-![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_task.PNG)
+![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_task_example.PNG)
 
 
 ## Installation
