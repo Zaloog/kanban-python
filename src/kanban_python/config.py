@@ -1,11 +1,12 @@
 import configparser
 from pathlib import Path
 
-CONFIG_PATH = Path.home() / "pykanban.ini"
+CONFIG_PATH = Path.home() / ".kanban-python"
+CONFIG_FILE_PATH = CONFIG_PATH / "pykanban.ini"
 
 
 class KanbanConfig:
-    def __init__(self, path=CONFIG_PATH) -> None:
+    def __init__(self, path=CONFIG_FILE_PATH) -> None:
         self.configpath = path
         self._config = configparser.ConfigParser(default_section=None)
         self._config.optionxform = str
@@ -23,8 +24,8 @@ class KanbanConfig:
         return output
 
     def save(self):
-        with open(self.configpath, "w") as self.configfile:
-            self.config.write(self.configfile)
+        with open(self.configpath, "w") as configfile:
+            self.config.write(configfile)
 
     @property
     def config(self) -> configparser.ConfigParser:
@@ -92,7 +93,7 @@ class KanbanConfig:
         self.save()
 
 
-cfg = KanbanConfig(path=CONFIG_PATH)
+cfg = KanbanConfig(path=CONFIG_FILE_PATH)
 
 
 def create_init_config(path=CONFIG_PATH):
@@ -112,7 +113,10 @@ def create_init_config(path=CONFIG_PATH):
         "Archived": False,
     }
     config["kanban_boards"] = {}
-    with open(path, "w") as configfile:
+
+    if not path.exists():
+        path.mkdir()
+    with open(path / "pykanban.ini", "w") as configfile:
         config.write(configfile)
 
 
@@ -138,7 +142,7 @@ def delete_board_from_config(board_name, cfg=cfg) -> None:
     cfg.save()
 
 
-def check_config_exists(path=CONFIG_PATH) -> bool:
+def check_config_exists(path=CONFIG_FILE_PATH) -> bool:
     return path.exists()
 
 

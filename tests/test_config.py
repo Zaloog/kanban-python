@@ -3,10 +3,9 @@ import pytest
 from kanban_python import config
 
 
-def test_create_init_config(tmp_path):
-    conf_path = tmp_path / "pykanban.ini"
-    config.create_init_config(conf_path)
-    cfg = config.KanbanConfig(path=conf_path)
+def test_create_init_config(test_config_path, test_config_filepath):
+    config.create_init_config(test_config_path)
+    cfg = config.KanbanConfig(path=test_config_filepath)
 
     assert ("settings.general" in cfg.config.sections()) is True
     assert ("settings.columns.visible" in cfg.config.sections()) is True
@@ -76,8 +75,8 @@ def test_delete_board_from_config(test_config, to_delete_board, board_left):
     assert board_left in cfg.kanban_boards
 
 
-def test_check_config_exists(tmp_path, test_config):
-    assert config.check_config_exists(path=tmp_path / "pykanban.ini") is True
+def test_check_config_exists(test_config_filepath, test_config):
+    assert config.check_config_exists(path=test_config_filepath) is True
 
 
 @pytest.mark.parametrize(

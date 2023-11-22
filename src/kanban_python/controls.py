@@ -2,11 +2,9 @@ from json import dump, load
 
 from .config import (
     cfg,
-    check_config_exists,
     check_current_path_exists_for_board,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
-    create_init_config,
     delete_board_from_config,
     delete_current_folder_board_from_config,
 )
@@ -38,10 +36,6 @@ from .utils import (
 
 
 def create_new_db() -> None:
-    if not check_config_exists():
-        create_init_config()
-        console.print("Created new [orange3]pykanban.ini[/] file @Home Directory")
-
     OVERWRITTEN_FLAG = False
     if check_db_exists():
         OVERWRITTEN_FLAG = True
@@ -93,6 +87,7 @@ def read_db(path: str = None) -> dict:
         return data
     except FileNotFoundError:
         console.print(":warning: No [orange3]pykanban.json[/] file here anymore.")
+        console.print("Please change to another board.")
         change_kanban_board()
     console.print("[red]Seems like the previous pykanban.json file was deleted[/]")
     console.print("Create new [orange3]pykanban.json[/] file here.")
@@ -107,6 +102,11 @@ def read_single_board(path):
 
 
 def show():
+    if not cfg.kanban_boards:
+        console.print(":warning:  [red]No Boards created yet[/]:warning:")
+        console.print("Use 'kanban init' to create a new kanban board.")
+        raise KeyboardInterrupt
+
     if not check_if_current_active_board_in_board_list():
         console.print(
             "[yellow]Hmm, Something went wrong.[/] "

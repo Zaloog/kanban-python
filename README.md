@@ -18,6 +18,7 @@
 ## Introduction
 Welcome to **kanban-python**, your Terminal Kanban Board Manager.
 
+![header](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_header.PNG)
 The [clikan] Kanban App inspired me to write
 my own Terminal Kanban Application, since I preferred a more simple and guided workflow.
 
@@ -30,19 +31,20 @@ Which was a great help for developing my first package.
 - *colorful and interactive*: kanban-python uses [rich] under the hood to process user input
 and display nice looking tables to the terminal.
 
-- *configfile*: A `pykanban.ini` file gets created on first initialization in your `Home`-Directory.
-This can be edited manually or within the kanban-python application. It tracks the location for all your created boards
-
+- *configfile*: A `pykanban.ini` file gets created on first initialization in a `.kanban-python` folder in your `Home`-Directory.
+This can be edited manually or within the kanban-python application. It tracks the location for all your created boards. \
 ![configfile](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_config.PNG)
 
 - *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
 which stores all tasks for that board.
 
 - *column customization*: kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
-More column can be added in the `pykanban.ini`, also the visibility can be configured.
+More column can be added manually in the `pykanban.ini`, also the visibility can be configured.
 
 - *time-tracking*: for each task it is tracked, how long it was in the
- <span style="color:green">Doing</span> column.
+ <span style="color:green">Doing</span> column, based on the moments when you update the task status.
+ The initial Task structure on creation looks as follows:
+![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_task.PNG)
 
 
 ## Installation
@@ -59,7 +61,7 @@ There are 3 commands available after installation of kanban-python:
   kanban init
   ```
 Is used to create a new kanban board i.e. it asks for a name and then creates a `pykanban.json` file with a Welcome Task.
-On first use, it will also create the `pykanban.ini` configfile automatically.
+On first use of any command, the `pykanban.ini` configfile and the `.kanban-python` folder will be created automatically.
 ![init_file](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_init.PNG)
 
 ### Interact with Tasks/Boards

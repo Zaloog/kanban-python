@@ -37,11 +37,20 @@ def test_task():
 
 
 @pytest.fixture
-def test_config(tmp_path):
-    conf_path = tmp_path / "pykanban.ini"
-    config.create_init_config(conf_path)
+def test_config_path(tmp_path):
+    return tmp_path / ".kanban-python"
 
-    cfg = config.KanbanConfig(path=conf_path)
+
+@pytest.fixture
+def test_config_filepath(test_config_path):
+    return test_config_path / "pykanban.ini"
+
+
+@pytest.fixture
+def test_config(test_config_path, test_config_filepath):
+    config.create_init_config(test_config_path)
+
+    cfg = config.KanbanConfig(path=test_config_filepath)
     return cfg
 
 
