@@ -29,6 +29,7 @@ concurrency:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.event.ref == 'refs/tags/v${{ github.event.release.tag_name }}' && github.event.before == github.sha
     outputs:
       wheel-distribution: ${{ steps.wheel-distribution.outputs.path }}
     steps:

@@ -316,7 +316,8 @@ def create_config_table():
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
         highlight=True,
         show_header=True,
-        caption="pykanban.ini file is located in your [light_green]$Home[/] Directory",
+        caption="pykanban.ini file is located in your "
+        + "[light_green]$Home/.kanban-python[/] Directory",
     )
     for col in ["Option", "Current Value"]:
         settings_table.add_column(
