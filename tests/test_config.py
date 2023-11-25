@@ -77,17 +77,3 @@ def test_delete_board_from_config(test_config, to_delete_board, board_left):
 
 def test_check_config_exists(test_config_filepath, test_config):
     assert config.check_config_exists(path=test_config_filepath) is True
-
-
-@pytest.mark.parametrize(
-    "board, folder, exists",
-    [("testboard1", "test1", True), ("testboard2", "test2", False)],
-)
-def test_check_current_path_exists_for_board(
-    tmp_path, test_config, board, folder, exists
-):
-    cfg = test_config
-    board_path = str(tmp_path / "test1" / "pykanban.json")
-    cfg.config["kanban_boards"][board] = board_path
-    check_path = str(tmp_path / folder / "pykanban.json")
-    assert config.check_current_path_exists_for_board(cfg, check_path) == exists

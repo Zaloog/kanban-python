@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 import pytest
@@ -49,18 +48,6 @@ def test_move_first_done_task_to_archive(first_task_id):
     assert task["Status"] == "Archived"
 
 
-def test_check_db_exists(tmp_path):
-    os.chdir(tmp_path)
-
-    result = utils.check_db_exists()
-
-    assert isinstance(result, bool)
-
-    db_file_path = tmp_path / "pykanban.json"
-    db_file_path.touch()
-    assert utils.check_db_exists() is True
-
-
 @pytest.mark.parametrize(
     "vis_col, expected_result",
     [
@@ -90,14 +77,26 @@ def test_check_if_there_are_visible_tasks_in_board(test_task, vis_col, expected_
     "file_there, output", [(True, "removed"), (False, "File already deleted")]
 )
 def test_delete_json_file(tmp_path, capsys, file_there, output):
-    db_file_path = tmp_path / "pykanban.json"
+    db_path = tmp_path / "boardname"
+    db_file_path = db_path / "pykanban.json"
     if file_there:
+        db_path.mkdir()
         db_file_path.touch()
 
-    utils.delete_json_file(tmp_path)
+    utils.delete_json_file(db_file_path)
 
     captured = capsys.readouterr()
     assert output in captured.out
+
+
+@pytest.mark.parametrize(
+    "name, expected_result",
+    [("Test_123", True), ("Test123/", False), (".test_", False)],
+)
+def test_check_board_name_valid(name, expected_result):
+    result = utils.check_board_name_valid(name)
+
+    assert result is expected_result
 
 
 # def test_main(capsys):
