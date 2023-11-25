@@ -162,7 +162,6 @@ def input_update_task(current_task: dict) -> dict:
         duration = current_task.get("Duration", 0)
 
     if status == "Done":
-        print(cfg)
         console.print(
             f":sparkle: Congrats, you just completed '{title}'"
             + f" after {duration} minutes :muscle:"
@@ -208,6 +207,7 @@ def input_ask_to_what_status_to_move(task_title):
     return possible_status[int(new_status) - 1]
 
 
+# TODO not needed anymore i guess
 def input_confirm_to_overwrite_db() -> bool:
     console.print(":warning:  Existing [orange3]pykanban.json[/] found :warning:")
     return Confirm.ask(

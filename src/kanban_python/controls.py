@@ -37,6 +37,7 @@ from .utils import (
 
 def create_new_db() -> None:
     OVERWRITTEN_FLAG = False
+    # TODO Still needed just need to check boardname?
     if check_db_exists():
         OVERWRITTEN_FLAG = True
         if not input_confirm_to_overwrite_db():
@@ -54,8 +55,15 @@ def create_new_db() -> None:
         delete_current_folder_board_from_config()
         cfg.active_board = new_name
 
+    # TODO Change config structure on new board creation
     cfg.kanban_boards_dict = new_name
 
+    # TODO Change path save on board creation
+    # Options:
+    # 1. ~/.kanban-python/<BOARDNAME>.json
+    # 2. ~/.kanban-python/kanban_boards/<BOARDNAME>.json
+    # 3. ~/.kanban-python/kanban_boards/<BOARDNAME>/pykanban.json
+    # 4. ~/.kanban-python/kanban_boards/<BOARDNAME>/<BOARDNAME>.json
     with open("pykanban.json", "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
@@ -65,6 +73,7 @@ def create_new_db() -> None:
         cfg.active_board = new_name
 
 
+# TODO Change path on db file save
 def save_db(data):
     path = cfg.active_board_path
     with open(f"{path}/pykanban.json", "w", encoding="utf-8") as f:

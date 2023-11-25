@@ -146,5 +146,6 @@ def check_config_exists(path=CONFIG_FILE_PATH) -> bool:
     return path.exists()
 
 
+# TODO Think on on new structure for config
 def check_current_path_exists_for_board(cfg=cfg, path=str(Path.cwd())) -> bool:
     return path in cfg.kanban_boards_dict.values()
