@@ -8,15 +8,17 @@
 [![Monthly Downloads](https://pepy.tech/badge/kanban-python/month)](https://pepy.tech/project/kanban-python)
 -->
 
-[![Coveralls](https://img.shields.io/coveralls/github/Zaloog/kanban-python/main.svg)](https://coveralls.io/r/Zaloog/kanban-python)
-[![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
+[![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
+[![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
+[![Coveralls](https://img.shields.io/coveralls/github/Zaloog/kanban-python/main.svg)](https://coveralls.io/r/Zaloog/kanban-python)
+
 # kanban-python
 
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:
 
 ## Introduction
-Welcome to **kanban-python**, your Terminal Kanban Board Manager.
+Welcome to **kanban-python**, your Terminal Kanban-Board Manager.
 
 ![header](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_header.PNG)
 The [clikan] Kanban App inspired me to write
@@ -25,7 +27,7 @@ my own Terminal Kanban Application, since I preferred a more simple and guided w
 **kanban-python** also comes with more features and customization options.
 This package was developed with [pyscaffold], which provides nice project templates
 and takes over much of the boilerplate for python packaging.
-Which was a great help for developing my first package.
+It was a great help for developing my first package.
 
 ## Features
 - *colorful and interactive*: kanban-python uses [rich] under the hood to process user input
@@ -34,15 +36,22 @@ and display nice looking tables to the terminal.
 - *configfile*: A `pykanban.ini` file gets created on first initialization in a `.kanban-python` folder in your `Home`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards. \
 ![configfile](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_config.PNG)
+   * `Active_Board`: current board that is shown when using `kanban`-command
+   * `Done_Limit`: If the amount of tasks exceed this number in the  <span style="color:green">Done</span> column,
+   the first task of that column gets its status updated to <span style="color:gold">Archived</span> and is moved into that column. (default: 10)
+   * `Column_Min_Width`: Sets the minimum width of columns. (default: 40)
+   * `Show_Footer`: Shows the table footer with package name and version. (default: True)
+
+   <br />
 
 - *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
-which stores all tasks for that board.
+which stores all tasks for that board. The files are stored in board specific folders under `.kanban-python/kanban_boards/<BOARDNAME>`
 
 - *column customization*: kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
 More column can be added manually in the `pykanban.ini`, also the visibility can be configured.
 
 - *time-tracking*: for each task it is tracked, how long it was in the
- <span style="color:green">Doing</span> column, based on the moments when you update the task status.
+ <span style="color:yellow">Doing</span> column, based on the moments when you update the task status.
  The initial Task structure on creation looks as follows:
 ![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_task_example.PNG)
 
@@ -69,7 +78,7 @@ On first use of any command, the `pykanban.ini` configfile and the `.kanban-pyth
   kanban
   ```
 This is your main command to interact with your boards and tasks. It also gives the option to show the current settings and adjust them.
-Adjusting the settings can also be done directly by using the 3rd command which is:
+Adjusting the settings can also be done directly by using the third command `kanban configure`:
 ![kanban](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban.PNG)
 
 Use `Ctrl-C` to exit the application at any time. :warning: If you exit in the middle of creating/updating a task,
@@ -87,6 +96,7 @@ under the `settings.columns.visible` section.
 
 ## Feedback and Issues
 Feel free to reach out and share your feedback, or open an Issue, if something doesnt work as expected.
+Also check the [Changelog](https://raw.githubusercontent.com/Zaloog/kanban-python/main/CHANGELOG.md) for new updates.
 
 <!-- pyscaffold-notes -->
 
