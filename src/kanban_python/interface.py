@@ -3,7 +3,7 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import cfg
+from .config import TASK_FILE, cfg
 from .utils import (
     CAPTION_STRING,
     COLOR_DICT,
@@ -209,7 +209,7 @@ def input_ask_to_what_status_to_move(task_title):
 
 # TODO not needed anymore i guess
 def input_confirm_to_overwrite_db() -> bool:
-    console.print(":warning:  Existing [orange3]pykanban.json[/] found :warning:")
+    console.print(f":warning:  Existing [orange3]{TASK_FILE}[/] found :warning:")
     return Confirm.ask(
         "Do you want to wipe it clean and start from scratch:question_mark:"
     )
@@ -222,11 +222,17 @@ def input_confirm_set_board_active(name) -> bool:
 
 
 def input_ask_for_new_board_name() -> str:
-    return Prompt.ask(prompt="What should the new board be called?")
+    return Prompt.ask(
+        prompt="A new folder will be created for your board\n"
+        + ":warning:  [yellow]Only[/] use alpha-numeric characters or"
+        + " [green]'-', '_', ' '[/] for new board names.\n"
+        + "What should the new board be called?"
+    )
 
 
 def input_ask_for_change_board() -> str:
     boards = [b for b in cfg.kanban_boards]
+    active_board_idx = boards.index(cfg.active_board) + 1
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
 
@@ -234,6 +240,8 @@ def input_ask_for_change_board() -> str:
         prompt="Which board to activate",
         choices=[f"{i}" for i, _ in enumerate(boards, start=1)],
         show_choices=False,
+        default=active_board_idx,
+        show_default=True,
     )
     return boards[int(answer) - 1]
 

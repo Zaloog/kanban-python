@@ -1,12 +1,13 @@
 from json import dump, load
 
 from .config import (
+    KANBAN_BOARDS_PATH,
+    TASK_FILE,
     cfg,
-    check_current_path_exists_for_board,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
     delete_board_from_config,
-    delete_current_folder_board_from_config,
+    get_json_path,
 )
 from .interface import (
     create_config_table,
@@ -20,13 +21,12 @@ from .interface import (
     input_confirm_change_current_settings,
     input_confirm_delete_board,
     input_confirm_set_board_active,
-    input_confirm_to_overwrite_db,
     input_create_new_task,
     input_update_task,
 )
 from .utils import (
     DUMMY_DB,
-    check_db_exists,
+    check_board_name_valid,
     check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
     console,
@@ -36,47 +36,43 @@ from .utils import (
 
 
 def create_new_db() -> None:
-    OVERWRITTEN_FLAG = False
-    # TODO Still needed just need to check boardname?
-    if check_db_exists():
-        OVERWRITTEN_FLAG = True
-        if not input_confirm_to_overwrite_db():
-            return
-
     while True:
-        new_name = input_ask_for_new_board_name()
-        if not check_if_board_name_exists_in_config(new_name):
+        while True:
+            new_board_name = input_ask_for_new_board_name()
+            if check_board_name_valid(new_board_name):
+                break
+            console.print(f":warning:  '{new_board_name}' is [red]not[/] a valid Name.")
+
+        if not check_if_board_name_exists_in_config(new_board_name):
             break
         console.print(
-            f":warning:  Board '{new_name}' already exists, choose a different Name."
+            f":warning:  Board '{new_board_name}' already exists, choose another Name."
         )
 
-    if OVERWRITTEN_FLAG or check_current_path_exists_for_board():
-        delete_current_folder_board_from_config()
-        cfg.active_board = new_name
+    cfg.kanban_boards_dict = new_board_name
 
-    # TODO Change config structure on new board creation
-    cfg.kanban_boards_dict = new_name
-
-    # TODO Change path save on board creation
     # Options:
     # 1. ~/.kanban-python/<BOARDNAME>.json
     # 2. ~/.kanban-python/kanban_boards/<BOARDNAME>.json
-    # 3. ~/.kanban-python/kanban_boards/<BOARDNAME>/pykanban.json
+    # 3. ~/.kanban-python/kanban_boards/<BOARDNAME>/pykanban.json  <- THIS
     # 4. ~/.kanban-python/kanban_boards/<BOARDNAME>/<BOARDNAME>.json
-    with open("pykanban.json", "w", encoding="utf-8") as f:
+    new_db_path = KANBAN_BOARDS_PATH / new_board_name
+
+    if not new_db_path.exists():
+        new_db_path.mkdir()
+
+    with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    console.print("Created new [orange3]pykanban.json[/] file to save tasks")
+    console.print(f"Created new [orange3]{TASK_FILE}[/] file to save tasks")
 
-    if input_confirm_set_board_active(name=new_name):
-        cfg.active_board = new_name
+    if input_confirm_set_board_active(name=new_board_name):
+        cfg.active_board = new_board_name
 
 
-# TODO Change path on db file save
 def save_db(data):
     path = cfg.active_board_path
-    with open(f"{path}/pykanban.json", "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8") as f:
         dump(data, f, ensure_ascii=False, indent=4)
 
 
@@ -95,17 +91,18 @@ def read_db(path: str = None) -> dict:
         data = read_single_board(path)
         return data
     except FileNotFoundError:
-        console.print(":warning: No [orange3]pykanban.json[/] file here anymore.")
+        print(path)
+        console.print(f":warning: No [orange3]{TASK_FILE}[/] file here anymore.")
         console.print("Please change to another board.")
         change_kanban_board()
-    console.print("[red]Seems like the previous pykanban.json file was deleted[/]")
-    console.print("Create new [orange3]pykanban.json[/] file here.")
+    console.print(f"[red]Seems like the previous {TASK_FILE} file was deleted[/]")
+    console.print(f"Create new [orange3]{TASK_FILE}[/] file here.")
     create_new_db()
     return read_db()
 
 
 def read_single_board(path):
-    with open(f"{path}/pykanban.json", "r") as file:
+    with open(path, "r") as file:
         data = load(file)
     return data
 

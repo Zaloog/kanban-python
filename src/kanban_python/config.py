@@ -1,7 +1,9 @@
 import configparser
 from pathlib import Path
 
+TASK_FILE = "pykanban.json"
 CONFIG_PATH = Path.home() / ".kanban-python"
+KANBAN_BOARDS_PATH = CONFIG_PATH / "kanban_boards"
 CONFIG_FILE_PATH = CONFIG_PATH / "pykanban.ini"
 
 
@@ -50,7 +52,7 @@ class KanbanConfig:
 
     @kanban_boards_dict.setter
     def kanban_boards_dict(self, board_name: str) -> dict:
-        self.config["kanban_boards"][board_name] = str(Path.cwd())
+        self.config["kanban_boards"][board_name] = get_json_path(board_name)
         self.save()
 
     @property
@@ -116,6 +118,8 @@ def create_init_config(path=CONFIG_PATH):
 
     if not path.exists():
         path.mkdir()
+        (path / "kanban_boards").mkdir()
+
     with open(path / "pykanban.ini", "w") as configfile:
         config.write(configfile)
 
@@ -146,6 +150,5 @@ def check_config_exists(path=CONFIG_FILE_PATH) -> bool:
     return path.exists()
 
 
-# TODO Think on on new structure for config
-def check_current_path_exists_for_board(cfg=cfg, path=str(Path.cwd())) -> bool:
-    return path in cfg.kanban_boards_dict.values()
+def get_json_path(boardname: str):
+    return str(KANBAN_BOARDS_PATH / boardname / TASK_FILE)

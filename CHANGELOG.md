@@ -6,6 +6,8 @@ in the `.kanban-python` directory under `<BOARDNAME>/pykanban.json`.
 This allows centrally stored tasks and doesnt scatter multiple
 `pykanban.json` files over your projects.
 - Adjusted functions/tests accordingly to new structure
+- limiting Namespace of new boardnames to alpha-numeric + `-_ ` due to folder creation
+- added default option (active board selection) for board change
 - updated docs/readme
 
 ## Version 0.1.2

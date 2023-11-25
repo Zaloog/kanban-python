@@ -28,11 +28,6 @@ def calculate_time_delta_str(start_time_str: str, end_time_str: str) -> float:
     return round(delta_minutes, 2)
 
 
-# TODO path change needs boardname
-def check_db_exists() -> bool:
-    return Path("pykanban.json").exists()
-
-
 def create_status_dict_for_rows(data: dict, vis_cols: list) -> dict:
     status_dict = {col: [] for col in vis_cols}
 
@@ -67,14 +62,19 @@ def move_first_done_task_to_archive(data: dict):
     return first_task_id, updated_task
 
 
-# TODO Fix deletion path
-def delete_json_file(db_path) -> None:
-    path = Path(Path(db_path) / "pykanban.json")
+def delete_json_file(db_path: str) -> None:
+    path = Path(db_path)
     try:
         path.unlink()
-        console.print(f"File under {path} was now removed")
+        path.parent.rmdir()
+        console.print(f"File under {path.parent} was now removed")
     except FileNotFoundError:
         console.print("File already deleted")
+
+
+def check_board_name_valid(boardname: str):
+    checker = "".join(x for x in boardname if (x.isalnum() or x in "_- "))
+    return True if (checker == boardname) else False
 
 
 QUOTES = [
