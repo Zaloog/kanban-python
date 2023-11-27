@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from pathlib import Path
 from random import choice
@@ -77,6 +78,38 @@ def check_board_name_valid(boardname: str):
     return True if (checker == boardname) else False
 
 
+def scan_files(path=Path.cwd(), ending: str = ".py"):
+    file_list = []
+    for entry in os.scandir(path):
+        if entry.is_dir(follow_symlinks=False) and not entry.name.startswith("."):
+            files = scan_files(path=entry.path)
+            if files:
+                file_list += files
+        else:
+            if entry.path.endswith(ending):
+                file_list.append(entry.path)
+
+    return file_list
+
+
+def scan_for_todos(file_paths, patterns: list[str] = ["# TODO", "#TODO"]):
+    todos = []
+    for file_path in file_paths:
+        with open(file_path, "r") as file:
+            try:
+                todos += [
+                    line.strip()
+                    for line in file
+                    if any(line.strip().startswith(pattern) for pattern in patterns)
+                ]
+                if todos:
+                    print(file_path)
+            except UnicodeDecodeError:
+                continue
+
+    return todos
+
+
 QUOTES = [
     "\n:wave:Stay Hard:wave:",
     "\n:wave:See you later:wave:",
@@ -113,3 +146,9 @@ FOOTER_FIRST = FOOTER_LINK + FOOTER_AUTHOR
 
 FOOTER_LAST = f"version [blue]{__version__}[/]"
 FOOTER = [FOOTER_FIRST, FOOTER_LAST]
+
+if __name__ == "__main__":
+    from pprint import pprint
+
+    files = scan_files()
+    pprint([i for i in scan_for_todos(file_paths=files)])
