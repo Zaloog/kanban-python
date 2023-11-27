@@ -3,7 +3,7 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import TASK_FILE, cfg
+from .config import cfg
 from .utils import (
     CAPTION_STRING,
     COLOR_DICT,
@@ -207,14 +207,6 @@ def input_ask_to_what_status_to_move(task_title):
     return possible_status[int(new_status) - 1]
 
 
-# TODO not needed anymore i guess
-def input_confirm_to_overwrite_db() -> bool:
-    console.print(f":warning:  Existing [orange3]{TASK_FILE}[/] found :warning:")
-    return Confirm.ask(
-        "Do you want to wipe it clean and start from scratch:question_mark:"
-    )
-
-
 def input_confirm_set_board_active(name) -> bool:
     return Confirm.ask(
         f"Do you want to set the Board '{name}' as active:question_mark:"
@@ -261,7 +253,26 @@ def input_ask_for_delete_board() -> int:
 
 def input_confirm_delete_board(name) -> bool:
     return Confirm.ask(
-        f"Are you sure you want to delete the Board '{name}':question_mark:"
+        prompt=f"Are you sure you want to delete the Board '{name}':question_mark:",
+    )
+
+
+def input_show_all_todos(todos) -> bool:
+    return Confirm.ask(
+        prompt=f"Found [blue]{len(todos)}[/] TODOs. Do you want to list all of them?",
+        default=True,
+        show_default=True,
+    )
+
+
+def input_confirm_add_todos_to_board(todos) -> bool:
+    if input_show_all_todos(todos):
+        for i, (todo, path) in enumerate(todos, start=1):
+            colored_todo = todo.replace("TODO", "[orange3]TODO[/]")
+            console.print(f"{i}) {colored_todo} - [blue]{path}[/]")
+
+    return Confirm.ask(
+        prompt="Add found TODOs to active board?", default=False, show_default=True
     )
 
 

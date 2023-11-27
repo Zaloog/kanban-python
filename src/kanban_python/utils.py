@@ -4,6 +4,7 @@ from pathlib import Path
 from random import choice
 
 from rich.console import Console
+from rich.progress import MofNCompleteColumn, Progress
 
 from kanban_python import __version__
 
@@ -78,34 +79,47 @@ def check_board_name_valid(boardname: str):
     return True if (checker == boardname) else False
 
 
-def scan_files(path=Path.cwd(), ending: str = ".py"):
+def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
+    # TODO: From scan_files function
+
+    def recursive_search(path, file_list, progress):
+        for entry in os.scandir(path):
+            if entry.is_dir(follow_symlinks=False) and not entry.name.startswith("."):
+                recursive_search(
+                    path=entry.path, file_list=file_list, progress=progress
+                )
+
+            elif entry.is_file(follow_symlinks=False):
+                if any(entry.path.endswith(ending) for ending in endings):
+                    file_list.append(entry.path)
+                    prog.update(task_id=task, advance=1)
+
     file_list = []
-    for entry in os.scandir(path):
-        if entry.is_dir(follow_symlinks=False) and not entry.name.startswith("."):
-            files = scan_files(path=entry.path)
-            if files:
-                file_list += files
-        else:
-            if entry.path.endswith(ending):
-                file_list.append(entry.path)
+    with Progress(transient=True) as prog:
+        task = prog.add_task("[blue]Collecting files...", total=None)
+        recursive_search(path=path, file_list=file_list, progress=prog)
 
     return file_list
 
 
-def scan_for_todos(file_paths, patterns: list[str] = ["# TODO", "#TODO"]):
+def scan_for_todos(
+    file_paths: list[Path], patterns: list[str] = ["# TODO", "#TODO"]
+) -> list[tuple[str, str]]:
     todos = []
-    for file_path in file_paths:
-        with open(file_path, "r") as file:
-            try:
-                todos += [
-                    line.strip()
-                    for line in file
-                    if any(line.strip().startswith(pattern) for pattern in patterns)
-                ]
-                if todos:
-                    print(file_path)
-            except UnicodeDecodeError:
-                continue
+    with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:
+        task = prog.add_task("Files searched for TODOs...", total=len(file_paths))
+
+        for file_path in file_paths:
+            prog.update(task_id=task, advance=1)
+            with open(file_path, "r") as file:
+                try:
+                    todos += [
+                        (line.strip(), Path(file_path).relative_to(Path.cwd()))
+                        for line in file.readlines()
+                        if any(line.strip().startswith(pattern) for pattern in patterns)
+                    ]
+                except UnicodeDecodeError:
+                    continue
 
     return todos
 
@@ -146,9 +160,3 @@ FOOTER_FIRST = FOOTER_LINK + FOOTER_AUTHOR
 
 FOOTER_LAST = f"version [blue]{__version__}[/]"
 FOOTER = [FOOTER_FIRST, FOOTER_LAST]
-
-if __name__ == "__main__":
-    from pprint import pprint
-
-    files = scan_files()
-    pprint([i for i in scan_for_todos(file_paths=files)])

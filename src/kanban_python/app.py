@@ -89,6 +89,12 @@ def main(args):
         controls.show_settings()
         return
 
+    if args.command == "scan":
+        # TODO Test for new scan command
+        controls.add_todos_to_board()
+
+        return
+
     while True:
         controls.show()
         user_input = controls.get_user_action()

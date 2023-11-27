@@ -18,6 +18,7 @@ from .interface import (
     input_ask_for_new_board_name,
     input_ask_which_task_to_update,
     input_change_settings,
+    input_confirm_add_todos_to_board,
     input_confirm_change_current_settings,
     input_confirm_delete_board,
     input_confirm_set_board_active,
@@ -32,6 +33,8 @@ from .utils import (
     console,
     delete_json_file,
     move_first_done_task_to_archive,
+    scan_files,
+    scan_for_todos,
 )
 
 
@@ -168,3 +171,12 @@ def show_settings():
     console.print(settings_table)
     if input_confirm_change_current_settings():
         change_settings()
+
+
+def add_todos_to_board():
+    files = scan_files()
+    todos = scan_for_todos(file_paths=files)
+    if input_confirm_add_todos_to_board(todos=todos):
+        pass
+
+    return todos

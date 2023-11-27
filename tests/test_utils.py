@@ -99,6 +99,14 @@ def test_check_board_name_valid(name, expected_result):
     assert result is expected_result
 
 
+def test_scan_files():
+    pass
+
+
+def test_scan_todos():
+    pass
+
+
 # def test_main(capsys):
 # """CLI Tests"""
 # # capsys is a pytest fixture that allows asserts against stdout/stderr
