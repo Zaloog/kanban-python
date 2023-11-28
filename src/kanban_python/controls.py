@@ -79,10 +79,21 @@ def save_db(data):
         dump(data, f, ensure_ascii=False, indent=4)
 
 
-def add_tasks_to_db():
+def add_new_task_to_db():
+    new_task = input_create_new_task()
+    add_tasks_to_db(tasks=new_task)
+
+
+def add_tasks_to_db(tasks: dict | list[dict]) -> None:
     db_data = read_db()
-    new_id = str(max(int(i) for i in db_data.keys()) + 1)
-    db_data[new_id] = input_create_new_task()
+    if isinstance(tasks, dict):
+        new_id = str(max(int(i) for i in db_data.keys()) + 1)
+        db_data[new_id] = tasks
+    else:
+        for task in tasks:
+            new_id = str(max(int(i) for i in db_data.keys()) + 1)
+            db_data[new_id] = task
+
     save_db(data=db_data)
 
 
@@ -174,9 +185,13 @@ def show_settings():
 
 
 def add_todos_to_board():
-    files = scan_files()
-    todos = scan_for_todos(file_paths=files)
+    files = scan_files(endings=cfg.scanned_files)
+    todos = scan_for_todos(file_paths=files, patterns=cfg.scanned_patterns)
+    if not todos:
+        console.print("Nothing found that matches any of your patterns.")
+        return
     if input_confirm_add_todos_to_board(todos=todos):
-        pass
-
-    return todos
+        for task, file in todos:
+            # TODO implement Logic
+            task_dict = {}
+            task_dict["Title"]

@@ -94,6 +94,14 @@ class KanbanConfig:
         self.config["settings.general"]["Done_Limit"] = new_limit
         self.save()
 
+    @property
+    def scanned_files(self):
+        return self.config["settings.scanner"]["files"].split(" ")
+
+    @property
+    def scanned_patterns(self):
+        return self.config["settings.scanner"]["patterns"].split(",")
+
 
 cfg = KanbanConfig(path=CONFIG_FILE_PATH)
 
@@ -113,6 +121,10 @@ def create_init_config(path=CONFIG_PATH):
         "Done": True,
         "Deleted": False,
         "Archived": False,
+    }
+    config["settings.scanner"] = {
+        "Files": ".py .md",
+        "Patterns": "# TODO,#TODO",
     }
     config["kanban_boards"] = {}
 

@@ -200,7 +200,7 @@ def input_ask_to_what_status_to_move(task_title):
         console.print(f"\t[{idx}] {COLOR_DICT.get(status, status)}")
 
     new_status = IntPrompt.ask(
-        prompt="New Status of Task?",
+        prompt="[4/4] New Status of Task?",
         show_choices=False,
         choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
     )
@@ -223,8 +223,13 @@ def input_ask_for_new_board_name() -> str:
 
 
 def input_ask_for_change_board() -> str:
-    boards = [b for b in cfg.kanban_boards]
-    active_board_idx = boards.index(cfg.active_board) + 1
+    boards = cfg.kanban_boards
+    # if active Board is not in Board List dont show default
+    try:
+        active_board_idx = boards.index(cfg.active_board) + 1
+    except ValueError:
+        active_board_idx = None
+
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
 
@@ -253,26 +258,42 @@ def input_ask_for_delete_board() -> int:
 
 def input_confirm_delete_board(name) -> bool:
     return Confirm.ask(
-        prompt=f"Are you sure you want to delete the Board '{name}':question_mark:",
+        prompt=f"Are you sure you want to delete the Board '{name}':question_mark:"
     )
 
 
-def input_show_all_todos(todos) -> bool:
+def input_ask_show_all_todos() -> bool:
     return Confirm.ask(
-        prompt=f"Found [blue]{len(todos)}[/] TODOs. Do you want to list all of them?",
+        prompt="Do you want to list all of them?",
         default=True,
         show_default=True,
     )
 
 
+# BUG Test fix that thing
+def print_all_todos(todos: list[tuple[str, str]]) -> None:
+    pattern_dict = {pat: f"[orange3]{pat}[/]" for pat in cfg.scanned_patterns}
+
+    for i, (todo, path) in enumerate(todos, start=1):
+        todo_string = f"[cyan]{i}[/]) " if i > 9 else f"[cyan]0{i}[/]) "
+        for pat, col_pat in pattern_dict.items():
+            todo = todo.replace(pat, col_pat)
+        todo_string += f"{todo:<90} "
+        todo_string += f"[blue]{str(path):>10}[/] "
+        console.print(todo_string)
+
+
 def input_confirm_add_todos_to_board(todos) -> bool:
-    if input_show_all_todos(todos):
-        for i, (todo, path) in enumerate(todos, start=1):
-            colored_todo = todo.replace("TODO", "[orange3]TODO[/]")
-            console.print(f"{i}) {colored_todo} - [blue]{path}[/]")
+    # TODO Also print tasks already in Board?
+    console.print(f"Found [blue]{len(todos)}[/] TODOs.")
+    if len(todos) > 10:
+        if input_ask_show_all_todos():
+            print_all_todos(todos)
+    else:
+        print_all_todos(todos)
 
     return Confirm.ask(
-        prompt="Add found TODOs to active board?", default=False, show_default=True
+        prompt="Add found Tasks to active board?", default=False, show_default=True
     )
 
 
