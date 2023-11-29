@@ -31,10 +31,12 @@ from .utils import (
     check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
     console,
+    current_time_to_str,
     delete_json_file,
     move_first_done_task_to_archive,
     scan_files,
     scan_for_todos,
+    split_todo_in_tag_and_title,
 )
 
 
@@ -188,10 +190,26 @@ def add_todos_to_board():
     files = scan_files(endings=cfg.scanned_files)
     todos = scan_for_todos(file_paths=files, patterns=cfg.scanned_patterns)
     if not todos:
-        console.print("Nothing found that matches any of your patterns.")
+        console.print(
+            ":cross_mark: [red]Nothing found that "
+            + "matches any of your provided patterns.[/]"
+        )
         return
     if input_confirm_add_todos_to_board(todos=todos):
+        todo_task_list = []
         for task, file in todos:
-            # TODO implement Logic
-            task_dict = {}
-            task_dict["Title"]
+            tag, title = split_todo_in_tag_and_title(task, cfg.scanned_patterns)
+            new_task = {
+                "Title": title,
+                "Description": f"from {file}",
+                "Status": "Ready",
+                "Tag": tag,
+                "Creation_Date": current_time_to_str(),
+                "Begin_Time": "",
+                "Completion_Time": "",
+                "Duration": 0,
+            }
+
+            todo_task_list.append(new_task)
+            console.print(new_task)
+        add_tasks_to_db(tasks=todo_task_list)

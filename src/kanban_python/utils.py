@@ -80,8 +80,6 @@ def check_board_name_valid(boardname: str):
 
 
 def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
-    # TODO: From scan_files function
-
     def recursive_search(path, file_list, progress):
         for entry in os.scandir(path):
             if entry.is_dir(follow_symlinks=False) and not entry.name.startswith("."):
@@ -103,7 +101,7 @@ def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
 
 
 def scan_for_todos(
-    file_paths: list[Path], patterns: list[str] = ["# TODO", "#TODO"]
+    file_paths: list[Path], patterns: list[str] = ["#TODO", "# TODO"]
 ) -> list[tuple[str, str]]:
     todos = []
     with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:
@@ -122,6 +120,17 @@ def scan_for_todos(
                     continue
 
     return todos
+
+
+def split_todo_in_tag_and_title(todo: str, patterns: list[str]):
+    for pattern in patterns:
+        if pattern in todo:
+            tag = "".join(c for c in pattern if c.isalnum())
+        if not todo.split(pattern)[0]:
+            title = todo.split(pattern)[1].strip()
+            title = title[1:].strip() if title.startswith(":") else title
+
+    return tag.upper(), title
 
 
 QUOTES = [

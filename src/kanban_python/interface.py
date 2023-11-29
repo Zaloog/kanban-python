@@ -112,6 +112,8 @@ def input_create_new_task() -> dict:
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
         "Begin_Time": current_time_to_str() if str(status) == "2" else "",
+        "Complete_Time": "",
+        "Duration": 0,
     }
     return new_task
 
@@ -258,7 +260,7 @@ def input_ask_for_delete_board() -> int:
 
 def input_confirm_delete_board(name) -> bool:
     return Confirm.ask(
-        prompt=f"Are you sure you want to delete the Board '{name}':question_mark:"
+        f"Are you sure you want to delete the Board '{name}':question_mark:"
     )
 
 
@@ -270,7 +272,6 @@ def input_ask_show_all_todos() -> bool:
     )
 
 
-# BUG Test fix that thing
 def print_all_todos(todos: list[tuple[str, str]]) -> None:
     pattern_dict = {pat: f"[orange3]{pat}[/]" for pat in cfg.scanned_patterns}
 
@@ -284,7 +285,7 @@ def print_all_todos(todos: list[tuple[str, str]]) -> None:
 
 
 def input_confirm_add_todos_to_board(todos) -> bool:
-    # TODO Also print tasks already in Board?
+    # Question Also print tasks already in Board?
     console.print(f"Found [blue]{len(todos)}[/] TODOs.")
     if len(todos) > 10:
         if input_ask_show_all_todos():
