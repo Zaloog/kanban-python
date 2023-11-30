@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.2.2
+- BUGFIX settings.scanner keys not capitalized
+- New Image for Readme
+
 ## Version 0.2.1
 - New `kanban scan` option to scan for  `# TODO` entries or other patterns.
 Check Docs for example and Usage.
