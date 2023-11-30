@@ -97,11 +97,11 @@ class KanbanConfig:
 
     @property
     def scanned_files(self):
-        return self.config["settings.scanner"]["files"].split(" ")
+        return self.config["settings.scanner"]["Files"].split(" ")
 
     @property
     def scanned_patterns(self):
-        return self.config["settings.scanner"]["patterns"].split(",")
+        return self.config["settings.scanner"]["Patterns"].split(",")
 
 
 cfg = KanbanConfig(path=CONFIG_FILE_PATH)
