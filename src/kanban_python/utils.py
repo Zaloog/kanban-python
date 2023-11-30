@@ -1,8 +1,10 @@
+import os
 from datetime import datetime
 from pathlib import Path
 from random import choice
 
 from rich.console import Console
+from rich.progress import MofNCompleteColumn, Progress
 
 from kanban_python import __version__
 
@@ -75,6 +77,65 @@ def delete_json_file(db_path: str) -> None:
 def check_board_name_valid(boardname: str):
     checker = "".join(x for x in boardname if (x.isalnum() or x in "_- "))
     return True if (checker == boardname) else False
+
+
+def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
+    def recursive_search(path, file_list, progress):
+        for entry in os.scandir(path):
+            try:
+                if entry.is_dir(follow_symlinks=False) and not entry.name.startswith(
+                    "."
+                ):
+                    recursive_search(
+                        path=entry.path, file_list=file_list, progress=progress
+                    )
+
+                elif entry.is_file(follow_symlinks=False):
+                    if any(entry.path.endswith(ending) for ending in endings):
+                        file_list.append(entry.path)
+                        prog.update(task_id=task, advance=1)
+            except PermissionError:
+                continue
+
+    file_list = []
+    with Progress(transient=True) as prog:
+        task = prog.add_task("[blue]Collecting files...", total=None)
+        recursive_search(path=path, file_list=file_list, progress=prog)
+
+    return file_list
+
+
+def scan_for_todos(
+    file_paths: list[Path], patterns: list[str] = ["#TODO", "# TODO"]
+) -> list[tuple[str, str]]:
+    todos = []
+    with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:
+        task = prog.add_task("Files searched for TODOs...", total=len(file_paths))
+
+        for file_path in file_paths:
+            prog.update(task_id=task, advance=1)
+            with open(file_path, "r") as file:
+                try:
+                    todos += [
+                        (line.strip(), Path(file_path).relative_to(Path.cwd()))
+                        for line in file.readlines()
+                        if any(line.strip().startswith(pattern) for pattern in patterns)
+                    ]
+                except UnicodeDecodeError:
+                    continue
+
+    return todos
+
+
+def split_todo_in_tag_and_title(todo: str, patterns: list[str]):
+    for pattern in patterns:
+        if pattern in todo:
+            tag = "".join(c for c in pattern if c.isalnum())
+        if not todo.split(pattern)[0]:
+            title = todo.split(pattern)[1].strip()
+            title = title[1:].strip() if title.startswith(":") else title
+
+    return tag.upper(), title
 
 
 QUOTES = [

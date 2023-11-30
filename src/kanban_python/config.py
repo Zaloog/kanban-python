@@ -1,10 +1,11 @@
 import configparser
 from pathlib import Path
 
-TASK_FILE = "pykanban.json"
+TASK_FILE_NAME = "pykanban.json"
+CONFIG_FILE_NAME = "pykanban.ini"
 CONFIG_PATH = Path.home() / ".kanban-python"
 KANBAN_BOARDS_PATH = CONFIG_PATH / "kanban_boards"
-CONFIG_FILE_PATH = CONFIG_PATH / "pykanban.ini"
+CONFIG_FILE_PATH = CONFIG_PATH / CONFIG_FILE_NAME
 
 
 class KanbanConfig:
@@ -94,6 +95,14 @@ class KanbanConfig:
         self.config["settings.general"]["Done_Limit"] = new_limit
         self.save()
 
+    @property
+    def scanned_files(self):
+        return self.config["settings.scanner"]["files"].split(" ")
+
+    @property
+    def scanned_patterns(self):
+        return self.config["settings.scanner"]["patterns"].split(",")
+
 
 cfg = KanbanConfig(path=CONFIG_FILE_PATH)
 
@@ -114,13 +123,17 @@ def create_init_config(path=CONFIG_PATH):
         "Deleted": False,
         "Archived": False,
     }
+    config["settings.scanner"] = {
+        "Files": ".py .md",
+        "Patterns": "# TODO,#TODO,# BUG",
+    }
     config["kanban_boards"] = {}
 
     if not path.exists():
         path.mkdir()
         (path / "kanban_boards").mkdir()
 
-    with open(path / "pykanban.ini", "w") as configfile:
+    with open(path / CONFIG_FILE_NAME, "w") as configfile:
         config.write(configfile)
 
 
@@ -151,4 +164,4 @@ def check_config_exists(path=CONFIG_FILE_PATH) -> bool:
 
 
 def get_json_path(boardname: str):
-    return str(KANBAN_BOARDS_PATH / boardname / TASK_FILE)
+    return str(KANBAN_BOARDS_PATH / boardname / TASK_FILE_NAME)

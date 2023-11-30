@@ -2,7 +2,7 @@ from json import dump, load
 
 from .config import (
     KANBAN_BOARDS_PATH,
-    TASK_FILE,
+    TASK_FILE_NAME,
     cfg,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
@@ -18,6 +18,7 @@ from .interface import (
     input_ask_for_new_board_name,
     input_ask_which_task_to_update,
     input_change_settings,
+    input_confirm_add_todos_to_board,
     input_confirm_change_current_settings,
     input_confirm_delete_board,
     input_confirm_set_board_active,
@@ -30,8 +31,12 @@ from .utils import (
     check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
     console,
+    current_time_to_str,
     delete_json_file,
     move_first_done_task_to_archive,
+    scan_files,
+    scan_for_todos,
+    split_todo_in_tag_and_title,
 )
 
 
@@ -64,7 +69,7 @@ def create_new_db() -> None:
     with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    console.print(f"Created new [orange3]{TASK_FILE}[/] file to save tasks")
+    console.print(f"Created new [orange3]{TASK_FILE_NAME}[/] file to save tasks")
 
     if input_confirm_set_board_active(name=new_board_name):
         cfg.active_board = new_board_name
@@ -76,10 +81,21 @@ def save_db(data):
         dump(data, f, ensure_ascii=False, indent=4)
 
 
-def add_tasks_to_db():
+def add_new_task_to_db():
+    new_task = input_create_new_task()
+    add_tasks_to_db(tasks=new_task)
+
+
+def add_tasks_to_db(tasks: dict | list[dict]) -> None:
     db_data = read_db()
-    new_id = str(max(int(i) for i in db_data.keys()) + 1)
-    db_data[new_id] = input_create_new_task()
+    if isinstance(tasks, dict):
+        new_id = str(max(int(i) for i in db_data.keys()) + 1)
+        db_data[new_id] = tasks
+    else:
+        for task in tasks:
+            new_id = str(max(int(i) for i in db_data.keys()) + 1)
+            db_data[new_id] = task
+
     save_db(data=db_data)
 
 
@@ -92,11 +108,11 @@ def read_db(path: str = None) -> dict:
         return data
     except FileNotFoundError:
         print(path)
-        console.print(f":warning: No [orange3]{TASK_FILE}[/] file here anymore.")
+        console.print(f":warning: No [orange3]{TASK_FILE_NAME}[/] file here anymore.")
         console.print("Please change to another board.")
         change_kanban_board()
-    console.print(f"[red]Seems like the previous {TASK_FILE} file was deleted[/]")
-    console.print(f"Create new [orange3]{TASK_FILE}[/] file here.")
+    console.print(f"[red]Seems like the previous {TASK_FILE_NAME} file was deleted[/]")
+    console.print(f"Create new [orange3]{TASK_FILE_NAME}[/] file here.")
     create_new_db()
     return read_db()
 
@@ -168,3 +184,34 @@ def show_settings():
     console.print(settings_table)
     if input_confirm_change_current_settings():
         change_settings()
+
+
+def add_todos_to_board():
+    files = scan_files(endings=cfg.scanned_files)
+    todos = scan_for_todos(file_paths=files, patterns=cfg.scanned_patterns)
+    if not todos:
+        console.print(
+            ":cross_mark: [red]Nothing found that "
+            + "matches any of your provided patterns.[/]"
+        )
+        return
+    # TODO Write Docs for kanban scan functionality
+    # BUG This pattern also works
+    if input_confirm_add_todos_to_board(todos=todos):
+        todo_task_list = []
+        for task, file in todos:
+            tag, title = split_todo_in_tag_and_title(task, cfg.scanned_patterns)
+            new_task = {
+                "Title": title,
+                "Description": f"from {file}",
+                "Status": "Ready",
+                "Tag": tag,
+                "Creation_Date": current_time_to_str(),
+                "Begin_Time": "",
+                "Completion_Time": "",
+                "Duration": 0,
+            }
+
+            todo_task_list.append(new_task)
+            console.print(new_task)
+        add_tasks_to_db(tasks=todo_task_list)

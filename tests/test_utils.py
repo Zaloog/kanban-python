@@ -99,6 +99,28 @@ def test_check_board_name_valid(name, expected_result):
     assert result is expected_result
 
 
+def test_scan_files():
+    pass
+
+
+def test_scan_todos():
+    pass
+
+
+@pytest.mark.parametrize(
+    "todo, pattern, expected_result",
+    [
+        ("#TODO Test this", ["#TODO"], ("TODO", "Test this")),
+        ("# BUG : Test this", ["# TODO", "# BUG"], ("BUG", "Test this")),
+    ],
+)
+def test_split_todo_in_tag_and_title(todo, pattern, expected_result):
+    tag, title = utils.split_todo_in_tag_and_title(todo=todo, patterns=pattern)
+
+    assert tag == expected_result[0]
+    assert title == expected_result[1]
+
+
 # def test_main(capsys):
 # """CLI Tests"""
 # # capsys is a pytest fixture that allows asserts against stdout/stderr

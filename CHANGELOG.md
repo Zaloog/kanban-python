@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.2.1
+- New `kanban scan` option to scan for  `# TODO` entries or other patterns.
+Check Docs for example and Usage.
+- Bug Fix: Prevent ValueError, if active board is not in board_list (couldve happened
+if active board was deleted.) Now gives you option to change to other board.
+- Add config options for `kanban scan` functionality
+
 ## Version 0.2.0
 - Moved the board specific `pykanban.json` files into a dedicated `kanban_boards` directory
 in the `.kanban-python` directory under `<BOARDNAME>/pykanban.json`.

@@ -3,7 +3,7 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import TASK_FILE, cfg
+from .config import CONFIG_FILE_NAME, cfg
 from .utils import (
     CAPTION_STRING,
     COLOR_DICT,
@@ -112,6 +112,8 @@ def input_create_new_task() -> dict:
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
         "Begin_Time": current_time_to_str() if str(status) == "2" else "",
+        "Complete_Time": "",
+        "Duration": 0,
     }
     return new_task
 
@@ -200,19 +202,11 @@ def input_ask_to_what_status_to_move(task_title):
         console.print(f"\t[{idx}] {COLOR_DICT.get(status, status)}")
 
     new_status = IntPrompt.ask(
-        prompt="New Status of Task?",
+        prompt="[4/4] New Status of Task?",
         show_choices=False,
         choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
     )
     return possible_status[int(new_status) - 1]
-
-
-# TODO not needed anymore i guess
-def input_confirm_to_overwrite_db() -> bool:
-    console.print(f":warning:  Existing [orange3]{TASK_FILE}[/] found :warning:")
-    return Confirm.ask(
-        "Do you want to wipe it clean and start from scratch:question_mark:"
-    )
 
 
 def input_confirm_set_board_active(name) -> bool:
@@ -231,8 +225,13 @@ def input_ask_for_new_board_name() -> str:
 
 
 def input_ask_for_change_board() -> str:
-    boards = [b for b in cfg.kanban_boards]
-    active_board_idx = boards.index(cfg.active_board) + 1
+    boards = cfg.kanban_boards
+    # if active Board is not in Board List dont show default
+    try:
+        active_board_idx = boards.index(cfg.active_board) + 1
+    except ValueError:
+        active_board_idx = None
+
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
 
@@ -262,6 +261,40 @@ def input_ask_for_delete_board() -> int:
 def input_confirm_delete_board(name) -> bool:
     return Confirm.ask(
         f"Are you sure you want to delete the Board '{name}':question_mark:"
+    )
+
+
+def input_ask_show_all_todos() -> bool:
+    return Confirm.ask(
+        prompt="Do you want to list all of them?",
+        default=True,
+        show_default=True,
+    )
+
+
+def print_all_todos(todos: list[tuple[str, str]]) -> None:
+    pattern_dict = {pat: f"[orange3]{pat}[/]" for pat in cfg.scanned_patterns}
+
+    for i, (todo, path) in enumerate(todos, start=1):
+        todo_string = f"[cyan]{i}[/]) " if i > 9 else f"[cyan]0{i}[/]) "
+        for pat, col_pat in pattern_dict.items():
+            todo = todo.replace(pat, col_pat)
+        todo_string += f"{todo:<90} "
+        todo_string += f"[blue]{str(path):>10}[/] "
+        console.print(todo_string)
+
+
+def input_confirm_add_todos_to_board(todos) -> bool:
+    # Question Also print tasks already in Board?
+    console.print(f"Found [blue]{len(todos)}[/] TODOs.")
+    if len(todos) > 10:
+        if input_ask_show_all_todos():
+            print_all_todos(todos)
+    else:
+        print_all_todos(todos)
+
+    return Confirm.ask(
+        prompt="Add found Tasks to active board?", default=False, show_default=True
     )
 
 
@@ -324,7 +357,7 @@ def create_config_table():
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
         highlight=True,
         show_header=True,
-        caption="pykanban.ini file is located in your "
+        caption=f"{CONFIG_FILE_NAME} file is located in your "
         + "[light_green]$Home/.kanban-python[/] Directory",
     )
     for col in ["Option", "Current Value"]:

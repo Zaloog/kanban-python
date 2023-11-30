@@ -89,12 +89,15 @@ def main(args):
         controls.show_settings()
         return
 
+    if args.command == "scan":
+        controls.add_todos_to_board()
+
     while True:
         controls.show()
         user_input = controls.get_user_action()
 
         if user_input == 1:
-            controls.add_tasks_to_db()
+            controls.add_new_task_to_db()
         elif user_input == 2:
             controls.update_task_from_db()
         elif user_input == 3:
