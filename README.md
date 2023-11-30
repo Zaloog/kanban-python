@@ -27,20 +27,25 @@ my own Terminal Kanban Application, since I preferred a more simple and guided w
 **kanban-python** also comes with more features and customization options.
 This package was developed with [pyscaffold], which provides nice project templates
 and takes over much of the boilerplate for python packaging.
-It was a great help for developing my first package.
+It was a great help for developing my first package and I can highly recommend it.
 
 ## Features
 - *colorful and interactive*: kanban-python uses [rich] under the hood to process user input
 and display nice looking tables to the terminal.
+
+- *automated scanning of files for task creation*: kanban-python can scan files of defined types for specific patterns at start of line.
+Check [Automatic Task Creation](#automatic-task-creation) for more Infos.
 
 - *configfile*: A `pykanban.ini` file gets created on first initialization in a `.kanban-python` folder in your `Home`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards. \
 ![configfile](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_config.PNG)
    * `Active_Board`: current board that is shown when using `kanban`-command
    * `Done_Limit`: If the amount of tasks exceed this number in the  <span style="color:green">Done</span> column,
-   the first task of that column gets its status updated to <span style="color:gold">Archived</span> and is moved into that column. (default: 10)
-   * `Column_Min_Width`: Sets the minimum width of columns. (default: 40)
-   * `Show_Footer`: Shows the table footer with package name and version. (default: True)
+   the first task of that column gets its status updated to <span style="color:gold">Archived</span> and is moved into that column. (default: `10`)
+   * `Column_Min_Width`: Sets the minimum width of columns. (default: `40`)
+   * `Show_Footer`: Shows the table footer with package name and version. (default: `True`)
+   * `Files`: Space seperated filetypes to search for patterns to create tasks. (default: `.py .md`)
+   * `Patterns`: Comma seperated patterns to search for start of line to create tasks. <br />(default: `# TODO,#TODO,# BUG`)
 
    <br />
 
@@ -63,7 +68,7 @@ python -m pip install kanban-python
 ```
 
 ## Usage
-There are 3 commands available after installation of kanban-python:
+After Installation of kanban-python, there are 4 commands available:
 
 ### Create new Boards
   ```bash
@@ -78,11 +83,23 @@ On first use of any command, the `pykanban.ini` configfile and the `.kanban-pyth
   kanban
   ```
 This is your main command to interact with your boards and tasks. It also gives the option to show the current settings and adjust them.
-Adjusting the settings can also be done directly by using the third command `kanban configure`:
+Adjusting the settings can also be done directly by using the command `kanban configure`:
 ![kanban](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban.PNG)
 
 Use `Ctrl-C` to exit the application at any time. :warning: If you exit in the middle of creating/updating a task,
 or changing settings, your progress wont be saved.
+
+### Automatic Task Creation
+  ```bash
+  kanban scan
+  ```
+After executing this command, kanban-python scans your current Directory recursively for the defined filetypes and searches for lines
+that start with the pattern provided.
+![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_view.PNG)
+
+After confirmation to add the found tasks to table they will be added to the board. The alphanumeric Part of the Pattern will be used as tag.
+The filepath were the task was found will be added as description of the task.
+![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_table.PNG)
 
 ### Change Settings
   ```bash
@@ -91,7 +108,7 @@ or changing settings, your progress wont be saved.
 ![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_configure.PNG)
 
 To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new columnname + visibility status
-under the `settings.columns.visible` section.
+under the `settings.columns.visible` section. This will also be configurable within the application in the future.
 
 
 ## Feedback and Issues

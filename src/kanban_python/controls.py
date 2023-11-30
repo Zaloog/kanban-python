@@ -2,7 +2,7 @@ from json import dump, load
 
 from .config import (
     KANBAN_BOARDS_PATH,
-    TASK_FILE,
+    TASK_FILE_NAME,
     cfg,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
@@ -69,7 +69,7 @@ def create_new_db() -> None:
     with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    console.print(f"Created new [orange3]{TASK_FILE}[/] file to save tasks")
+    console.print(f"Created new [orange3]{TASK_FILE_NAME}[/] file to save tasks")
 
     if input_confirm_set_board_active(name=new_board_name):
         cfg.active_board = new_board_name
@@ -108,11 +108,11 @@ def read_db(path: str = None) -> dict:
         return data
     except FileNotFoundError:
         print(path)
-        console.print(f":warning: No [orange3]{TASK_FILE}[/] file here anymore.")
+        console.print(f":warning: No [orange3]{TASK_FILE_NAME}[/] file here anymore.")
         console.print("Please change to another board.")
         change_kanban_board()
-    console.print(f"[red]Seems like the previous {TASK_FILE} file was deleted[/]")
-    console.print(f"Create new [orange3]{TASK_FILE}[/] file here.")
+    console.print(f"[red]Seems like the previous {TASK_FILE_NAME} file was deleted[/]")
+    console.print(f"Create new [orange3]{TASK_FILE_NAME}[/] file here.")
     create_new_db()
     return read_db()
 
@@ -195,6 +195,8 @@ def add_todos_to_board():
             + "matches any of your provided patterns.[/]"
         )
         return
+    # TODO Write Docs for kanban scan functionality
+    # BUG This pattern also works
     if input_confirm_add_todos_to_board(todos=todos):
         todo_task_list = []
         for task, file in todos:

@@ -82,15 +82,20 @@ def check_board_name_valid(boardname: str):
 def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
     def recursive_search(path, file_list, progress):
         for entry in os.scandir(path):
-            if entry.is_dir(follow_symlinks=False) and not entry.name.startswith("."):
-                recursive_search(
-                    path=entry.path, file_list=file_list, progress=progress
-                )
+            try:
+                if entry.is_dir(follow_symlinks=False) and not entry.name.startswith(
+                    "."
+                ):
+                    recursive_search(
+                        path=entry.path, file_list=file_list, progress=progress
+                    )
 
-            elif entry.is_file(follow_symlinks=False):
-                if any(entry.path.endswith(ending) for ending in endings):
-                    file_list.append(entry.path)
-                    prog.update(task_id=task, advance=1)
+                elif entry.is_file(follow_symlinks=False):
+                    if any(entry.path.endswith(ending) for ending in endings):
+                        file_list.append(entry.path)
+                        prog.update(task_id=task, advance=1)
+            except PermissionError:
+                continue
 
     file_list = []
     with Progress(transient=True) as prog:

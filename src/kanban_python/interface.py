@@ -3,7 +3,7 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import cfg
+from .config import CONFIG_FILE_NAME, cfg
 from .utils import (
     CAPTION_STRING,
     COLOR_DICT,
@@ -357,7 +357,7 @@ def create_config_table():
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
         highlight=True,
         show_header=True,
-        caption="pykanban.ini file is located in your "
+        caption=f"{CONFIG_FILE_NAME} file is located in your "
         + "[light_green]$Home/.kanban-python[/] Directory",
     )
     for col in ["Option", "Current Value"]:
