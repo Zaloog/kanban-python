@@ -79,8 +79,8 @@ def check_board_name_valid(boardname: str):
     return True if (checker == boardname) else False
 
 
-def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
-    def recursive_search(path, file_list, progress):
+def scan_files(path=Path.cwd(), endings: list = [".py"]):
+    def recursive_search(path, file_list: list, progress):
         for entry in os.scandir(path):
             try:
                 if entry.is_dir(follow_symlinks=False) and not entry.name.startswith(
@@ -105,9 +105,7 @@ def scan_files(path=Path.cwd(), endings: list[str] = [".py"]):
     return file_list
 
 
-def scan_for_todos(
-    file_paths: list[Path], patterns: list[str] = ["#TODO", "# TODO"]
-) -> list[tuple[str, str]]:
+def scan_for_todos(file_paths: list, patterns: list = ["#TODO", "# TODO"]) -> list:
     todos = []
     with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:
         task = prog.add_task("Files searched for TODOs...", total=len(file_paths))
@@ -127,7 +125,7 @@ def scan_for_todos(
     return todos
 
 
-def split_todo_in_tag_and_title(todo: str, patterns: list[str]):
+def split_todo_in_tag_and_title(todo: str, patterns: list):
     for pattern in patterns:
         if pattern in todo:
             tag = "".join(c for c in pattern if c.isalnum())

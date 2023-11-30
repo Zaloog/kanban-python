@@ -213,5 +213,4 @@ def add_todos_to_board():
             }
 
             todo_task_list.append(new_task)
-            console.print(new_task)
         add_tasks_to_db(tasks=todo_task_list)
