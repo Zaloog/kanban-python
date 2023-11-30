@@ -272,7 +272,7 @@ def input_ask_show_all_todos() -> bool:
     )
 
 
-def print_all_todos(todos: list[tuple[str, str]]) -> None:
+def print_all_todos(todos: list) -> None:
     pattern_dict = {pat: f"[orange3]{pat}[/]" for pat in cfg.scanned_patterns}
 
     for i, (todo, path) in enumerate(todos, start=1):
