@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.3.0
+- Move to XDG Path convention
+
 ## Version 0.2.2
 - BUGFIX settings.scanner keys not capitalized
 - New Image for Readme

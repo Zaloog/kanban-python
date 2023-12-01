@@ -6,7 +6,7 @@ from random import choice
 from rich.console import Console
 from rich.progress import MofNCompleteColumn, Progress
 
-from kanban_python import __version__
+from .constants import QUOTES
 
 console = Console()
 
@@ -134,41 +134,3 @@ def split_todo_in_tag_and_title(todo: str, patterns: list):
             title = title[1:].strip() if title.startswith(":") else title
 
     return tag.upper(), title
-
-
-QUOTES = [
-    "\n:wave:Stay Hard:wave:",
-    "\n:wave:See you later:wave:",
-    "\n:wave:Lets get started:wave:",
-    "\n:wave:Lets work on those tasks:wave:",
-]
-
-CAPTION_STRING = "Tasks have the following Structure:\
-     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]"
-
-COLOR_DICT = {
-    "Ready": "[red]Ready[/]",
-    "Doing": "[yellow]Doing[/]",
-    "Done": "[green]Done[/]",
-    "Deleted": "[deep_pink4]Deleted[/]",
-    "Archived": "[dark_goldenrod]Archived[/]",
-}
-
-DUMMY_TASK = {
-    "Title": "Welcome Task",
-    "Description": "Welcome to kanban-python, I hope this helps your productivity",
-    "Tag": "HI",
-    "Status": "Ready",
-    "Begin_Time": "",
-    "Complete_Time": "",
-    "Duration": "0",
-    "Creation_Date": current_time_to_str(),
-}
-DUMMY_DB = {1: DUMMY_TASK}
-
-FOOTER_LINK = "[link=https://github.com/Zaloog/kanban-python][blue]kanban-python[/]"
-FOOTER_AUTHOR = "[/link][grey35] (by Zaloog)[/]"
-FOOTER_FIRST = FOOTER_LINK + FOOTER_AUTHOR
-
-FOOTER_LAST = f"version [blue]{__version__}[/]"
-FOOTER = [FOOTER_FIRST, FOOTER_LAST]

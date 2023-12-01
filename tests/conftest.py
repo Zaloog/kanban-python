@@ -9,7 +9,7 @@
 
 import pytest
 
-from kanban_python import config
+from kanban_python import config, constants
 
 
 @pytest.fixture
@@ -38,19 +38,24 @@ def test_task():
 
 @pytest.fixture
 def test_config_path(tmp_path):
-    return tmp_path / ".kanban-python"
+    return tmp_path
 
 
 @pytest.fixture
-def test_config_filepath(test_config_path):
-    return test_config_path / "pykanban.ini"
+def test_config_file_path(test_config_path):
+    return test_config_path / constants.CONFIG_FILE_NAME
 
 
 @pytest.fixture
-def test_config(test_config_path, test_config_filepath):
-    config.create_init_config(test_config_path)
+def test_kanban_board_path(tmp_path):
+    return tmp_path / constants.KANBAN_BOARDS_FOLDER_NAME
 
-    cfg = config.KanbanConfig(path=test_config_filepath)
+
+@pytest.fixture
+def test_config(test_config_path, test_config_file_path, test_kanban_board_path):
+    config.create_init_config(test_config_path, test_kanban_board_path)
+
+    cfg = config.KanbanConfig(path=test_config_file_path)
     return cfg
 
 

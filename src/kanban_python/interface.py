@@ -3,11 +3,9 @@ from itertools import zip_longest
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
-from .config import CONFIG_FILE_NAME, cfg
+from .config import cfg
+from .constants import BOARD_CAPTION_STRING, COLOR_DICT, CONFIG_FILE_PATH, FOOTER
 from .utils import (
-    CAPTION_STRING,
-    COLOR_DICT,
-    FOOTER,
     calculate_time_delta_str,
     console,
     create_status_dict_for_rows,
@@ -26,7 +24,7 @@ def create_table(data: dict) -> Table:
         highlight=True,
         show_header=True,
         show_footer=True if cfg.show_footer == "True" else False,
-        caption=CAPTION_STRING,
+        caption=BOARD_CAPTION_STRING,
     )
 
     for i, category in enumerate([COLOR_DICT.get(col, col) for col in cfg.vis_cols]):
@@ -357,8 +355,7 @@ def create_config_table():
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
         highlight=True,
         show_header=True,
-        caption=f"{CONFIG_FILE_NAME} file is located in your "
-        + "[light_green]$Home/.kanban-python[/] Directory",
+        caption=f"Your config file is located under [light_green]{CONFIG_FILE_PATH}[/]",
     )
     for col in ["Option", "Current Value"]:
         settings_table.add_column(

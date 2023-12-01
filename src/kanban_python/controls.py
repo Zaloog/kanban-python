@@ -1,14 +1,13 @@
 from json import dump, load
 
 from .config import (
-    KANBAN_BOARDS_PATH,
-    TASK_FILE_NAME,
     cfg,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
     delete_board_from_config,
     get_json_path,
 )
+from .constants import DUMMY_DB, KANBAN_BOARDS_PATH, TASK_FILE_NAME
 from .interface import (
     create_config_table,
     create_table,
@@ -26,7 +25,6 @@ from .interface import (
     input_update_task,
 )
 from .utils import (
-    DUMMY_DB,
     check_board_name_valid,
     check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
@@ -69,7 +67,10 @@ def create_new_db() -> None:
     with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
-    console.print(f"Created new [orange3]{TASK_FILE_NAME}[/] file to save tasks")
+    console.print(
+        f"Created new [orange3]{TASK_FILE_NAME}[/] file at "
+        + f"[orange3]{KANBAN_BOARDS_PATH / new_board_name}[/] to save tasks."
+    )
 
     if input_confirm_set_board_active(name=new_board_name):
         cfg.active_board = new_board_name

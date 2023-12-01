@@ -1,11 +1,22 @@
 import configparser
 from pathlib import Path
 
-TASK_FILE_NAME = "pykanban.json"
-CONFIG_FILE_NAME = "pykanban.ini"
-CONFIG_PATH = Path.home() / ".kanban-python"
-KANBAN_BOARDS_PATH = CONFIG_PATH / "kanban_boards"
-CONFIG_FILE_PATH = CONFIG_PATH / CONFIG_FILE_NAME
+from .constants import (
+    CONFIG_FILE_NAME,
+    CONFIG_FILE_PATH,
+    CONFIG_PATH,
+    DATA_PATH,
+    KANBAN_BOARDS_FOLDER_NAME,
+    KANBAN_BOARDS_PATH,
+    TASK_FILE_NAME,
+)
+from .utils import console
+
+# TASK_FILE_NAME = "pykanban.json"
+# CONFIG_FILE_NAME = "pykanban.ini"
+# CONFIG_PATH = Path.home() / ".kanban-python"
+# KANBAN_BOARDS_PATH = CONFIG_PATH / "kanban_boards"
+# CONFIG_FILE_PATH = CONFIG_PATH / CONFIG_FILE_NAME
 
 
 class KanbanConfig:
@@ -96,18 +107,18 @@ class KanbanConfig:
         self.save()
 
     @property
-    def scanned_files(self):
+    def scanned_files(self) -> list:
         return self.config["settings.scanner"]["Files"].split(" ")
 
     @property
-    def scanned_patterns(self):
+    def scanned_patterns(self) -> list:
         return self.config["settings.scanner"]["Patterns"].split(",")
 
 
 cfg = KanbanConfig(path=CONFIG_FILE_PATH)
 
 
-def create_init_config(path=CONFIG_PATH):
+def create_init_config(conf_path=CONFIG_PATH, data_path=DATA_PATH):
     config = configparser.ConfigParser(default_section=None)
     config.optionxform = str
     config["settings.general"] = {
@@ -129,12 +140,17 @@ def create_init_config(path=CONFIG_PATH):
     }
     config["kanban_boards"] = {}
 
-    if not path.exists():
-        path.mkdir()
-        (path / "kanban_boards").mkdir()
+    if not data_path.exists():
+        data_path.mkdir(exist_ok=True)
+        (data_path / KANBAN_BOARDS_FOLDER_NAME).mkdir(exist_ok=True)
 
-    with open(path / CONFIG_FILE_NAME, "w") as configfile:
+    with open(conf_path / CONFIG_FILE_NAME, "w") as configfile:
         config.write(configfile)
+    console.print(
+        f"Welcome, I Created a new [orange3]{CONFIG_FILE_NAME}[/] file "
+        + f"located in [orange3]{conf_path}[/]"
+    )
+    console.print("Now use 'kanban init' to create kanban boards")
 
 
 def delete_current_folder_board_from_config(
