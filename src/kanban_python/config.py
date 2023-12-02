@@ -140,7 +140,7 @@ def create_init_config(conf_path=CONFIG_PATH, data_path=DATA_PATH):
     }
     config["kanban_boards"] = {}
 
-    if not data_path.exists():
+    if not (data_path / KANBAN_BOARDS_FOLDER_NAME).exists():
         data_path.mkdir(exist_ok=True)
         (data_path / KANBAN_BOARDS_FOLDER_NAME).mkdir(exist_ok=True)
 
