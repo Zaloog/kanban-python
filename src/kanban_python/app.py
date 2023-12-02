@@ -110,7 +110,7 @@ def run():
     """
     try:
         main(sys.argv[1:])
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         utils.console.print(utils.get_motivational_quote())
 
 
