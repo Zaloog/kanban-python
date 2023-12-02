@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.3.1
+- Bug fix: On first use the kanban_boards folder was not created. And therefore Board creation failed
+
 ## Version 0.3.0
 - Move to XDG Path convention,
 utilize `platformdirs` to write the config file to `user_config_dir` and the task files
