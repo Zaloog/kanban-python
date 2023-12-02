@@ -33,6 +33,10 @@ It was a great help for developing my first package and I can highly recommend i
 - *colorful and interactive*: kanban-python uses [rich] under the hood to process user input
 and display nice looking tables to the terminal.
 
+- *following the XDG convention*: kanban-python utilizes [platformdirs] `user_config_dir` to save the config file and `user_data_dir` for
+the board specific task files. After creating your first board, you can use `kanban configure` to show the current settings table.
+The config path in the table caption and the path for the task files can be found in the kanban_boards section.
+
 - *automated scanning of files for task creation*: kanban-python can scan files of defined types for specific patterns at start of line.
 Check [Automatic Task Creation](#automatic-task-creation) for more Infos.
 
@@ -107,13 +111,17 @@ The filepath were the task was found will be added as description of the task.
   ```
 ![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_configure.PNG)
 
-To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new columnname + visibility status
-under the `settings.columns.visible` section. This will also be configurable within the application in the future.
+To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new column name + visibility status
+under the `settings.columns.visible` section. The same way you can also add more file endings or patterns for the `settings.scanner` section.
+Keep in mind the specific separators for that section.
+I am working on an option to customize those things in the future without the need to manual edit the file.
 
 
 ## Feedback and Issues
 Feel free to reach out and share your feedback, or open an Issue, if something doesnt work as expected.
 Also check the [Changelog](https://raw.githubusercontent.com/Zaloog/kanban-python/main/CHANGELOG.md) for new updates.
+:warning: With release v0.3.0 kanban-python switched to the [XDG] Basedir Spec. So some file migrations and config edits might be
+needed to continue working with your already created boards if you update from `v0.2.X` to `v0.3.X`
 
 <!-- pyscaffold-notes -->
 
@@ -122,6 +130,8 @@ Also check the [Changelog](https://raw.githubusercontent.com/Zaloog/kanban-pytho
 This project has been set up using PyScaffold 4.5. For details and usage
 information on PyScaffold see https://pyscaffold.org/.
 
+[XDG]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+[platformdirs]: https://platformdirs.readthedocs.io/en/latest/
 [clikan]: https://github.com/kitplummer/clikan
 [pyscaffold]: https://pyscaffold.org/
 [rich]: https://github.com/Textualize/rich

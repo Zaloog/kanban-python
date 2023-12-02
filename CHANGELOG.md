@@ -1,7 +1,13 @@
 # Changelog
 
 ## Version 0.3.0
-- Move to XDG Path convention
+- Move to XDG Path convention,
+utilize `platformdirs` to write the config file to `user_config_dir` and the task files
+to `user_data_dir`.
+- added constants.py file for constants like the above mentioned Paths
+- added more Tests
+- added `platformdirs` <4 dependency
+- Updated the docs
 
 ## Version 0.2.2
 - BUGFIX settings.scanner keys not capitalized
