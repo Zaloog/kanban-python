@@ -243,7 +243,7 @@ def input_ask_for_change_board() -> str:
     return boards[int(answer) - 1]
 
 
-def input_ask_for_delete_board() -> int:
+def input_ask_for_delete_board() -> str:
     boards = [b for b in cfg.kanban_boards]
     for idx, board in enumerate(boards, start=1):
         console.print(f"[{idx}] {board}")
@@ -262,7 +262,7 @@ def input_confirm_delete_board(name) -> bool:
     )
 
 
-def input_ask_show_all_todos() -> bool:
+def input_confirm_show_all_todos() -> bool:
     return Confirm.ask(
         prompt="Do you want to list all of them?",
         default=True,
@@ -286,7 +286,7 @@ def input_confirm_add_todos_to_board(todos) -> bool:
     # Question Also print tasks already in Board?
     console.print(f"Found [blue]{len(todos)}[/] TODOs.")
     if len(todos) > 10:
-        if input_ask_show_all_todos():
+        if input_confirm_show_all_todos():
             print_all_todos(todos)
     else:
         print_all_todos(todos)

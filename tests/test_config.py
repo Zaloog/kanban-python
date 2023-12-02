@@ -3,6 +3,44 @@ import pytest
 from kanban_python import config
 
 
+def test_active_board_path(test_config):
+    cfg = test_config
+    board_name = "Testboard"
+    cfg.kanban_boards_dict = board_name
+    cfg.active_board = board_name
+
+    expected_path = str(config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME)
+    assert cfg.active_board_path == expected_path
+
+
+def test_show_footer_setter(test_config):
+    cfg = test_config
+    cfg.show_footer = "False"
+    assert cfg.show_footer == "False"
+
+
+def test_col_min_width(test_config):
+    cfg = test_config
+    assert cfg.col_min_width == 35
+
+
+def test_kanban_columns_dict_setter(test_config):
+    cfg = test_config
+    cfg.kanban_columns_dict = {"Archived": True}
+    assert cfg.kanban_columns_dict["Archived"] == "True"
+
+
+def test_vis_cols(test_config):
+    cfg = test_config
+    assert cfg.vis_cols == ["Ready", "Doing", "Done"]
+
+
+def test_done_limit_setter(test_config):
+    cfg = test_config
+    cfg.done_limit = "11"
+    assert cfg.done_limit == 11
+
+
 def test_create_init_config(
     test_config_path, test_config_file_path, test_kanban_board_path
 ):
@@ -83,3 +121,10 @@ def test_delete_board_from_config(test_config, to_delete_board, board_left):
 
 def test_check_config_exists(test_config_file_path, test_config):
     assert config.check_config_exists(path=test_config_file_path) is True
+
+
+def test_get_json_path():
+    board_name = "Testboard"
+    result = config.get_json_path(board_name)
+
+    assert result == str(config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME)

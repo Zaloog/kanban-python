@@ -105,7 +105,9 @@ def scan_files(path=Path.cwd(), endings: list = [".py"]):
     return file_list
 
 
-def scan_for_todos(file_paths: list, patterns: list = ["#TODO", "# TODO"]) -> list:
+def scan_for_todos(
+    file_paths: list, rel_path=Path.cwd(), patterns: list = ["#TODO", "# TODO"]
+) -> list:
     todos = []
     with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:
         task = prog.add_task("Files searched for TODOs...", total=len(file_paths))
@@ -115,7 +117,7 @@ def scan_for_todos(file_paths: list, patterns: list = ["#TODO", "# TODO"]) -> li
             with open(file_path, "r") as file:
                 try:
                     todos += [
-                        (line.strip(), Path(file_path).relative_to(Path.cwd()))
+                        (line.strip(), str(Path(file_path).relative_to(rel_path)))
                         for line in file.readlines()
                         if any(line.strip().startswith(pattern) for pattern in patterns)
                     ]

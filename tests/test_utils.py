@@ -99,11 +99,49 @@ def test_check_board_name_valid(name, expected_result):
     assert result is expected_result
 
 
-def test_scan_files():
-    pass
+def test_scan_files(tmp_path, test_config):
+    cfg = test_config
+
+    folderlv1 = tmp_path / "folder1"
+    folderlv2 = folderlv1 / ".folder2"
+
+    folderlv1.mkdir()
+    folderlv2.mkdir()
+
+    py_filelv0 = tmp_path / "file.py"
+    txt_filelv1 = folderlv1 / "file.txt"
+    md_filelv1 = folderlv1 / "file.md"
+    md_filelv2 = folderlv2 / "file.md"
+
+    py_filelv0.touch()
+    txt_filelv1.touch()
+    md_filelv1.touch()
+    md_filelv2.touch()
+
+    result = utils.scan_files(path=tmp_path, endings=cfg.scanned_files)
+
+    assert sorted(result) == sorted(
+        [
+            str(tmp_path / "file.py"),
+            str(tmp_path / "folder1" / "file.md"),
+        ]
+    )
 
 
-def test_scan_todos():
+def test_scan_todos(test_config, tmp_path):
+    cfg = test_config
+    file_path = tmp_path / "file.py"
+    file_path.touch()
+    with open(file_path, "w") as file:
+        file.write("# TODO: Pytest is cool")
+
+    list_input = [file_path]
+
+    result = utils.scan_for_todos(
+        rel_path=tmp_path, file_paths=list_input, patterns=cfg.scanned_patterns
+    )
+
+    assert result == [("# TODO: Pytest is cool", "file.py")]
     pass
 
 
