@@ -90,7 +90,7 @@ This is your main command to interact with your boards and tasks. It also gives 
 Adjusting the settings can also be done directly by using the command `kanban configure`:
 ![kanban](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban.PNG)
 
-Use `Ctrl-C` to exit the application at any time. :warning: If you exit in the middle of creating/updating a task,
+Use `Ctrl-C` or `Ctrl-D` to exit the application at any time. :warning: If you exit in the middle of creating/updating a task,
 or changing settings, your progress wont be saved.
 
 ### Automatic Task Creation
@@ -119,8 +119,8 @@ I am working on an option to customize those things in the future without the ne
 
 ## Feedback and Issues
 Feel free to reach out and share your feedback, or open an Issue, if something doesnt work as expected.
-Also check the [Changelog](https://raw.githubusercontent.com/Zaloog/kanban-python/main/CHANGELOG.md) for new updates.
-:warning: With release v0.3.0 kanban-python switched to the [XDG] Basedir Spec. So some file migrations and config edits might be
+Also check the [Changelog](https://github.com/Zaloog/kanban-python/blob/main/CHANGELOG.md) for new updates. :warning:
+With release v0.3.0 kanban-python switched to the [XDG] Basedir Spec. So some file migrations and config edits might be
 needed to continue working with your already created boards if you update from `v0.2.X` to `v0.3.X`
 
 <!-- pyscaffold-notes -->

@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.3.2
+- Add `^D` besides `^C` as option to close app (on windows pwsh its `^Z`).
+- App closes now on `KeyboardInterrupt` and `EOFError`
+
 ## Version 0.3.1
 - Bug fix: On first use the kanban_boards folder was not created. And therefore Board creation failed
 
