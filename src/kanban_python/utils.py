@@ -136,3 +136,13 @@ def split_todo_in_tag_and_title(todo: str, patterns: list):
             title = title[1:].strip() if title.startswith(":") else title
 
     return tag.upper(), title
+
+
+def get_tag_id_choices(data_dict: dict, vis_cols: list) -> list:
+    valid_ids = [i for i, task in data_dict.items() if task["Status"] in vis_cols]
+    valid_tags = [
+        task["Tag"] for task in data_dict.values() if task["Status"] in vis_cols
+    ]
+
+    valid_choices = list(set(valid_ids + valid_tags))
+    return valid_choices

@@ -1,5 +1,7 @@
 from json import dump, load
 
+from rich.pretty import pprint
+
 from .config import (
     cfg,
     check_if_board_name_exists_in_config,
@@ -16,6 +18,7 @@ from .interface import (
     input_ask_for_delete_board,
     input_ask_for_new_board_name,
     input_ask_which_task_to_update,
+    input_ask_which_tasks_to_show,
     input_change_settings,
     input_confirm_add_todos_to_board,
     input_confirm_change_current_settings,
@@ -31,6 +34,7 @@ from .utils import (
     console,
     current_time_to_str,
     delete_json_file,
+    get_tag_id_choices,
     move_first_done_task_to_archive,
     scan_files,
     scan_for_todos,
@@ -215,3 +219,15 @@ def add_todos_to_board():
 
             todo_task_list.append(new_task)
         add_tasks_to_db(tasks=todo_task_list)
+
+
+def show_tasks():
+    db_data = read_db()
+    choices = get_tag_id_choices(db_data, cfg.vis_cols)
+    selection_criteria = input_ask_which_tasks_to_show(choices)
+    for i, task in db_data.items():
+        if selection_criteria in [i, task["Tag"]]:
+            console.print(
+                20 * "[bold blue]#[/]" + f" Task {i} " + 20 * "[bold blue]#[/]"
+            )
+            pprint(task, console=console, expand_all=True)

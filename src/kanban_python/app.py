@@ -98,8 +98,10 @@ def main(args):
         elif user_input == 3:
             controls.change_kanban_board()
         elif user_input == 4:
-            controls.delete_kanban_board()
+            controls.show_tasks()
         elif user_input == 5:
+            controls.delete_kanban_board()
+        elif user_input == 6:
             controls.show_settings()
 
 

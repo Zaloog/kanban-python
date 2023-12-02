@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.3.3
+- Push lower bound Version of `platformdirs` dependency to be 3 or higher to include `ensure_exists` argument
+in `user_data_dir` and `user_config_dir`.
+- Update User Action Options with new option `Show Task Details`
+- Also changed coloring and order of User Actions
+
 ## Version 0.3.2
 - Add `^D` besides `^C` as option to close app (on windows pwsh its `^Z`).
 - App closes now on `KeyboardInterrupt` and `EOFError`

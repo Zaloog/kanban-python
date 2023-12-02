@@ -54,14 +54,18 @@ def input_ask_for_action():
     console.print(
         "\t[1] :clipboard: [green]Create new Task[/]"
         + 2 * "\t"
-        + "[2] :clockwise_vertical_arrows: [bold blue]Update/Check Task[/]"
+        + "[2] :clockwise_vertical_arrows: [bold cornflower_blue]Update/Check Task[/]"
     )
     console.print(
         "\t[3] :bookmark_tabs: [bold yellow]Change Kanban Board[/]"
         + "\t"
-        + "[4] :cross_mark: [red]Delete Kanban Board[/]"
+        + "[4] :magnifying_glass_tilted_left: [bold blue]Show Task Details[/]"
     )
-    console.print("\t[5] :hammer_and_wrench:  [grey69]Show Current Settings[/]")
+    console.print(
+        "\t[5] :cross_mark: [red]Delete Kanban Board[/]"
+        + "\t"
+        + "[6] :hammer_and_wrench:  [grey69]Show Current Settings[/]"
+    )
     action = IntPrompt.ask(
         prompt="Choose wisely :books:",
         choices=[
@@ -70,6 +74,7 @@ def input_ask_for_action():
             "3",
             "4",
             "5",
+            "6",
         ],
         show_choices=False,
     )
@@ -373,3 +378,13 @@ def create_config_table():
             settings_table.add_row(key, val)
 
     return settings_table
+
+
+def input_ask_which_tasks_to_show(choices):
+    return Prompt.ask(
+        prompt="What Task/s to show? Select an [cyan]ID[/] or [orange3]Tag[/]?",
+        default=False,
+        show_default=False,
+        choices=choices,
+        show_choices=False,
+    )
