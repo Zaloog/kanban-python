@@ -5,6 +5,8 @@
 in `user_data_dir` and `user_config_dir`.
 - Update User Action Options with new option `Show Task Details`
 - Also changed coloring and order of User Actions
+- Added another Menu to configure settings when using `[6] Show Current Settings` or `kanban configure`
+- TODO Updating DOCS/README and Images
 
 ## Version 0.3.2
 - Add `^D` besides `^C` as option to close app (on windows pwsh its `^Z`).
