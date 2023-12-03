@@ -84,6 +84,11 @@ class KanbanConfig:
     def col_min_width(self) -> int:
         return int(self.config["settings.general"]["Column_Min_Width"])
 
+    @col_min_width.setter
+    def col_min_width(self, new_width: int) -> None:
+        self.config["settings.general"]["Column_Min_Width"] = new_width
+        self.save()
+
     @property
     def kanban_columns_dict(self) -> dict:
         return self.config["settings.columns.visible"]
@@ -110,9 +115,19 @@ class KanbanConfig:
     def scanned_files(self) -> list:
         return self.config["settings.scanner"]["Files"].split(" ")
 
+    @scanned_files.setter
+    def scanned_files(self, new_files_to_scan: str) -> None:
+        self.config["settings.scanner"]["Files"] = new_files_to_scan
+        self.save()
+
     @property
     def scanned_patterns(self) -> list:
         return self.config["settings.scanner"]["Patterns"].split(",")
+
+    @scanned_patterns.setter
+    def scanned_patterns(self, new_patterns_to_scan: str) -> None:
+        self.config["settings.scanner"]["Patterns"] = new_patterns_to_scan
+        self.save()
 
 
 cfg = KanbanConfig(path=CONFIG_FILE_PATH)

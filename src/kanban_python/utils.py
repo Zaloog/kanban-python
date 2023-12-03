@@ -146,3 +146,19 @@ def get_tag_id_choices(data_dict: dict, vis_cols: list) -> list:
 
     valid_choices = list(set(valid_ids + valid_tags))
     return valid_choices
+
+
+def check_scanner_files_valid(files: str) -> bool:
+    for file in files.split(" "):
+        if not file.startswith("."):
+            return False
+        if not all(char.isalpha() for char in file[1:]):
+            return False
+    return True
+
+
+def check_scanner_patterns_valid(patterns: str) -> bool:
+    for pattern in patterns.split(","):
+        if not pattern.startswith("#"):
+            return False
+    return True

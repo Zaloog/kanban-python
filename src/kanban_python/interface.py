@@ -301,60 +301,50 @@ def input_confirm_add_todos_to_board(todos) -> bool:
     )
 
 
+def input_ask_which_tasks_to_show(choices):
+    return Prompt.ask(
+        prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
+        default=False,
+        show_default=False,
+        choices=choices,
+        show_choices=False,
+    )
+
+
 # Config Settings
 #####################################################################################
-def input_change_settings():
-    updated_col_config = input_change_column_settings()
-    cfg.kanban_columns_dict = updated_col_config
-
-    footer_visible = input_change_footer_settings()
-    done_limit = input_change_done_limit_settings()
-    cfg.show_footer = "True" if footer_visible else "False"
-    cfg.done_limit = done_limit
 
 
-def input_change_column_settings():
-    updated_column_dict = {}
-    for col, vis in cfg.kanban_columns_dict.items():
-        new_visible = Confirm.ask(
-            prompt=f"Should Column {COLOR_DICT.get(col,col)} be visible?",
-            default=True if vis == "True" else False,
-            show_default=True,
-        )
-        updated_column_dict[col] = "True" if new_visible else "False"
-
-    return updated_column_dict
-
-
-def input_change_footer_settings():
-    footer_visible = Confirm.ask(
-        prompt="Should Footer be visible?",
-        default=True if cfg.show_footer == "True" else False,
-        show_default=True,
+# Ask for Actions
+def input_ask_for_action_settings():
+    console.print(
+        "[yellow]Not happy with current settings!?[/],"
+        + "which [blue]Section[/] do you want to change :hammer_and_wrench:?"
     )
-
-    return footer_visible
-
-
-def input_change_done_limit_settings():
-    done_limit = IntPrompt.ask(
-        prompt=f"What should the Limit of Tasks in {COLOR_DICT.get('Done','Done')} "
-        + f"Column be, before moving to {COLOR_DICT.get('Archived','Archived')}?",
-        default=cfg.done_limit,
-        show_default=True,
+    console.print(
+        "\t[1] :clipboard: [blue]settings.general[/]"
+        + 2 * "\t"
+        + "[2] :eye:  [blue]settings.columns.visibility[/]"
     )
-
-    return str(done_limit)
-
-
-def input_confirm_change_current_settings():
-    return Confirm.ask(
-        prompt="Do you want to change :hammer_and_wrench: [grey69]Settings[/]?",
-        default=False,
-        show_default=True,
+    console.print(
+        "\t[3] :magnifying_glass_tilted_left: [blue]settings.scanner[/]"
+        + 2 * "\t"
+        + "[4] :cross_mark: [red]Go back to Kanban Board[/]"
     )
+    action = IntPrompt.ask(
+        prompt="Choose [blue]Section[/], where you want to change the Current Value",
+        choices=[
+            "1",
+            "2",
+            "3",
+            "4",
+        ],
+        show_choices=False,
+    )
+    return action
 
 
+# Show current Config Table
 def create_config_table():
     settings_table = Table(
         title=":hammer_and_wrench:  [grey69]Settings Overview[/]:hammer_and_wrench:",
@@ -380,11 +370,68 @@ def create_config_table():
     return settings_table
 
 
-def input_ask_which_tasks_to_show(choices):
-    return Prompt.ask(
-        prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
-        default=False,
-        show_default=False,
-        choices=choices,
-        show_choices=False,
+# Change settings.general
+def input_change_footer_settings():
+    footer_visible = Confirm.ask(
+        prompt="Should Footer be visible?",
+        default=True if cfg.show_footer == "True" else False,
+        show_default=True,
     )
+
+    return footer_visible
+
+
+def input_change_done_limit_settings():
+    done_limit = IntPrompt.ask(
+        prompt=f"What should the Limit of Tasks in {COLOR_DICT.get('Done','Done')} "
+        + f"Column be, before moving to {COLOR_DICT.get('Archived','Archived')}?",
+        default=cfg.done_limit,
+        show_default=True,
+    )
+
+    return str(done_limit)
+
+
+def input_change_min_col_width_settings():
+    new_min_col_width = IntPrompt.ask(
+        prompt="What should the minimum Column Width be?",
+        default=cfg.col_min_width,
+        show_default=True,
+    )
+
+    return new_min_col_width
+
+
+# Change settings.columns.visible
+def input_change_column_settings():
+    updated_column_dict = {}
+    for col, vis in cfg.kanban_columns_dict.items():
+        new_visible = Confirm.ask(
+            prompt=f"Should Column {COLOR_DICT.get(col,col)} be visible?",
+            default=True if vis == "True" else False,
+            show_default=True,
+        )
+        updated_column_dict[col] = "True" if new_visible else "False"
+
+    return updated_column_dict
+
+
+# Change settings.scanner
+def input_change_files_to_scan_settings():
+    files_to_scan = Prompt.ask(
+        prompt="Which Files to scan? Enter [green]' '[/] separated File Endings",
+        default=" ".join(cfg.scanned_files),
+        show_default=True,
+    )
+
+    return files_to_scan
+
+
+def input_change_patterns_to_scan_settings():
+    files_to_scan = Prompt.ask(
+        prompt="Which Patterns to scan? Enter [green]','[/] separated Patterns",
+        default=" ".join(cfg.scanned_patterns),
+        show_default=True,
+    )
+
+    return files_to_scan

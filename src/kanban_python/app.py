@@ -81,8 +81,7 @@ def main(args):
         controls.create_new_db()
 
     if args.command == "configure":
-        controls.show_settings()
-        return
+        controls.change_settings()
 
     if args.command == "scan":
         controls.add_todos_to_board()
@@ -102,7 +101,7 @@ def main(args):
         elif user_input == 5:
             controls.delete_kanban_board()
         elif user_input == 6:
-            controls.show_settings()
+            controls.change_settings()
 
 
 def run():

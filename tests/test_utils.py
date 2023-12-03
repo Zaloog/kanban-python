@@ -159,6 +159,26 @@ def test_split_todo_in_tag_and_title(todo, pattern, expected_result):
     assert title == expected_result[1]
 
 
+@pytest.mark.parametrize(
+    "files, expected_result",
+    [(".md .py", True), (".py  md", False), (".py .d3", False)],
+)
+def test_check_scanner_files_valid(files, expected_result):
+    result = utils.check_scanner_files_valid(files)
+
+    assert result is expected_result
+
+
+@pytest.mark.parametrize(
+    "patterns, expected_result",
+    [("# TODO,#TODO", True), ("TODO,# BUG", False), ("TODO BUG", False)],
+)
+def test_check_scanner_patterns_valid(patterns, expected_result):
+    result = utils.check_scanner_patterns_valid(patterns)
+
+    assert result is expected_result
+
+
 # def test_main(capsys):
 # """CLI Tests"""
 # # capsys is a pytest fixture that allows asserts against stdout/stderr
