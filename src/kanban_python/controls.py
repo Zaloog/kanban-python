@@ -230,4 +230,12 @@ def show_tasks():
             console.print(
                 20 * "[bold blue]#[/]" + f" Task {i} " + 20 * "[bold blue]#[/]"
             )
-            pprint(task, console=console, expand_all=True)
+            pprint(
+                {
+                    key: val
+                    for key, val in task.items()
+                    if key in ["Title", "Description", "Tag", "Status"]
+                },
+                console=console,
+                expand_all=True,
+            )

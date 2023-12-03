@@ -190,7 +190,7 @@ def input_ask_which_task_to_update(data: dict) -> str:
         id for id, task in data.items() if task["Status"] in cfg.vis_cols
     ]
     task_id_to_update = IntPrompt.ask(
-        prompt="Which Task to update?",
+        prompt="Which Task to update? Select an [[cyan]Id[/]]",
         choices=choice_task_ids,
         show_choices=False,
     )
@@ -382,7 +382,7 @@ def create_config_table():
 
 def input_ask_which_tasks_to_show(choices):
     return Prompt.ask(
-        prompt="What Task/s to show? Select an [cyan]ID[/] or [orange3]Tag[/]?",
+        prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
         default=False,
         show_default=False,
         choices=choices,
