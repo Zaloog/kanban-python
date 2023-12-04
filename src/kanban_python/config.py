@@ -86,7 +86,7 @@ class KanbanConfig:
 
     @col_min_width.setter
     def col_min_width(self, new_width: int) -> None:
-        self.config["settings.general"]["Column_Min_Width"] = new_width
+        self.config["settings.general"]["Column_Min_Width"] = str(new_width)
         self.save()
 
     @property
