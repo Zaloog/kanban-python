@@ -11,7 +11,7 @@
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 [![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
-[![Coveralls](https://img.shields.io/coveralls/github/Zaloog/kanban-python/main.svg)](https://coveralls.io/r/Zaloog/kanban-python)
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=main)](https://coveralls.io/github/Zaloog/kanban-python?branch=main)
 
 # kanban-python
 
