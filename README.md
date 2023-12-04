@@ -32,17 +32,34 @@ and takes over much of the boilerplate for python packaging.
 It was a great help for developing my first package and I can highly recommend it.
 
 ## Features
-- *colorful and interactive*: kanban-python uses [rich] under the hood to process user input
+<details><summary>Colorful and Interactive</summary>
+
+- kanban-python uses [rich] under the hood to process user input
 and display nice looking tables to the terminal.
 
-- *following the XDG convention*: kanban-python utilizes [platformdirs] `user_config_dir` to save the config file and `user_data_dir` for
+</details>
+
+
+<details><summary>Following the XDG basedir convention</summary>
+
+- kanban-python utilizes [platformdirs] `user_config_dir` to save the config file and `user_data_dir` for
 the board specific task files. After creating your first board, you can use `kanban configure` to show the current settings table.
 The config path in the table caption and the path for the task files can be found in the kanban_boards section.
 
-- *automated scanning of files for task creation*: kanban-python can scan files of defined types for specific patterns at start of line.
+</details>
+
+
+<details><summary>Scanning of Files for automatic Task Creation</summary>
+
+- kanban-python can scan files of defined types for specific patterns at start of line.
 Check [Automatic Task Creation](#automatic-task-creation) for more Infos.
 
-- *configfile*: A `pykanban.ini` file gets created on first initialization in a `kanban-python` folder in your `user_config_dir`-Directory.
+</details>
+
+
+<details><summary>Customizable Configfile</summary>
+
+- A `pykanban.ini` file gets created on first initialization in a `kanban-python` folder in your `user_config_dir`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards. \
 ![configfile](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_config.PNG)
    * `Active_Board`: current board that is shown when using `kanban`-command
@@ -53,18 +70,33 @@ This can be edited manually or within the kanban-python application. It tracks t
    * `Files`: Space seperated filetypes to search for patterns to create tasks. (default: `.py .md`)
    * `Patterns`: Comma seperated patterns to search for start of line to create tasks. <br />(default: `# TODO,#TODO,# BUG`)
 
-   <br />
+</details>
 
-- *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
+
+<details><summary>Task Storage File for each Board</summary>
+
+- Each created board comes with its own name and `pykanban.json` file,
 which stores all tasks for that board. The files are stored in board specific folders under `$USER_DATA_DIR/kanban-python/kanban_boards/<BOARDNAME>`
 
-- *column customization*: kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
+</details>
+
+
+<details><summary>Customizable Columns</summary>
+
+- kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
 More column can be added manually in the `pykanban.ini`, also the visibility can be configured there.
 
-- *time-tracking*: for each task it is tracked, how long it was in the
+</details>
+
+
+<details><summary>Time Tracking of Task duration in Doing</summary>
+
+- For each task it is tracked, how long it was in the
  <span style="color:yellow">Doing</span> column, based on the moments when you update the task status.
  The initial Task structure on creation looks as follows:
 ![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_task_example.PNG)
+
+</details>
 
 
 ## Installation
