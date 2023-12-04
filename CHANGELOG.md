@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.3.4
+- Bug fix: default separator for `settings.scanner` Pattern setting was space separated not comma separated
+- Fix Image for kanban configure to show right Pattern
+
 ## Version 0.3.3
 - Push lower bound Version of `platformdirs` dependency to be 3 or higher to include `ensure_exists` argument
 in `user_data_dir` and `user_config_dir`.

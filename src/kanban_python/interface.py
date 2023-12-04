@@ -430,7 +430,7 @@ def input_change_files_to_scan_settings():
 def input_change_patterns_to_scan_settings():
     files_to_scan = Prompt.ask(
         prompt="Which Patterns to scan? Enter [green]','[/] separated Patterns",
-        default=" ".join(cfg.scanned_patterns),
+        default=",".join(cfg.scanned_patterns),
         show_default=True,
     )
 
