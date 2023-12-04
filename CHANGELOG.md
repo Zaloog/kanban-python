@@ -4,9 +4,10 @@
 - Push lower bound Version of `platformdirs` dependency to be 3 or higher to include `ensure_exists` argument
 in `user_data_dir` and `user_config_dir`.
 - Update User Action Options with new option `Show Task Details`
-- Also changed coloring and order of User Actions
+- Change coloring and order of User Actions
 - Added another Menu to configure settings when using `[6] Show Current Settings` or `kanban configure`
-- TODO Updating DOCS/README and Images
+- Update DOCS/README and Images
+- Bugfix for data type of min col width setter
 
 ## Version 0.3.2
 - Add `^D` besides `^C` as option to close app (on windows pwsh its `^Z`).

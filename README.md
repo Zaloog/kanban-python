@@ -22,10 +22,12 @@ Welcome to **kanban-python**, your Terminal Kanban-Board Manager.
 
 ![header](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_header.PNG)
 The [clikan] Kanban App inspired me to write
-my own Terminal Kanban Application, since I preferred a more simple and guided workflow.
+my own Terminal Kanban Application since I preferred a more simple and guided workflow.
 
-**kanban-python** also comes with more features and customization options.
-This package was developed with [pyscaffold], which provides nice project templates
+**kanban-python** also comes with more features, like custom column creation,
+automatic scanning and customizable config file to support you being productive.
+
+This package was developed with [pyscaffold], which provides awesome project templates
 and takes over much of the boilerplate for python packaging.
 It was a great help for developing my first package and I can highly recommend it.
 
@@ -40,7 +42,7 @@ The config path in the table caption and the path for the task files can be foun
 - *automated scanning of files for task creation*: kanban-python can scan files of defined types for specific patterns at start of line.
 Check [Automatic Task Creation](#automatic-task-creation) for more Infos.
 
-- *configfile*: A `pykanban.ini` file gets created on first initialization in a `.kanban-python` folder in your `Home`-Directory.
+- *configfile*: A `pykanban.ini` file gets created on first initialization in a `kanban-python` folder in your `user_config_dir`-Directory.
 This can be edited manually or within the kanban-python application. It tracks the location for all your created boards. \
 ![configfile](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_config.PNG)
    * `Active_Board`: current board that is shown when using `kanban`-command
@@ -54,10 +56,10 @@ This can be edited manually or within the kanban-python application. It tracks t
    <br />
 
 - *storage-file for each board*: Each created board comes with its own name and `pykanban.json` file,
-which stores all tasks for that board. The files are stored in board specific folders under `.kanban-python/kanban_boards/<BOARDNAME>`
+which stores all tasks for that board. The files are stored in board specific folders under `$USER_DATA_DIR/kanban-python/kanban_boards/<BOARDNAME>`
 
 - *column customization*: kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
-More column can be added manually in the `pykanban.ini`, also the visibility can be configured.
+More column can be added manually in the `pykanban.ini`, also the visibility can be configured there.
 
 - *time-tracking*: for each task it is tracked, how long it was in the
  <span style="color:yellow">Doing</span> column, based on the moments when you update the task status.
@@ -79,7 +81,7 @@ After Installation of kanban-python, there are 4 commands available:
   kanban init
   ```
 Is used to create a new kanban board i.e. it asks for a name and then creates a `pykanban.json` file with a Welcome Task.
-On first use of any command, the `pykanban.ini` configfile and the `.kanban-python` folder will be created automatically.
+On first use of any command, the `pykanban.ini` configfile and the `kanban-python` folder will be created automatically.
 ![init_file](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_init.PNG)
 
 ### Interact with Tasks/Boards
@@ -112,9 +114,7 @@ The filepath were the task was found will be added as description of the task.
 ![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_configure.PNG)
 
 To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new column name + visibility status
-under the `settings.columns.visible` section. The same way you can also add more file endings or patterns for the `settings.scanner` section.
-Keep in mind the specific separators for that section.
-I am working on an option to customize those things in the future without the need to manual edit the file.
+under the `settings.columns.visible` section. The other options are all customizable now via the new settings menu.
 
 
 ## Feedback and Issues
