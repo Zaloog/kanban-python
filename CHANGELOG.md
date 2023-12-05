@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.3.5
+- Bug Fix: Datatype `Welcome Task` Duration: str -> int
+
 ## Version 0.3.4
 - Bug fix: default separator for `settings.scanner` Pattern setting was space separated not comma separated
 - Fix Image for kanban configure to show right Pattern
