@@ -112,6 +112,12 @@ def read_db(path: str = None) -> dict:
     if not path:
         path = cfg.active_board_path
 
+    if path == "all":
+        board_dict = {
+            b: read_single_board(b_path) for b, b_path in cfg.kanban_boards_dict.items()
+        }
+        return board_dict
+
     try:
         data = read_single_board(path)
         return data
@@ -120,6 +126,7 @@ def read_db(path: str = None) -> dict:
         console.print(f":warning: No [orange3]{TASK_FILE_NAME}[/] file here anymore.")
         console.print("Please change to another board.")
         change_kanban_board()
+
     console.print(f"[red]Seems like the previous {TASK_FILE_NAME} file was deleted[/]")
     console.print(f"Create new [orange3]{TASK_FILE_NAME}[/] file here.")
     create_new_db()
@@ -163,7 +170,8 @@ def update_task_from_db():
 
 # Action 3
 def change_kanban_board():
-    new_active_board = input_ask_for_change_board()
+    boards_dict = read_db(path="all")
+    new_active_board = input_ask_for_change_board(boards_dict)
     cfg.active_board = new_active_board
 
 

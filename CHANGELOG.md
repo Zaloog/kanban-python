@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.6
+- Add an `Overview` of Task amounts when changing boards, to get an overview over all Boards
+    - Behind the boardname you now have something like `Ready: 05 | Doing: 02 | Done: 10`
+    - only tasks amount of columns set as visible are displayed
+
 ## Version 0.3.5
 - Bug Fix: Datatype `Welcome Task` Duration: str -> int
 

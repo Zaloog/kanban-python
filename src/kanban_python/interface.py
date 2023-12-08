@@ -47,6 +47,7 @@ def create_table(data: dict) -> Table:
     return table
 
 
+# Board Action selection
 def input_ask_for_action():
     console.print(
         "[yellow]Whats up!?[/], how can I help you being productive today :rocket:?"
@@ -81,6 +82,7 @@ def input_ask_for_action():
     return action
 
 
+# Action 1: New Task
 def input_create_new_task() -> dict:
     title = Prompt.ask(
         prompt="[1/4] Add Task Title",
@@ -119,6 +121,19 @@ def input_create_new_task() -> dict:
         "Duration": 0,
     }
     return new_task
+
+
+# Option 2
+def input_ask_which_task_to_update(data: dict) -> str:
+    choice_task_ids = [
+        id for id, task in data.items() if task["Status"] in cfg.vis_cols
+    ]
+    task_id_to_update = IntPrompt.ask(
+        prompt="Which Task to update? Select an [[cyan]Id[/]]",
+        choices=choice_task_ids,
+        show_choices=False,
+    )
+    return str(task_id_to_update)
 
 
 def input_update_task_title(current_title) -> str:
@@ -185,18 +200,6 @@ def input_update_task(current_task: dict) -> dict:
     return current_task
 
 
-def input_ask_which_task_to_update(data: dict) -> str:
-    choice_task_ids = [
-        id for id, task in data.items() if task["Status"] in cfg.vis_cols
-    ]
-    task_id_to_update = IntPrompt.ask(
-        prompt="Which Task to update? Select an [[cyan]Id[/]]",
-        choices=choice_task_ids,
-        show_choices=False,
-    )
-    return str(task_id_to_update)
-
-
 def input_ask_to_what_status_to_move(task_title):
     possible_status = [cat for cat in cfg.kanban_columns_dict]
 
@@ -227,16 +230,29 @@ def input_ask_for_new_board_name() -> str:
     )
 
 
-def input_ask_for_change_board() -> str:
+# Action 3 Change Boards
+def input_ask_for_change_board(boards_dict: dict) -> str:
     boards = cfg.kanban_boards
+    max_board_len = max([len(b) for b in cfg.kanban_boards])
+
     # if active Board is not in Board List dont show default
     try:
         active_board_idx = boards.index(cfg.active_board) + 1
     except ValueError:
         active_board_idx = None
 
-    for idx, board in enumerate(boards, start=1):
-        console.print(f"[{idx}] {board}")
+    for idx, (board, board_data) in enumerate(boards_dict.items(), start=1):
+        status_dict = create_status_dict_for_rows(board_data, cfg.vis_cols)
+        console.print(
+            f"[{idx}] {board}"
+            + " " * ((max_board_len - len(board) + 1))
+            + " | ".join(
+                [
+                    f"{COLOR_DICT[col]}: {len(status_dict[col]):02d}"
+                    for col in cfg.vis_cols
+                ]
+            )
+        )
 
     answer = IntPrompt.ask(
         prompt="Which board to activate",
@@ -248,6 +264,18 @@ def input_ask_for_change_board() -> str:
     return boards[int(answer) - 1]
 
 
+# Action 4 Show Tasks
+def input_ask_which_tasks_to_show(choices):
+    return Prompt.ask(
+        prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
+        default=False,
+        show_default=False,
+        choices=choices,
+        show_choices=False,
+    )
+
+
+# Action 5 Delete Boards
 def input_ask_for_delete_board() -> str:
     boards = [b for b in cfg.kanban_boards]
     for idx, board in enumerate(boards, start=1):
@@ -267,6 +295,7 @@ def input_confirm_delete_board(name) -> bool:
     )
 
 
+# Scanner options
 def input_confirm_show_all_todos() -> bool:
     return Confirm.ask(
         prompt="Do you want to list all of them?",
@@ -298,16 +327,6 @@ def input_confirm_add_todos_to_board(todos) -> bool:
 
     return Confirm.ask(
         prompt="Add found Tasks to active board?", default=False, show_default=True
-    )
-
-
-def input_ask_which_tasks_to_show(choices):
-    return Prompt.ask(
-        prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
-        default=False,
-        show_default=False,
-        choices=choices,
-        show_choices=False,
     )
 
 
