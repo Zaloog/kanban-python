@@ -12,6 +12,7 @@ from .config import (
 from .constants import DUMMY_DB, KANBAN_BOARDS_PATH, TASK_FILE_NAME
 from .interface import (
     create_config_table,
+    create_github_like_report_table,
     create_table,
     input_ask_for_action,
     input_ask_for_action_settings,
@@ -27,6 +28,7 @@ from .interface import (
     input_change_min_col_width_settings,
     input_change_patterns_to_scan_settings,
     input_confirm_add_todos_to_board,
+    input_confirm_create_report,
     input_confirm_delete_board,
     input_confirm_set_board_active,
     input_create_new_task,
@@ -306,3 +308,13 @@ def change_settings():
 def show_settings():
     settings_table = create_config_table()
     console.print(settings_table)
+
+
+# Report Creation
+#####################################################################################
+def create_report():
+    boards_dict = read_db("all")
+    gh_table = create_github_like_report_table(boards_dict)
+    console.print(gh_table)
+    input_confirm_create_report()
+    pass

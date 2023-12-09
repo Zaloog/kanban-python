@@ -123,7 +123,7 @@ def input_create_new_task() -> dict:
     return new_task
 
 
-# Option 2
+# Action 2: Update Task
 def input_ask_which_task_to_update(data: dict) -> str:
     choice_task_ids = [
         id for id, task in data.items() if task["Status"] in cfg.vis_cols
@@ -230,7 +230,7 @@ def input_ask_for_new_board_name() -> str:
     )
 
 
-# Action 3 Change Boards
+# Action 3: Change Boards
 def input_ask_for_change_board(boards_dict: dict) -> str:
     boards = cfg.kanban_boards
     max_board_len = max([len(b) for b in cfg.kanban_boards])
@@ -264,7 +264,7 @@ def input_ask_for_change_board(boards_dict: dict) -> str:
     return boards[int(answer) - 1]
 
 
-# Action 4 Show Tasks
+# Action 4: Show Tasks
 def input_ask_which_tasks_to_show(choices):
     return Prompt.ask(
         prompt="What Task/s to show? Select an [[cyan]Id[/]] or ([orange3]Tag[/])?",
@@ -295,7 +295,7 @@ def input_confirm_delete_board(name) -> bool:
     )
 
 
-# Scanner options
+# Scanner Options
 def input_confirm_show_all_todos() -> bool:
     return Confirm.ask(
         prompt="Do you want to list all of them?",
@@ -328,6 +328,52 @@ def input_confirm_add_todos_to_board(todos) -> bool:
     return Confirm.ask(
         prompt="Add found Tasks to active board?", default=False, show_default=True
     )
+
+
+# Report Options
+def create_github_like_report_table(boards_dict: dict):
+    completed_tasks = []
+    print(boards_dict)
+    for board, task_dict in boards_dict.items():
+        completed_tasks += [
+            task for id, task in task_dict.items() if task["Complete_Time"]
+        ]
+
+    print(completed_tasks)
+    gh_table = Table(
+        title=f"[green]{len(completed_tasks)}[/] Tasks completed",
+        title_justify="left",
+        highlight=True,
+        padding=False,
+        show_header=True,
+        box=None,
+        caption_justify="right",
+        caption="\nless [black on black]  [/] "
+        + "[green on green]  [/] "
+        + "[dark_green on dark_green]  [/] "
+        + "[light_green on light_green]  [/] "
+        + "[green3 on green3]  [/] more",
+    )
+    for month in range(1, 57):
+        gh_table.add_column(
+            header=f"{month:02d}",
+            header_style="bold",
+            justify="left",
+            overflow="fold",
+        )
+
+    for day in range(8):
+        # gh_table.add_row(*[f":green_square:"] * 12)
+        gh_table.add_row(*["[white on black]  [/] "] * 56)
+        # gh_table.add_row(*[f"[black on green]__[/]"] * 56)
+        # gh_table.add_row(*[f"[black on dark_green]__[/]"] * 56)
+        # gh_table.add_row(*[f"[black on light_green]__[/]"] * 56)
+
+    return gh_table
+
+
+def input_confirm_create_report():
+    pass
 
 
 # Config Settings

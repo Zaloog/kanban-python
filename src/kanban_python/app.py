@@ -86,6 +86,10 @@ def main(args):
     if args.command == "scan":
         controls.add_todos_to_board()
 
+    if args.command == "report":
+        controls.create_report()
+        return
+
     while True:
         controls.show()
         user_input = controls.get_user_action()

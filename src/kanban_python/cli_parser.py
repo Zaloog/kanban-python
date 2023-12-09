@@ -53,10 +53,10 @@ def parse_args(args):
     )
     parser.add_argument(
         nargs="?",
-        choices=["init", "configure", "scan"],
+        choices=["init", "configure", "scan", "report"],
         dest="command",
         help="""
-        initialize new board, configure settings, or scan for TODOs in files
+        initialize new board, configure settings, scan for TODOs in files, create Report
                 """,
     )
     return parser.parse_args(args)
