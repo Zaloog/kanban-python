@@ -55,3 +55,6 @@ FOOTER_FIRST = FOOTER_LINK + FOOTER_AUTHOR
 
 FOOTER_LAST = f"version [blue]{__version__}[/]"
 FOOTER = [FOOTER_FIRST, FOOTER_LAST]
+
+# found here: https://github.com/orgs/community/discussions/7078
+REPORT_COLORS = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]

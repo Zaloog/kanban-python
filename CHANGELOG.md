@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.3.7
+- Bug Fix, `Complete_Time`-Key was wrong in Task Creation, when task was created with `kanban scan`
+- Add new function `kanban report` to show a github contribution like visual + creating a .md report
+# TODO
+- Updated Readme/Docs accordingly
+
 ## Version 0.3.6
 - Add an `Overview` of Task amounts when changing boards, to get an overview over all Boards
     - Behind the boardname you now have something like `Ready: 05 | Doing: 02 | Done: 10`

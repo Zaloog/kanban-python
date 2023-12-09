@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from random import choice
@@ -162,3 +163,36 @@ def check_scanner_patterns_valid(patterns: str) -> bool:
         if not pattern.startswith("#"):
             return False
     return True
+
+
+def get_iso_calender_info(date_str: str):
+    year, week, weekday = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S").isocalendar()
+    return year, week, weekday
+
+
+def create_dict_for_report_view(completed_tasks: list):
+    report_dict = defaultdict(lambda: defaultdict(int))
+    max_val = 0
+    for task in completed_tasks:
+        year, week, day = get_iso_calender_info(task["Complete_Time"])
+        report_dict[day][week] += 1
+        max_val = max(max_val, report_dict[day][week])
+
+    return max_val, report_dict
+
+
+def create_color_mapping(amount_list: list, max_val: int):
+    mapped_list = []
+    for val in amount_list:
+        if val == 0:
+            mapped_list.append(0)
+        elif (val / max_val) <= 0.25:
+            mapped_list.append(1)
+        elif (val / max_val) <= 0.5:
+            mapped_list.append(2)
+        elif (val / max_val) <= 0.75:
+            mapped_list.append(3)
+        elif (val / max_val) <= 1:
+            mapped_list.append(4)
+
+    return mapped_list

@@ -179,6 +179,33 @@ def test_check_scanner_patterns_valid(patterns, expected_result):
     assert result is expected_result
 
 
+@pytest.mark.parametrize(
+    "vis_cols, expected_result",
+    [(["Ready"], ["1", "3", "HI"]), (["Done"], [])],
+)
+def test_get_tag_id_choices(test_task, vis_cols, expected_result):
+    data_dict = {"1": test_task, "3": test_task}
+
+    result = utils.get_tag_id_choices(data_dict=data_dict, vis_cols=vis_cols)
+    assert sorted(result) == sorted(expected_result)
+
+
+def test_get_iso_calender_info():
+    date = "2023-12-05 23:41:41"
+    year, week, weekday = utils.get_iso_calender_info(date)
+    assert year == 2023
+    assert week == 49
+    assert weekday == 2
+
+
+def test_create_color_mapping():
+    task_amount = [1, 3, 4, 0, 5, 8, 12, 16]
+    max_val = max(task_amount)
+    result = utils.create_color_mapping(amount_list=task_amount, max_val=max_val)
+
+    assert result == [1, 1, 1, 0, 2, 2, 3, 4]
+
+
 # def test_main(capsys):
 # """CLI Tests"""
 # # capsys is a pytest fixture that allows asserts against stdout/stderr

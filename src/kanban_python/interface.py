@@ -1,13 +1,22 @@
+import calendar
 from itertools import zip_longest
 
 from rich.prompt import Confirm, IntPrompt, Prompt
 from rich.table import Table
 
 from .config import cfg
-from .constants import BOARD_CAPTION_STRING, COLOR_DICT, CONFIG_FILE_PATH, FOOTER
+from .constants import (
+    BOARD_CAPTION_STRING,
+    COLOR_DICT,
+    CONFIG_FILE_PATH,
+    FOOTER,
+    REPORT_COLORS,
+)
 from .utils import (
     calculate_time_delta_str,
     console,
+    create_color_mapping,
+    create_dict_for_report_view,
     create_status_dict_for_rows,
     current_time_to_str,
 )
@@ -182,6 +191,7 @@ def input_update_task(current_task: dict) -> dict:
         duration = current_task.get("Duration", 0)
 
     if status == "Done":
+        stop_doing = current_time_to_str()
         console.print(
             f":sparkle: Congrats, you just completed '{title}'"
             + f" after {duration} minutes :muscle:"
@@ -332,42 +342,46 @@ def input_confirm_add_todos_to_board(todos) -> bool:
 
 # Report Options
 def create_github_like_report_table(boards_dict: dict):
-    completed_tasks = []
-    print(boards_dict)
-    for board, task_dict in boards_dict.items():
-        completed_tasks += [
-            task for id, task in task_dict.items() if task["Complete_Time"]
-        ]
+    done_tasks = []
+    for _, task_dict in boards_dict.items():
+        done_tasks += [task for _, task in task_dict.items() if task["Complete_Time"]]
 
-    print(completed_tasks)
+    max_val, report_dict = create_dict_for_report_view(done_tasks)
+    console.print(report_dict)
+    console.print(max_val)
+
     gh_table = Table(
-        title=f"[green]{len(completed_tasks)}[/] Tasks completed",
+        title=f"[#39d353]{len(done_tasks)}[/] Tasks completed in [#39d353]2023[/]",
         title_justify="left",
         highlight=True,
         padding=False,
         show_header=True,
         box=None,
+        caption="\nless"
+        + " ".join([f"[{scale} on {scale}]  [/] " for scale in REPORT_COLORS])
+        + " more",
         caption_justify="right",
-        caption="\nless [black on black]  [/] "
-        + "[green on green]  [/] "
-        + "[dark_green on dark_green]  [/] "
-        + "[light_green on light_green]  [/] "
-        + "[green3 on green3]  [/] more",
     )
-    for month in range(1, 57):
+    for work_week in range(0, 53):
         gh_table.add_column(
-            header=f"{month:02d}",
+            header="" if (work_week % 5 or work_week == 0) else f"{work_week}",
             header_style="bold",
             justify="left",
             overflow="fold",
         )
 
-    for day in range(8):
-        # gh_table.add_row(*[f":green_square:"] * 12)
-        gh_table.add_row(*["[white on black]  [/] "] * 56)
-        # gh_table.add_row(*[f"[black on green]__[/]"] * 56)
-        # gh_table.add_row(*[f"[black on dark_green]__[/]"] * 56)
-        # gh_table.add_row(*[f"[black on light_green]__[/]"] * 56)
+    for day in range(1, 8):
+        day_name = calendar.day_abbr[day - 1] if day % 2 else ""
+        day_row_vals = [report_dict[day].get(week, 0) for week in range(1, 53)]
+        mapped_day_row_vals = create_color_mapping(day_row_vals, max_val=max_val)
+
+        gh_table.add_row(
+            day_name,
+            *[
+                f"[{REPORT_COLORS[i]} on {REPORT_COLORS[i]}]  [/]"
+                for i in mapped_day_row_vals
+            ],
+        )
 
     return gh_table
 

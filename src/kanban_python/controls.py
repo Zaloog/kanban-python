@@ -251,7 +251,7 @@ def add_todos_to_board():
                 "Tag": tag,
                 "Creation_Date": current_time_to_str(),
                 "Begin_Time": "",
-                "Completion_Time": "",
+                "Complete_Time": "",
                 "Duration": 0,
             }
 
