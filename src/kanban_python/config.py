@@ -12,12 +12,6 @@ from .constants import (
 )
 from .utils import console
 
-# TASK_FILE_NAME = "pykanban.json"
-# CONFIG_FILE_NAME = "pykanban.ini"
-# CONFIG_PATH = Path.home() / ".kanban-python"
-# KANBAN_BOARDS_PATH = CONFIG_PATH / "kanban_boards"
-# CONFIG_FILE_PATH = CONFIG_PATH / CONFIG_FILE_NAME
-
 
 class KanbanConfig:
     def __init__(self, path=CONFIG_FILE_PATH) -> None:

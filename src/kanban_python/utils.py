@@ -1,3 +1,4 @@
+import calendar
 import os
 from collections import defaultdict
 from datetime import datetime
@@ -7,7 +8,7 @@ from random import choice
 from rich.console import Console
 from rich.progress import MofNCompleteColumn, Progress
 
-from .constants import QUOTES
+from .constants import QUOTES, REPORT_FILE_NAME, REPORT_FILE_PATH
 
 console = Console()
 
@@ -173,8 +174,11 @@ def get_iso_calender_info(date_str: str):
 def create_dict_for_report_view(completed_tasks: list):
     report_dict = defaultdict(lambda: defaultdict(int))
     max_val = 0
+    current_year = datetime.now().year
     for task in completed_tasks:
         year, week, day = get_iso_calender_info(task["Complete_Time"])
+        if year != current_year:
+            continue
         report_dict[day][week] += 1
         max_val = max(max_val, report_dict[day][week])
 
@@ -196,3 +200,36 @@ def create_color_mapping(amount_list: list, max_val: int):
             mapped_list.append(4)
 
     return mapped_list
+
+
+def create_report_document(boards_dict: dict):
+    date_dict = defaultdict(list)
+    for _, task_dict in boards_dict.items():
+        for _, task in task_dict.items():
+            if not task["Complete_Time"]:
+                continue
+            completion_date = datetime.strptime(
+                task["Complete_Time"], "%Y-%m-%d %H:%M:%S"
+            ).date()
+            date_dict[completion_date].append(f"- {task['Tag']} {task['Title']}\n")
+
+    with open(REPORT_FILE_PATH / REPORT_FILE_NAME, "w") as report_file:
+        last_year = ""
+        last_month = ""
+        last_day = ""
+        for date, completed in sorted(date_dict.items()):
+            if date.year != last_year:
+                last_year = date.year
+                report_file.write(f"# Tasks Completed in {date.year}\n")
+
+            if date.month != last_month:
+                last_month = date.month
+                report_file.write(f"## {calendar.month_name[date.month]}\n")
+
+            if date.day != last_day:
+                last_day = date.day
+                report_file.write(f"### {date}\n")
+
+            report_file.write("".join(completed))
+
+    return date_dict

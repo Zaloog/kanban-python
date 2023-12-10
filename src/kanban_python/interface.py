@@ -1,4 +1,5 @@
 import calendar
+from datetime import datetime
 from itertools import zip_longest
 
 from rich.prompt import Confirm, IntPrompt, Prompt
@@ -111,6 +112,7 @@ def input_create_new_task() -> dict:
 
     console.print(f"\t[1] {COLOR_DICT['Ready']}")
     console.print(f"\t[2] {COLOR_DICT['Doing']}")
+
     status = IntPrompt.ask(
         prompt="[4/4] Status of Task",
         show_choices=False,
@@ -347,11 +349,11 @@ def create_github_like_report_table(boards_dict: dict):
         done_tasks += [task for _, task in task_dict.items() if task["Complete_Time"]]
 
     max_val, report_dict = create_dict_for_report_view(done_tasks)
-    console.print(report_dict)
-    console.print(max_val)
+    current_year = datetime.now().year
 
     gh_table = Table(
-        title=f"[#39d353]{len(done_tasks)}[/] Tasks completed in [#39d353]2023[/]",
+        title=f"[{REPORT_COLORS[4]}]{len(done_tasks)}[/] Tasks completed"
+        + f" in [{REPORT_COLORS[4]}]{current_year}[/]",
         title_justify="left",
         highlight=True,
         padding=False,
@@ -384,10 +386,6 @@ def create_github_like_report_table(boards_dict: dict):
         )
 
     return gh_table
-
-
-def input_confirm_create_report():
-    pass
 
 
 # Config Settings

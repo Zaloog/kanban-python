@@ -9,7 +9,13 @@ from .config import (
     delete_board_from_config,
     get_json_path,
 )
-from .constants import DUMMY_DB, KANBAN_BOARDS_PATH, TASK_FILE_NAME
+from .constants import (
+    DUMMY_DB,
+    KANBAN_BOARDS_PATH,
+    REPORT_FILE_NAME,
+    REPORT_FILE_PATH,
+    TASK_FILE_NAME,
+)
 from .interface import (
     create_config_table,
     create_github_like_report_table,
@@ -28,7 +34,6 @@ from .interface import (
     input_change_min_col_width_settings,
     input_change_patterns_to_scan_settings,
     input_confirm_add_todos_to_board,
-    input_confirm_create_report,
     input_confirm_delete_board,
     input_confirm_set_board_active,
     input_create_new_task,
@@ -41,6 +46,7 @@ from .utils import (
     check_scanner_files_valid,
     check_scanner_patterns_valid,
     console,
+    create_report_document,
     current_time_to_str,
     delete_json_file,
     get_tag_id_choices,
@@ -316,5 +322,10 @@ def create_report():
     boards_dict = read_db("all")
     gh_table = create_github_like_report_table(boards_dict)
     console.print(gh_table)
-    input_confirm_create_report()
-    pass
+    if not REPORT_FILE_PATH.exists():
+        REPORT_FILE_PATH.mkdir(exist_ok=True)
+    create_report_document(boards_dict=boards_dict)
+    console.print(
+        "\n[bright_black]You can find your markdown report under:"
+        + f"\n[bold green]{REPORT_FILE_PATH/REPORT_FILE_NAME}"
+    )

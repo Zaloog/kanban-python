@@ -7,7 +7,9 @@ from kanban_python import __version__
 # For Config Stuff
 TASK_FILE_NAME = "pykanban.json"
 CONFIG_FILE_NAME = "pykanban.ini"
+REPORT_FILE_NAME = "pykanban.md"
 KANBAN_BOARDS_FOLDER_NAME = "kanban_boards"
+REPORTS_FOLDER_NAME = "kanban_report"
 
 CONFIG_PATH = Path(
     user_config_dir(appname="kanban-python", appauthor=False, ensure_exists=True)
@@ -17,6 +19,7 @@ DATA_PATH = Path(
 )
 KANBAN_BOARDS_PATH = DATA_PATH / KANBAN_BOARDS_FOLDER_NAME
 CONFIG_FILE_PATH = CONFIG_PATH / CONFIG_FILE_NAME
+REPORT_FILE_PATH = DATA_PATH / REPORTS_FOLDER_NAME
 
 
 QUOTES = [
