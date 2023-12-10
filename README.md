@@ -6,13 +6,13 @@
 [![Conda-Forge](https://img.shields.io/conda/vn/conda-forge/kanban-python.svg)](https://anaconda.org/conda-forge/kanban-python)
 [![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter)](https://twitter.com/kanban-python)
 [![Monthly Downloads](https://pepy.tech/badge/kanban-python/month)](https://pepy.tech/project/kanban-python)
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=main)](https://coveralls.io/github/Zaloog/kanban-python?branch=main)
 -->
 
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 [![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
-[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=main)](https://coveralls.io/github/Zaloog/kanban-python?branch=main)
-
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.7)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.7)
 # kanban-python
 
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:
@@ -76,7 +76,9 @@ This can be edited manually or within the kanban-python application. It tracks t
 <details><summary>Task Storage File for each Board</summary>
 
 - Each created board comes with its own name and `pykanban.json` file,
-which stores all tasks for that board. The files are stored in board specific folders under `$USER_DATA_DIR/kanban-python/kanban_boards/<BOARDNAME>`
+which stores all tasks for that board. The files are stored in board specific folders under `$USER_DATA_DIR/kanban-python/kanban_boards/<BOARDNAME>`.
+When changing Boards you also get an overview over tasks in visible columns for each board.
+![change_view](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_change.PNG)
 
 </details>
 
@@ -84,7 +86,8 @@ which stores all tasks for that board. The files are stored in board specific fo
 <details><summary>Customizable Columns</summary>
 
 - kanban-python comes with 5 pre-defined colored columns: [Ready, Doing, Done, Archived, Deleted]
-More column can be added manually in the `pykanban.ini`, also the visibility can be configured there.
+More column can be added manually in the `pykanban.ini`, the visibility can be configured in the settings
+with `kanban configure`.
 
 </details>
 
@@ -99,6 +102,14 @@ More column can be added manually in the `pykanban.ini`, also the visibility can
 </details>
 
 
+<details><summary>Report Creation for completed Tasks</summary>
+
+- When you use [kanban report](#create-report) a github-like contribution map is displayed for the current year,
+Also a markdown file is created with all tasks comleted based on the moment, when the tasks were moved to Done Column.
+![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report.PNG)
+
+</details>
+
 ## Installation
 You can install kanban-python with:
 ```bash
@@ -106,7 +117,7 @@ python -m pip install kanban-python
 ```
 
 ## Usage
-After Installation of kanban-python, there are 4 commands available:
+After Installation of kanban-python, there are 5 commands available:
 
 ### Create new Boards
   ```bash
@@ -133,11 +144,19 @@ or changing settings, your progress wont be saved.
   ```
 After executing this command, kanban-python scans your current Directory recursively for the defined filetypes and searches for lines
 that start with the pattern provided.
-![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_view.PNG)
+![scan_view](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_view.PNG)
 
 After confirmation to add the found tasks to table they will be added to the board. The alphanumeric Part of the Pattern will be used as tag.
 The filepath were the task was found will be added as description of the task.
-![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_table.PNG)
+![scan_table](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_table.PNG)
+
+### Create Report
+  ```bash
+  kanban report
+  ```
+Goes over all your Boards and creates a single markdown file by checking the `Completion Dates` of your tasks.
+Also shows a nice github-like contribution table for the current year.
+![report](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report_document.PNG)
 
 ### Change Settings
   ```bash
@@ -151,7 +170,9 @@ under the `settings.columns.visible` section. The other options are all customiz
 
 ## Feedback and Issues
 Feel free to reach out and share your feedback, or open an Issue, if something doesnt work as expected.
-Also check the [Changelog](https://github.com/Zaloog/kanban-python/blob/main/CHANGELOG.md) for new updates. :warning:
+Also check the [Changelog](https://github.com/Zaloog/kanban-python/blob/main/CHANGELOG.md) for new updates.
+
+:warning:
 With release v0.3.0 kanban-python switched to the [XDG] Basedir Spec. So some file migrations and config edits might be
 needed to continue working with your already created boards if you update from `v0.2.X` to `v0.3.X`
 

@@ -2,8 +2,8 @@
 
 ## Version 0.3.7
 - Bug Fix, `Complete_Time`-Key was wrong in Task Creation, when task was created with `kanban scan`
-- Add new function `kanban report` to show a github contribution like visual + creating a .md report
-# TODO
+- Add new function `kanban report` to show a github contribution like visual + creating a `.md` report
+- The report is created in a `kanban_report` folder next to the `kanban_boards` folder
 - Updated Readme/Docs accordingly
 
 ## Version 0.3.6
