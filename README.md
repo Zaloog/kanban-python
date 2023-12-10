@@ -106,7 +106,7 @@ with `kanban configure`.
 
 - When you use [kanban report](#create-report) a github-like contribution map is displayed for the current year,
 Also a markdown file is created with all tasks comleted based on the moment, when the tasks were moved to Done Column.
-![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report.PNG)
+![task](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report_document.PNG)
 
 </details>
 
@@ -156,7 +156,7 @@ The filepath were the task was found will be added as description of the task.
   ```
 Goes over all your Boards and creates a single markdown file by checking the `Completion Dates` of your tasks.
 Also shows a nice github-like contribution table for the current year.
-![report](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report_document.PNG)
+![report](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report.PNG)
 
 ### Change Settings
   ```bash
