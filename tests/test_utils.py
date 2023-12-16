@@ -198,12 +198,41 @@ def test_get_iso_calender_info():
     assert weekday == 2
 
 
+def test_create_dict_for_report_view():
+    tasks = [
+        {"Complete_Time": "2022-12-05 23:41:41"},
+        {"Complete_Time": "2023-12-05 23:41:41"},
+    ]
+
+    result_max = 1
+    result_dict = {2: {49: 1}}
+
+    max_val, report_dict = utils.create_dict_for_report_view(tasks)
+    assert result_max == max_val
+    assert result_dict == report_dict
+
+
 def test_create_color_mapping():
-    task_amount = [1, 3, 4, 0, 5, 8, 12, 16]
-    max_val = max(task_amount)
+    task_amount = [1, 3, 4, 0, 5, 8, 12, 16, 25]
+    max_val = 16
     result = utils.create_color_mapping(amount_list=task_amount, max_val=max_val)
 
     assert result == [1, 1, 1, 0, 2, 2, 3, 4]
+
+
+@pytest.mark.parametrize(
+    "date, expected_result",
+    [
+        ("24-12-2023", True),
+        ("3-17-2023", False),
+        ("30.05.2023", False),
+        ("30.05.223", False),
+    ],
+)
+def test_check_due_date_format(date, expected_result):
+    result = utils.check_due_date_format(date)
+
+    assert result is expected_result
 
 
 # def test_main(capsys):

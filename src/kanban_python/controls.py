@@ -197,7 +197,7 @@ def show_tasks():
                 {
                     key: val
                     for key, val in task.items()
-                    if key in ["Title", "Description", "Tag", "Status"]
+                    if key in ["Title", "Description", "Tag", "Status", "Due_Date"]
                 },
                 console=console,
                 expand_all=True,

@@ -49,6 +49,7 @@ DUMMY_TASK = {
     "Complete_Time": "",
     "Duration": 0,
     "Creation_Date": "",
+    "Due_Date": "",
 }
 DUMMY_DB = {1: DUMMY_TASK}
 

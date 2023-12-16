@@ -33,6 +33,7 @@ def test_task():
         "Complete_Time": "",
         "Duration": "0",
         "Creation_Date": "",
+        "Due_Date": "",
     }
 
 

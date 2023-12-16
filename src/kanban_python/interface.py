@@ -15,6 +15,7 @@ from .constants import (
 )
 from .utils import (
     calculate_time_delta_str,
+    check_due_date_format,
     console,
     create_color_mapping,
     create_dict_for_report_view,
@@ -95,26 +96,40 @@ def input_ask_for_action():
 # Action 1: New Task
 def input_create_new_task() -> dict:
     title = Prompt.ask(
-        prompt="[1/4] Add Task Title",
+        prompt="[1/5] Add Task Title",
     )
 
     description = Prompt.ask(
-        prompt="[2/4] Add Task Description",
+        prompt="[2/5] Add Task Description",
         show_default=True,
         default=None,
     )
 
     tag = Prompt.ask(
-        prompt="[3/4] Add a Tag",
+        prompt="[3/5] Add a Tag",
         show_default=True,
         default="ETC",
     )
+
+    while True:
+        due_date = Prompt.ask(
+            prompt="[4/5] Add a Due Date (DD-MM-YYYY)",
+            show_default=False,
+            default="",
+        )
+        if not due_date or check_due_date_format(date_str=due_date):
+            break
+        else:
+            console.print(
+                f":warning: '{due_date}' has [red]not[/] "
+                + "the right format DD-MM-YYYY"
+            )
 
     console.print(f"\t[1] {COLOR_DICT['Ready']}")
     console.print(f"\t[2] {COLOR_DICT['Doing']}")
 
     status = IntPrompt.ask(
-        prompt="[4/4] Status of Task",
+        prompt="[5/5] Status of Task",
         show_choices=False,
         choices=["1", "2"],
         show_default=True,
@@ -127,6 +142,7 @@ def input_create_new_task() -> dict:
         "Status": "Ready" if str(status) == "1" else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
+        "Due_Date": due_date,
         "Begin_Time": current_time_to_str() if str(status) == "2" else "",
         "Complete_Time": "",
         "Duration": 0,
@@ -149,7 +165,7 @@ def input_ask_which_task_to_update(data: dict) -> str:
 
 def input_update_task_title(current_title) -> str:
     return Prompt.ask(
-        prompt="[1/4] Update Task Title",
+        prompt="[1/5] Update Task Title",
         show_default=True,
         default=current_title,
     )
@@ -157,7 +173,7 @@ def input_update_task_title(current_title) -> str:
 
 def input_update_task_description(current_desc) -> str:
     return Prompt.ask(
-        prompt="[2/4] Update Task Description",
+        prompt="[2/5] Update Task Description",
         show_default=True,
         default=current_desc,
     )
@@ -165,16 +181,51 @@ def input_update_task_description(current_desc) -> str:
 
 def input_update_task_tag(current_tag) -> str:
     return Prompt.ask(
-        prompt="[3/4] Update Tag",
+        prompt="[3/5] Update Tag",
         show_default=True,
         default=current_tag,
     )
+
+
+def input_update_due_date(current_due) -> str:
+    while True:
+        due_date = Prompt.ask(
+            prompt="[4/5] Update Due Date (format: DD-MM-YYYY)",
+            show_default=True,
+            default=current_due,
+        )
+
+        if not due_date or check_due_date_format(date_str=due_date):
+            break
+        else:
+            console.print(
+                f":warning: '{due_date}' has [red]not[/] "
+                + "the right format DD-MM-YYYY"
+            )
+
+    return due_date
+
+
+def input_ask_to_what_status_to_move(task_title):
+    possible_status = [cat for cat in cfg.kanban_columns_dict]
+
+    console.print(f'Updating Status of Task "[white]{task_title}[/]"')
+    for idx, status in enumerate(possible_status, start=1):
+        console.print(f"\t[{idx}] {COLOR_DICT.get(status, status)}")
+
+    new_status = IntPrompt.ask(
+        prompt="[5/5] New Status of Task?",
+        show_choices=False,
+        choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
+    )
+    return possible_status[int(new_status) - 1]
 
 
 def input_update_task(current_task: dict) -> dict:
     title = input_update_task_title(current_task["Title"])
     description = input_update_task_description(current_task["Description"])
     tag = input_update_task_tag(current_task["Tag"])
+    due_date = input_update_due_date(current_task.get("Due_Date", ""))
     status = input_ask_to_what_status_to_move(current_task["Title"])
 
     if (status == "Doing") and (current_task["Status"] != "Doing"):
@@ -204,27 +255,13 @@ def input_update_task(current_task: dict) -> dict:
         "Description": description,
         "Status": status,
         "Tag": tag.upper(),
+        "Due_Date": due_date,
         "Begin_Time": start_doing,
         "Complete_Time": stop_doing,
         "Duration": duration,
     }
     current_task.update(updated_task)
     return current_task
-
-
-def input_ask_to_what_status_to_move(task_title):
-    possible_status = [cat for cat in cfg.kanban_columns_dict]
-
-    console.print(f'Updating Status of Task "[white]{task_title}[/]"')
-    for idx, status in enumerate(possible_status, start=1):
-        console.print(f"\t[{idx}] {COLOR_DICT.get(status, status)}")
-
-    new_status = IntPrompt.ask(
-        prompt="[4/4] New Status of Task?",
-        show_choices=False,
-        choices=[f"{i}" for i, _ in enumerate(possible_status, start=1)],
-    )
-    return possible_status[int(new_status) - 1]
 
 
 def input_confirm_set_board_active(name) -> bool:
@@ -328,7 +365,7 @@ def print_all_todos(todos: list) -> None:
         console.print(todo_string)
 
 
-def input_confirm_add_todos_to_board(todos) -> bool:
+def input_confirm_add_todos_to_board(todos: list) -> bool:
     # Question Also print tasks already in Board?
     console.print(f"Found [blue]{len(todos)}[/] TODOs.")
     if len(todos) > 10:
@@ -393,7 +430,7 @@ def create_github_like_report_table(boards_dict: dict):
 
 
 # Ask for Actions
-def input_ask_for_action_settings():
+def input_ask_for_action_settings() -> int:
     console.print(
         "[yellow]Not happy with current settings!?[/],"
         + "which [blue]Section[/] do you want to change :hammer_and_wrench:?"
@@ -458,7 +495,7 @@ def input_change_footer_settings():
     return footer_visible
 
 
-def input_change_done_limit_settings():
+def input_change_done_limit_settings() -> int:
     done_limit = IntPrompt.ask(
         prompt=f"What should the Limit of Tasks in {COLOR_DICT.get('Done','Done')} "
         + f"Column be, before moving to {COLOR_DICT.get('Archived','Archived')}?",

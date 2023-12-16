@@ -198,6 +198,8 @@ def create_color_mapping(amount_list: list, max_val: int):
             mapped_list.append(3)
         elif (val / max_val) <= 1:
             mapped_list.append(4)
+        else:
+            continue
 
     return mapped_list
 
@@ -233,3 +235,11 @@ def create_report_document(boards_dict: dict):
             report_file.write("".join(completed))
 
     return date_dict
+
+
+def check_due_date_format(date_str: str) -> bool:
+    try:
+        datetime.strptime(date_str, "%d-%m-%Y")
+        return True
+    except ValueError:
+        return False
