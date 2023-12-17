@@ -30,7 +30,7 @@ QUOTES = [
 ]
 
 BOARD_CAPTION_STRING = "Tasks have the following Structure:\
-     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/]"
+     [[cyan]ID[/]] ([orange3]TAG[/]) [white]Task Title[/] |[red]Days Left[/]|"
 
 COLOR_DICT = {
     "Ready": "[red]Ready[/]",

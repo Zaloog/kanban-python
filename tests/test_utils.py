@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 import pytest
 
@@ -10,7 +10,7 @@ def test_get_motivational_quote():
 
 
 def test_current_time_to_str():
-    current_time = datetime.now()
+    current_time = datetime.datetime.now()
     result = utils.current_time_to_str()
     expected_format = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -223,8 +223,8 @@ def test_create_color_mapping():
 @pytest.mark.parametrize(
     "date, expected_result",
     [
-        ("24-12-2023", True),
-        ("3-17-2023", False),
+        ("2023-12-24", True),
+        ("2023-17-3", False),
         ("30.05.2023", False),
         ("30.05.223", False),
     ],
@@ -233,6 +233,55 @@ def test_check_due_date_format(date, expected_result):
     result = utils.check_due_date_format(date)
 
     assert result is expected_result
+
+
+@pytest.mark.parametrize(
+    "datetime, expected_result",
+    [
+        ("2023-12-24 00:00:00", "2023-12-24"),
+        ("", ""),
+    ],
+)
+def test_due_date_datetime_to_date(datetime, expected_result):
+    result = utils.due_date_datetime_to_date(datetime)
+
+    assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "datetime, expected_result",
+    [
+        ("2023-12-24", "2023-12-24 00:00:00"),
+        ("", ""),
+    ],
+)
+def test_due_date_date_to_datetime(datetime, expected_result):
+    result = utils.due_date_date_to_datetime(datetime)
+
+    assert result == expected_result
+
+
+# Fixture to simulate datetime.now()
+FAKE_TIME = datetime.datetime(2023, 12, 17, 22, 8, 30)
+
+
+@pytest.fixture
+def patch_datetime_now(monkeypatch):
+    class mydatetime(datetime.datetime):
+        @classmethod
+        def now(cls):
+            return FAKE_TIME
+
+    monkeypatch.setattr(datetime, "datetime", mydatetime)
+
+
+def test_calculate_days_left_till_due(patch_datetime_now):
+    test_time = "2023-12-24 00:00:00"
+    delta_days = 6
+
+    result = utils.calculate_days_left_till_due(test_time)
+
+    assert result == delta_days
 
 
 # def test_main(capsys):

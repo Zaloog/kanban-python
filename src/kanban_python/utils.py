@@ -41,6 +41,10 @@ def create_status_dict_for_rows(data: dict, vis_cols: list) -> dict:
         task_str = f"[[cyan]{id}[/]]" if int(id) > 9 else f"[[cyan]0{id}[/]]"
         task_str += f'([orange3]{task.get("Tag")}[/])'
         task_str += f' [white]{task["Title"]}[/]'
+        # Add days left
+        if all((task["Status"] in ["Ready", "Doing"], task.get("Due_Date", False))):
+            days_left = calculate_days_left_till_due(task["Due_Date"])
+            task_str += f" |[red]{days_left:02d}[/]|"
         status_dict[task["Status"]].append(task_str)
 
     return status_dict
@@ -239,7 +243,29 @@ def create_report_document(boards_dict: dict):
 
 def check_due_date_format(date_str: str) -> bool:
     try:
-        datetime.strptime(date_str, "%d-%m-%Y")
+        datetime.strptime(date_str, "%Y-%m-%d")
         return True
     except ValueError:
         return False
+
+
+def due_date_datetime_to_date(date_datetime: str) -> str:
+    if date_datetime:
+        date_str = str(datetime.strptime(date_datetime, "%Y-%m-%d %H:%M:%S").date())
+        return date_str
+    return date_datetime
+
+
+def due_date_date_to_datetime(date_str: str) -> str:
+    if date_str:
+        date_datetime = str(datetime.strptime(date_str, "%Y-%m-%d"))
+        return date_datetime
+    return date_str
+
+
+def calculate_days_left_till_due(due_date: str):
+    time_now = datetime.now()
+    time_due = datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S")
+
+    delta_days = (time_due - time_now).days
+    return delta_days

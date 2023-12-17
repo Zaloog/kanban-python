@@ -21,6 +21,8 @@ from .utils import (
     create_dict_for_report_view,
     create_status_dict_for_rows,
     current_time_to_str,
+    due_date_date_to_datetime,
+    due_date_datetime_to_date,
 )
 
 
@@ -102,7 +104,7 @@ def input_create_new_task() -> dict:
     description = Prompt.ask(
         prompt="[2/5] Add Task Description",
         show_default=True,
-        default=None,
+        default="",
     )
 
     tag = Prompt.ask(
@@ -113,8 +115,8 @@ def input_create_new_task() -> dict:
 
     while True:
         due_date = Prompt.ask(
-            prompt="[4/5] Add a Due Date (DD-MM-YYYY)",
-            show_default=False,
+            prompt="[4/5] Add a Due Date (YYYY-MM-DD)",
+            show_default=True,
             default="",
         )
         if not due_date or check_due_date_format(date_str=due_date):
@@ -122,7 +124,7 @@ def input_create_new_task() -> dict:
         else:
             console.print(
                 f":warning: '{due_date}' has [red]not[/] "
-                + "the right format DD-MM-YYYY"
+                + "the right format YYYY-MM-DD"
             )
 
     console.print(f"\t[1] {COLOR_DICT['Ready']}")
@@ -189,21 +191,22 @@ def input_update_task_tag(current_tag) -> str:
 
 def input_update_due_date(current_due) -> str:
     while True:
-        due_date = Prompt.ask(
-            prompt="[4/5] Update Due Date (format: DD-MM-YYYY)",
+        due_date_str = Prompt.ask(
+            prompt="[4/5] Update Due Date (YYYY-MM-DD or ` `)",
             show_default=True,
-            default=current_due,
+            # fix default view
+            default=due_date_datetime_to_date(date_datetime=current_due),
         )
 
-        if not due_date or check_due_date_format(date_str=due_date):
+        if not due_date_str or check_due_date_format(date_str=due_date_str):
             break
         else:
             console.print(
-                f":warning: '{due_date}' has [red]not[/] "
-                + "the right format DD-MM-YYYY"
+                f":warning: '{due_date_str}' has [red]not[/] "
+                + "the right format YYYY-MM-DD"
             )
 
-    return due_date
+    return due_date_date_to_datetime(due_date_str)
 
 
 def input_ask_to_what_status_to_move(task_title):
