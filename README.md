@@ -12,7 +12,7 @@
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 [![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
-[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.7)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.7)
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.8)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.8)
 # kanban-python
 
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:
@@ -35,7 +35,9 @@ It was a great help for developing my first package and I can highly recommend i
 <details><summary>Colorful and Interactive</summary>
 
 - kanban-python uses [rich] under the hood to process user input
-and display nice looking tables to the terminal.
+and display nice looking kanban-boards to the terminal.
+- Each task has a unique `ID` per board and also has an optional `Tag` and `Due Date` associated with it,
+which are displayed alongside its `Title`
 
 </details>
 
@@ -77,7 +79,7 @@ This can be edited manually or within the kanban-python application. It tracks t
 
 - Each created board comes with its own name and `pykanban.json` file,
 which stores all tasks for that board. The files are stored in board specific folders under `$USER_DATA_DIR/kanban-python/kanban_boards/<BOARDNAME>`.
-When changing Boards you also get an overview over tasks in visible columns for each board.
+When changing Boards you also get an overview over tasks in visible columns for each board and the most urgent or overdue task on that board.
 ![change_view](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_change.PNG)
 
 </details>

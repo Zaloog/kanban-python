@@ -3,8 +3,8 @@
 ## Version 0.3.8
 - Add `Due_Date` to Task Structure
 - App now asks for `Due_Date` on task creation and task update
-- Show `days left` on board and color board background for task if it is overdue
-- Show `days left` of most urgent task for each board when changing boards
+- Show `days left` on board for task with `Due_Date`
+- Show `days left` of most overdue or urgent task for each board when changing boards
 - Add `freezegun` as test requirement
 
 ## Version 0.3.7

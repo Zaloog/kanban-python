@@ -145,7 +145,7 @@ def input_create_new_task() -> dict:
         "Status": "Ready" if str(status) == "1" else "Doing",
         "Tag": tag.upper(),
         "Creation_Date": current_time_to_str(),
-        "Due_Date": due_date,
+        "Due_Date": due_date_date_to_datetime(due_date),
         "Begin_Time": current_time_to_str() if str(status) == "2" else "",
         "Complete_Time": "",
         "Duration": 0,
@@ -313,9 +313,9 @@ def input_ask_for_change_board(boards_dict: dict) -> str:
                 ]
             )
             + (
-                f"\t next due in {days_left} days"
+                f"\t next due in {days_left} day/s"
                 if days_left > 0
-                else f"[red]\t task {-days_left} days overdue[/]"
+                else f"[red]\t task {-days_left} day/s overdue[/]"
                 if days_left != -9999
                 else "\t no dues present here"
             )

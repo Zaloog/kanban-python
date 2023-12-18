@@ -258,7 +258,9 @@ def due_date_datetime_to_date(date_datetime: str) -> str:
 
 def due_date_date_to_datetime(date_str: str) -> str:
     if date_str:
-        date_datetime = str(datetime.strptime(date_str, "%Y-%m-%d"))
+        date_datetime = str(
+            datetime.strptime(f"{date_str} 23:59:59", "%Y-%m-%d %H:%M:%S")
+        )
         return date_datetime
     return date_str
 

@@ -252,7 +252,7 @@ def test_due_date_datetime_to_date(datetime, expected_result):
 @pytest.mark.parametrize(
     "datetime, expected_result",
     [
-        ("2023-12-24", "2023-12-24 00:00:00"),
+        ("2023-12-24", "2023-12-24 23:59:59"),
         ("", ""),
     ],
 )
@@ -264,7 +264,7 @@ def test_due_date_date_to_datetime(datetime, expected_result):
 
 def test_calculate_days_left_till_due():
     fake_now = datetime.datetime(2023, 12, 10, 0, 0, 0)
-    test_time = "2023-12-24 00:00:00"
+    test_time = "2023-12-24 23:59:59"
     delta_days = 14
 
     with freeze_time(fake_now):
