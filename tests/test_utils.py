@@ -1,6 +1,7 @@
 import datetime
 
 import pytest
+from freezegun import freeze_time
 
 from kanban_python import utils
 
@@ -261,25 +262,13 @@ def test_due_date_date_to_datetime(datetime, expected_result):
     assert result == expected_result
 
 
-# Fixture to simulate datetime.now()
-FAKE_TIME = datetime.datetime(2023, 12, 17, 22, 8, 30)
-
-
-@pytest.fixture
-def patch_datetime_now(monkeypatch):
-    class mydatetime(datetime.datetime):
-        @classmethod
-        def now(cls):
-            return FAKE_TIME
-
-    monkeypatch.setattr(datetime, "datetime", mydatetime)
-
-
-def test_calculate_days_left_till_due(patch_datetime_now):
+def test_calculate_days_left_till_due():
+    fake_now = datetime.datetime(2023, 12, 10, 0, 0, 0)
     test_time = "2023-12-24 00:00:00"
-    delta_days = 6
+    delta_days = 14
 
-    result = utils.calculate_days_left_till_due(test_time)
+    with freeze_time(fake_now):
+        result = utils.calculate_days_left_till_due(test_time)
 
     assert result == delta_days
 

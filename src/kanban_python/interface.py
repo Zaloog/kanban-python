@@ -14,6 +14,7 @@ from .constants import (
     REPORT_COLORS,
 )
 from .utils import (
+    calculate_days_left_till_due,
     calculate_time_delta_str,
     check_due_date_format,
     console,
@@ -295,6 +296,13 @@ def input_ask_for_change_board(boards_dict: dict) -> str:
 
     for idx, (board, board_data) in enumerate(boards_dict.items(), start=1):
         status_dict = create_status_dict_for_rows(board_data, cfg.vis_cols)
+        days_left_list = [
+            calculate_days_left_till_due(val["Due_Date"])
+            for val in board_data.values()
+            if (val.get("Due_Date") and (val["Status"] in ["Ready", "Doing"]))
+        ]
+        # Use -9999 to as placeholder for no tasks to make comparison later
+        days_left = min(days_left_list) if days_left_list else -9999
         console.print(
             f"[{idx}] {board}"
             + " " * ((max_board_len - len(board) + 1))
@@ -303,6 +311,13 @@ def input_ask_for_change_board(boards_dict: dict) -> str:
                     f"{COLOR_DICT[col]}: {len(status_dict[col]):02d}"
                     for col in cfg.vis_cols
                 ]
+            )
+            + (
+                f"\t next due in {days_left} days"
+                if days_left > 0
+                else f"[red]\t task {-days_left} days overdue[/]"
+                if days_left != -9999
+                else "\t no dues present here"
             )
         )
 
