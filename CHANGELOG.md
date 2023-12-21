@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.3.9
+- Add `from __future__ import annotations` to controls.py to not error on Union TypeHint if python version is <=3.9
+
 ## Version 0.3.8
 - Add `Due_Date` to Task Structure
 - App now asks for `Due_Date` on task creation and task update
