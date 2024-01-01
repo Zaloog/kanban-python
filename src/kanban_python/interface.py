@@ -405,9 +405,15 @@ def create_github_like_report_table(boards_dict: dict):
 
     max_val, report_dict = create_dict_for_report_view(done_tasks)
     current_year = datetime.now().year
+    done_tasks_this_year = [
+        task
+        for task in done_tasks
+        if datetime.strptime(task["Complete_Time"], "%Y-%m-%d %H:%M:%S").year
+        == current_year
+    ]
 
     gh_table = Table(
-        title=f"[{REPORT_COLORS[4]}]{len(done_tasks)}[/] Tasks completed"
+        title=f"[{REPORT_COLORS[4]}]{len(done_tasks_this_year)}[/] Tasks completed"
         + f" in [{REPORT_COLORS[4]}]{current_year}[/]",
         title_justify="left",
         highlight=True,

@@ -12,7 +12,7 @@
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
 [![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
-[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.9)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.9)
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.10)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.10)
 # kanban-python
 
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:

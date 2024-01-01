@@ -204,11 +204,15 @@ def test_create_dict_for_report_view():
         {"Complete_Time": "2022-12-05 23:41:41"},
         {"Complete_Time": "2023-12-05 23:41:41"},
     ]
+    # freeze to year 2023
+    fake_now = datetime.datetime(2023, 12, 10, 0, 0, 0)
 
     result_max = 1
     result_dict = {2: {49: 1}}
 
-    max_val, report_dict = utils.create_dict_for_report_view(tasks)
+    with freeze_time(fake_now):
+        max_val, report_dict = utils.create_dict_for_report_view(tasks)
+
     assert result_max == max_val
     assert result_dict == report_dict
 

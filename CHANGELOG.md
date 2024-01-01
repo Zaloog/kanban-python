@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.3.10
+- Fix datetime for test for dict creation
+- Amount of completed task to tasks of current year in report
+
 ## Version 0.3.9
 - Add `from __future__ import annotations` to controls.py to not error on Union TypeHint if python version is <=3.9
 
