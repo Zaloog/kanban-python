@@ -118,6 +118,11 @@ You can install kanban-python with:
 python -m pip install kanban-python
 ```
 
+or using [pipx]:
+```bash
+pipx install kanban-python
+```
+
 ## Usage
 After Installation of kanban-python, there are 5 commands available:
 
@@ -190,3 +195,4 @@ information on PyScaffold see https://pyscaffold.org/.
 [clikan]: https://github.com/kitplummer/clikan
 [pyscaffold]: https://pyscaffold.org/
 [rich]: https://github.com/Textualize/rich
+[pipx]: https://github.com/pypa/pipx
