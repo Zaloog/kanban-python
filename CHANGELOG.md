@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.4.1
+- Update minimum python version in ci test
+
+## Version 0.4.0
+- Update Docs with pipx link
+
 ## Version 0.3.10
 - Fix datetime for test for dict creation
 - Amount of completed task to tasks of current year in report
