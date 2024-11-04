@@ -8,7 +8,7 @@ from random import choice
 from rich.console import Console
 from rich.progress import MofNCompleteColumn, Progress
 
-from .constants import QUOTES, REPORT_FILE_NAME, REPORT_FILE_PATH
+from .constants import QUOTES, REPORT_FILE_NAME
 
 console = Console()
 
@@ -211,7 +211,7 @@ def create_color_mapping(amount_list: list, max_val: int):
     return mapped_list
 
 
-def create_report_document(boards_dict: dict):
+def create_report_document(path: Path, boards_dict: dict):
     date_dict = defaultdict(list)
     for _, task_dict in boards_dict.items():
         for _, task in task_dict.items():
@@ -222,7 +222,7 @@ def create_report_document(boards_dict: dict):
             ).date()
             date_dict[completion_date].append(f"- {task['Tag']} {task['Title']}\n")
 
-    with open(REPORT_FILE_PATH / REPORT_FILE_NAME, "w") as report_file:
+    with open(path / REPORT_FILE_NAME, "w") as report_file:
         last_year = ""
         last_month = ""
         last_day = ""

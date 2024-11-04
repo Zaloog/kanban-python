@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from kanban_python import cli_parser, config, controls, utils
+from kanban_python import cli_parser, config, controls, utils, constants
 
 __author__ = "Zaloog"
 __copyright__ = "Zaloog"
@@ -28,12 +28,12 @@ def main(args):
         controls.change_settings()
 
     if args.command == "scan":
-        # args.path
-        controls.add_todos_to_board(path=args.path or Path.cwd())
+        controls.add_todos_to_board(path=Path(args.path) or Path.cwd())
 
     if args.command == "report":
-        # args.path
-        controls.create_report()
+        controls.create_report(
+            output_path=Path(args.path) or constants.REPORT_FILE_PATH
+        )
         return
 
     while True:

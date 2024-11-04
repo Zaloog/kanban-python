@@ -328,14 +328,14 @@ def show_settings():
 
 # Report Creation
 #####################################################################################
-def create_report():
+def create_report(output_path: Path = REPORT_FILE_PATH):
     boards_dict = read_db("all")
     gh_table = create_github_like_report_table(boards_dict)
     console.print(gh_table)
-    if not REPORT_FILE_PATH.exists():
-        REPORT_FILE_PATH.mkdir(exist_ok=True)
-    create_report_document(boards_dict=boards_dict)
+    if not output_path.exists():
+        output_path.mkdir(exist_ok=True)
+    create_report_document(path=output_path, boards_dict=boards_dict)
     console.print(
         "\n[bright_black]You can find your markdown report under:"
-        + f"\n[bold green]{REPORT_FILE_PATH/REPORT_FILE_NAME}"
+        + f"\n[bold green]{output_path/REPORT_FILE_NAME}"
     )
