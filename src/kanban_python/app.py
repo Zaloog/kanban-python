@@ -18,7 +18,7 @@ def main(args):
     if args.command == "init":
         utils.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
         # args.local
-        controls.create_new_db()
+        controls.create_new_db(local=args.local)
 
     if args.command == "configure":
         controls.change_settings()

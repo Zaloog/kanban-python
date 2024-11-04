@@ -188,5 +188,7 @@ def check_config_exists(path=CONFIG_FILE_PATH) -> bool:
     return path.exists()
 
 
-def get_json_path(boardname: str):
-    return str(KANBAN_BOARDS_PATH / boardname / TASK_FILE_NAME)
+def get_json_path(boardname: str, local: bool = False):
+    if local:
+        return Path().cwd() / TASK_FILE_NAME
+    return (KANBAN_BOARDS_PATH / boardname / TASK_FILE_NAME).as_posix()

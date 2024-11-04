@@ -9,7 +9,9 @@ def test_active_board_path(test_config):
     cfg.kanban_boards_dict = board_name
     cfg.active_board = board_name
 
-    expected_path = str(config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME)
+    expected_path = (
+        config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME
+    ).as_posix()
     assert cfg.active_board_path == expected_path
 
 
@@ -127,4 +129,7 @@ def test_get_json_path():
     board_name = "Testboard"
     result = config.get_json_path(board_name)
 
-    assert result == str(config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME)
+    assert (
+        result
+        == (config.KANBAN_BOARDS_PATH / board_name / config.TASK_FILE_NAME).as_posix()
+    )

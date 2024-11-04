@@ -2,6 +2,7 @@
 
 ## Version 0.5.0
 - Move Project to uv structure and cleanup repository #17
+- improve argparser to support new funtionality and give better command overview
 - add `local` board functionality as proposed in #16
 
 ## Version 0.4.1

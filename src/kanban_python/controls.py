@@ -1,24 +1,24 @@
 from __future__ import annotations
 
 from json import dump, load
+from pathlib import Path
 
 from rich.pretty import pprint
-
-from .config import (
+from kanban_python.config import (
     cfg,
     check_if_board_name_exists_in_config,
     check_if_current_active_board_in_board_list,
     delete_board_from_config,
     get_json_path,
 )
-from .constants import (
+from kanban_python.constants import (
     DUMMY_DB,
     KANBAN_BOARDS_PATH,
     REPORT_FILE_NAME,
     REPORT_FILE_PATH,
     TASK_FILE_NAME,
 )
-from .interface import (
+from kanban_python.interface import (
     create_config_table,
     create_github_like_report_table,
     create_table,
@@ -41,7 +41,7 @@ from .interface import (
     input_create_new_task,
     input_update_task,
 )
-from .utils import (
+from kanban_python.utils import (
     check_board_name_valid,
     check_if_done_col_leq_X,
     check_if_there_are_visible_tasks_in_board,
@@ -61,7 +61,7 @@ from .utils import (
 
 # DB Controls
 #####################################################################################
-def create_new_db() -> None:
+def create_new_db(local: bool = False) -> None:
     while True:
         while True:
             new_board_name = input_ask_for_new_board_name()
@@ -75,24 +75,26 @@ def create_new_db() -> None:
             f":warning:  Board '{new_board_name}' already exists, choose another Name."
         )
 
-    cfg.kanban_boards_dict = new_board_name
-
     # Options:
     # 1. ~/.kanban-python/<BOARDNAME>.json
     # 2. ~/.kanban-python/kanban_boards/<BOARDNAME>.json
     # 3. ~/.kanban-python/kanban_boards/<BOARDNAME>/pykanban.json  <- THIS
     # 4. ~/.kanban-python/kanban_boards/<BOARDNAME>/<BOARDNAME>.json
-    new_db_path = KANBAN_BOARDS_PATH / new_board_name
+    if local:
+        new_db_path = Path().cwd()
+    else:
+        new_db_path = KANBAN_BOARDS_PATH / new_board_name
+        cfg.kanban_boards_dict = new_board_name
 
     if not new_db_path.exists():
         new_db_path.mkdir()
 
-    with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
+    with open(get_json_path(new_board_name, local=local), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
     console.print(
         f"Created new [orange3]{TASK_FILE_NAME}[/] file at "
-        + f"[orange3]{KANBAN_BOARDS_PATH / new_board_name}[/] to save tasks."
+        + f"[orange3]{new_db_path}[/] to save tasks."
     )
 
     if input_confirm_set_board_active(name=new_board_name):
