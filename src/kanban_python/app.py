@@ -9,7 +9,6 @@ __license__ = "MIT"
 
 def main(args):
     args = cli_parser.parse_args(args)
-    cli_parser.setup_logging(args.loglevel)
 
     if not config.check_config_exists():
         config.create_init_config()
@@ -18,15 +17,18 @@ def main(args):
     # New database creation
     if args.command == "init":
         utils.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
+        # args.local
         controls.create_new_db()
 
     if args.command == "configure":
         controls.change_settings()
 
     if args.command == "scan":
+        # args.path
         controls.add_todos_to_board()
 
     if args.command == "report":
+        # args.path
         controls.create_report()
         return
 

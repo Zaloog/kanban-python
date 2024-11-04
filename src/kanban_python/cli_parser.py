@@ -1,22 +1,7 @@
 import argparse
-import logging
-import sys
 
 from kanban_python import __version__
-
-# _logger = logging.getLogger(__name__)
-
-
-def setup_logging(loglevel):
-    """Setup basic logging
-
-    Args:
-      loglevel (int): minimum loglevel for emitting messages
-    """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-    )
+from kanban_python.constants import REPORT_FILE_PATH
 
 
 def parse_args(args):
@@ -31,32 +16,48 @@ def parse_args(args):
     """
     parser = argparse.ArgumentParser(description="Usage Options")
     parser.add_argument(
+        "-v",
         "--version",
         action="version",
         version=f"kanban-python {__version__}",
     )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="loglevel",
-        help="set loglevel to INFO",
-        action="store_const",
-        const=logging.INFO,
+
+    command_parser = parser.add_subparsers(
+        title="commands", dest="command", description="available commands"
     )
-    parser.add_argument(
-        "-vv",
-        "--very-verbose",
-        dest="loglevel",
-        help="set loglevel to DEBUG",
-        action="store_const",
-        const=logging.DEBUG,
+
+    # Init
+    init_parser = command_parser.add_parser(
+        "init",
+        help="initialize a new board, use `--local`-flag to create in current working directory",
     )
-    parser.add_argument(
-        nargs="?",
-        choices=["init", "configure", "scan", "report"],
-        dest="command",
-        help="""
-        initialize new board, configure settings, scan for TODOs in files, create Report
-                """,
+    init_parser.add_argument(
+        "-l",
+        "--local",
+        help="create a local board in the current working directory, default:False",
+        action="store_true",
     )
+
+    # Configure
+    command_parser.add_parser("configure", help="configure settings")
+
+    # Scan
+    scan_parser = command_parser.add_parser(
+        "scan", help="scan path for TODOs in files (default: `.`)"
+    )
+    scan_parser.add_argument(
+        "-p", "--path", required=False, help="path to scan (default: `.`)"
+    )
+
+    # Report
+    report_parser = command_parser.add_parser(
+        "report", help=f"create report in output path (default: {REPORT_FILE_PATH})"
+    )
+    report_parser.add_argument(
+        "-p",
+        "--path",
+        required=False,
+        help=f"path to save output to (default: {REPORT_FILE_PATH})",
+    )
+
     return parser.parse_args(args)
