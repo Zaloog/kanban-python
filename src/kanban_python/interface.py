@@ -279,6 +279,7 @@ def input_ask_for_new_board_name() -> str:
         prompt="A new folder will be created for your board\n"
         + ":warning:  [yellow]Only[/] use alpha-numeric characters or"
         + " [green]'-', '_', ' '[/] for new board names.\n"
+        + "To create a local board at the current location, choose the name [green]'local'[/].\n"
         + "What should the new board be called?"
     )
 
@@ -305,7 +306,7 @@ def input_ask_for_change_board(boards_dict: dict) -> str:
         days_left = min(days_left_list) if days_left_list else -9999
         console.print(
             f"[{idx}] {board}"
-            + " " * ((max_board_len - len(board) + 1))
+            + " " * (max_board_len - len(board) + 1)
             + " | ".join(
                 [
                     f"{COLOR_DICT[col]}: {len(status_dict[col]):02d}"

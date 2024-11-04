@@ -64,11 +64,13 @@ from kanban_python.utils import (
 def create_new_db(local: bool = False) -> None:
     while True:
         while True:
-            new_board_name = input_ask_for_new_board_name()
+            new_board_name = "local" if local else input_ask_for_new_board_name()
             if check_board_name_valid(new_board_name):
                 break
             console.print(f":warning:  '{new_board_name}' is [red]not[/] a valid Name.")
 
+        if new_board_name == "local":
+            break
         if not check_if_board_name_exists_in_config(new_board_name):
             break
         console.print(
@@ -80,25 +82,25 @@ def create_new_db(local: bool = False) -> None:
     # 2. ~/.kanban-python/kanban_boards/<BOARDNAME>.json
     # 3. ~/.kanban-python/kanban_boards/<BOARDNAME>/pykanban.json  <- THIS
     # 4. ~/.kanban-python/kanban_boards/<BOARDNAME>/<BOARDNAME>.json
-    if local:
+    if local or (new_board_name == "local"):
         new_db_path = Path().cwd()
+        cfg.active_board = new_board_name
     else:
         new_db_path = KANBAN_BOARDS_PATH / new_board_name
-        cfg.kanban_boards_dict = new_board_name
+        if input_confirm_set_board_active(name=new_board_name):
+            cfg.active_board = new_board_name
 
+    cfg.kanban_boards_dict = new_board_name
     if not new_db_path.exists():
         new_db_path.mkdir()
 
-    with open(get_json_path(new_board_name, local=local), "w", encoding="utf-8") as f:
+    with open(get_json_path(new_board_name), "w", encoding="utf-8") as f:
         dump(DUMMY_DB, f, ensure_ascii=False, indent=4)
 
     console.print(
         f"Created new [orange3]{TASK_FILE_NAME}[/] file at "
         + f"[orange3]{new_db_path}[/] to save tasks."
     )
-
-    if input_confirm_set_board_active(name=new_board_name):
-        cfg.active_board = new_board_name
 
 
 def save_db(data):
@@ -126,22 +128,21 @@ def read_db(path: str = None) -> dict:
 
     if path == "all":
         board_dict = {
-            b: read_single_board(b_path) for b, b_path in cfg.kanban_boards_dict.items()
+            b: read_single_board(b_path)
+            for b, b_path in cfg.kanban_boards_dict.items()
+            if Path(b_path).exists()
         }
+
         return board_dict
 
     try:
         data = read_single_board(path)
         return data
     except FileNotFoundError:
-        print(path)
         console.print(f":warning: No [orange3]{TASK_FILE_NAME}[/] file here anymore.")
         console.print("Please change to another board.")
         change_kanban_board()
 
-    console.print(f"[red]Seems like the previous {TASK_FILE_NAME} file was deleted[/]")
-    console.print(f"Create new [orange3]{TASK_FILE_NAME}[/] file here.")
-    create_new_db()
     return read_db()
 
 
@@ -219,6 +220,9 @@ def delete_kanban_board():
 
 
 def show():
+    if (Path().cwd() / "pykanban.json").exists():
+        cfg.kanban_boards_dict = "local"
+
     if not cfg.kanban_boards:
         console.print(":warning:  [red]No Boards created yet[/]:warning:")
         console.print("Use 'kanban init' to create a new kanban board.")

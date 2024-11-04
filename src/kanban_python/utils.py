@@ -36,7 +36,7 @@ def create_status_dict_for_rows(data: dict, vis_cols: list) -> dict:
     status_dict = {col: [] for col in vis_cols}
 
     for id, task in data.items():
-        if not task["Status"] in vis_cols:
+        if task["Status"] not in vis_cols:
             continue
         task_str = f"[[cyan]{id}[/]]" if int(id) > 9 else f"[[cyan]0{id}[/]]"
         task_str += f'([orange3]{task.get("Tag")}[/])'
@@ -74,13 +74,16 @@ def delete_json_file(db_path: str) -> None:
     path = Path(db_path)
     try:
         path.unlink()
-        path.parent.rmdir()
+        if path != (Path().cwd() / "pykanban.json"):
+            path.parent.rmdir()
         console.print(f"File under {path.parent} was now removed")
     except FileNotFoundError:
         console.print("File already deleted")
 
 
 def check_board_name_valid(boardname: str):
+    if not boardname:
+        return False
     checker = "".join(x for x in boardname if (x.isalnum() or x in "_- "))
     return True if (checker == boardname) else False
 

@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from kanban_python import cli_parser, config, controls, utils
 
@@ -14,10 +15,13 @@ def main(args):
         config.create_init_config()
         return
 
+    # Delete Local Entry if no local file present
+    if (not Path("pykanban.json").exists()) and ("local" in config.cfg.kanban_boards):
+        config.delete_board_from_config(board_name="local")
+
     # New database creation
     if args.command == "init":
         utils.console.print("Starting new [blue]Kanban Board[/]:mechanical_arm:")
-        # args.local
         controls.create_new_db(local=args.local)
 
     if args.command == "configure":
