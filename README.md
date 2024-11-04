@@ -10,7 +10,10 @@
 -->
 
 [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![PyPI-Server](https://img.shields.io/pypi/v/kanban-python.svg)](https://pypi.org/project/kanban-python/)
+[![Pyversions](https://img.shields.io/pypi/pyversions/kanban-tui.svg)](https://pypi.python.org/pypi/kanban-tui)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
 [![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.10)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.10)
 # kanban-python
@@ -27,9 +30,10 @@ my own Terminal Kanban Application since I preferred a more simple and guided wo
 **kanban-python** also comes with more features, like custom column creation,
 automatic scanning and customizable config file to support you being productive.
 
-This package was developed with [pyscaffold], which provides awesome project templates
+This package was initially developed with [pyscaffold], which provides awesome project templates
 and takes over much of the boilerplate for python packaging.
 It was a great help for developing my first package and I can highly recommend it.
+With version `0.5.X` the repository structure was changed to use [uv].
 
 ## Features
 <details><summary>Colorful and Interactive</summary>
@@ -118,10 +122,13 @@ You can install kanban-python with:
 python -m pip install kanban-python
 ```
 
-or using [pipx]:
+or using [pipx] / [uv] / [rye]:
 ```bash
-pipx install kanban-python
+pipx install kanban-python # using pipx
+uv tool install kanban-python # using uv
+rye install kanban-python # using rye
 ```
+I recommend using pipx, rye or uv to install CLI Tools into an isolated environment.
 
 ## Usage
 After Installation of kanban-python, there are 5 commands available:
@@ -196,3 +203,5 @@ information on PyScaffold see https://pyscaffold.org/.
 [pyscaffold]: https://pyscaffold.org/
 [rich]: https://github.com/Textualize/rich
 [pipx]: https://github.com/pypa/pipx
+[uv]: https://docs.astral.sh/uv/
+[rye]: https://rye.astral.sh
