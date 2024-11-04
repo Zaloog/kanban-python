@@ -15,7 +15,7 @@
 [![Pyversions](https://img.shields.io/pypi/pyversions/kanban-tui.svg)](https://pypi.python.org/pypi/kanban-tui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Downloads](https://static.pepy.tech/badge/kanban-python)](https://pepy.tech/project/kanban-python)
-[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=refs/tags/v0.3.10)](https://coveralls.io/github/Zaloog/kanban-python?branch=refs/tags/v0.3.10)
+[![Coverage Status](https://coveralls.io/repos/github/Zaloog/kanban-python/badge.svg?branch=main)](https://coveralls.io/github/Zaloog/kanban-python?branch=main)
 # kanban-python
 
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:
@@ -141,6 +141,10 @@ Is used to create a new kanban board i.e. it asks for a name and then creates a 
 On first use of any command, the `pykanban.ini` configfile and the `kanban-python` folder will be created automatically.
 ![init_file](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_init.PNG)
 
+You can create local boards in the current working directory by using the name `local` or the flags `-l` or `--local` when
+using `kanban init`. kanban-python checks for local boards and updates the config file accordingly.
+Local boards can only be accessed when using `kanban` in the same folder.
+
 ### Interact with Tasks/Boards
   ```bash
   kanban
@@ -156,13 +160,15 @@ or changing settings, your progress wont be saved.
   ```bash
   kanban scan
   ```
-After executing this command, kanban-python scans your current Directory recursively for the defined filetypes and searches for lines
+After executing this command, kanban-python scans your current directory recursively for the defined filetypes and searches for lines
 that start with the pattern provided.
 ![scan_view](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_view.PNG)
 
 After confirmation to add the found tasks to table they will be added to the board. The alphanumeric Part of the Pattern will be used as tag.
 The filepath were the task was found will be added as description of the task.
 ![scan_table](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_scan_table.PNG)
+
+You can also define a different path to scan with the `-p` or `--path` argument.
 
 ### Create Report
   ```bash
@@ -172,13 +178,15 @@ Goes over all your Boards and creates a single markdown file by checking the `Co
 Also shows a nice github-like contribution table for the current year.
 ![report](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_report.PNG)
 
+You can define a different output path of the `pykanban.md` report file with the `-p` or `--path` argument.
+
 ### Change Settings
   ```bash
   kanban configure
   ```
 ![settings](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_kanban_configure.PNG)
 
-To create a new custom Columns, you have to edit the `pykanban.ini` manually and add a new column name + visibility status
+To create a new custom Column, you have to edit the `pykanban.ini` manually and add a new column name + visibility status
 under the `settings.columns.visible` section. The other options are all customizable now via the new settings menu.
 
 
@@ -190,12 +198,7 @@ Also check the [Changelog](https://github.com/Zaloog/kanban-python/blob/main/CHA
 With release v0.3.0 kanban-python switched to the [XDG] Basedir Spec. So some file migrations and config edits might be
 needed to continue working with your already created boards if you update from `v0.2.X` to `v0.3.X`
 
-<!-- pyscaffold-notes -->
 
-## Note
-
-This project has been set up using PyScaffold 4.5. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
 
 [XDG]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 [platformdirs]: https://platformdirs.readthedocs.io/en/latest/

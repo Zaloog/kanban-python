@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Zaloog", email = "gramslars@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = { file = "LICENSE.txt" }
 dependencies = [
     "platformdirs>=4.3.6",
@@ -26,7 +26,7 @@ classifiers = [
 
 [project.urls]
 Repository = "https://github.com/Zaloog/kanban-python"
-Changelog = "https://github.com/Zaloog/kanban-python/CHANGELOG.md"
+Changelog = "https://github.com/Zaloog/kanban-python/blob/main/CHANGELOG.md"
 
 [project.scripts]
 kanban = "kanban_python.app:run"
