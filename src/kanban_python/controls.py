@@ -243,9 +243,11 @@ def show():
 
 # Scan Functionality
 #####################################################################################
-def add_todos_to_board():
-    files = scan_files(endings=cfg.scanned_files)
-    todos = scan_for_todos(file_paths=files, patterns=cfg.scanned_patterns)
+def add_todos_to_board(path: Path) -> None:
+    files = scan_files(path=path, endings=cfg.scanned_files)
+    todos = scan_for_todos(
+        file_paths=files, rel_path=path, patterns=cfg.scanned_patterns
+    )
     if not todos:
         console.print(
             ":cross_mark: [red]Nothing found that "

@@ -88,7 +88,7 @@ def check_board_name_valid(boardname: str):
     return True if (checker == boardname) else False
 
 
-def scan_files(path=Path.cwd(), endings: list = [".py"]):
+def scan_files(path: Path, endings: list = [".py"]):
     def recursive_search(path, file_list: list, progress):
         for entry in os.scandir(path):
             try:
@@ -115,7 +115,7 @@ def scan_files(path=Path.cwd(), endings: list = [".py"]):
 
 
 def scan_for_todos(
-    file_paths: list, rel_path=Path.cwd(), patterns: list = ["#TODO", "# TODO"]
+    file_paths: list, rel_path: Path, patterns: list = ["#TODO", "# TODO"]
 ) -> list:
     todos = []
     with Progress(MofNCompleteColumn(), *Progress.get_default_columns()) as prog:

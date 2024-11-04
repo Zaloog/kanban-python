@@ -1,9 +1,12 @@
 # Changelog
 
 ## Version 0.5.0
-- Move Project to uv structure and cleanup repository #17
+- Move Project to uv structure and cleanup repository gh-17
 - improve argparser to support new funtionality and give better command overview
-- add `local` board functionality as proposed in #16
+- add `-l`/`--local` flag to `kanban init` command as a shortcut to create a board named `local`, which creates a local board.
+Local boards are stored in the current working directory and not under `user_data_dir`.
+- add `path` argument to `kanban scan` command to declare which path to scan for tasks
+- add `path` argument to `kanban report` command to declare path where the report should be created
 
 ## Version 0.4.1
 - Update minimum python version in ci test

@@ -29,7 +29,7 @@ def main(args):
 
     if args.command == "scan":
         # args.path
-        controls.add_todos_to_board()
+        controls.add_todos_to_board(path=args.path or Path.cwd())
 
     if args.command == "report":
         # args.path
