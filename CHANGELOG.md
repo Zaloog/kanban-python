@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.5.0
+- Move Project to uv structure and cleanup repository #17
+- add `local` board functionality as proposed in #16
+
 ## Version 0.4.1
 - Update minimum python version in ci test
 
