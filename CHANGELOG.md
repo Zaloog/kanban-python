@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.5.1
+- Fix deploymet issue caused by missing version file
+
 ## Version 0.5.0
 - Move Project to uv structure and cleanup repository gh-17
 - improve argparser to support new funtionality and give better command overview

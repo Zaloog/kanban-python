@@ -52,4 +52,3 @@ MANIFEST
 # Per-project virtualenvs
 .venv*/
 .conda*/
-.python-version
