@@ -19,7 +19,7 @@ jobs:
       matrix:
         python-version:
         - "3.9"
-        - "3.12"
+        - "3.13"
         platform:
         - ubuntu-latest
         - macos-latest
@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests
         # For example, using `pytest`
-        run: uv run pytest tests
+        run: uv run -p ${{matrix.python-version}} pytest tests
 
         # Generate Coverage
       - name: Generate coverage report

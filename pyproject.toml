@@ -1,6 +1,6 @@
 [project]
 name = "kanban-python"
-version = "0.5.1"
+version = "0.5.2"
 description = "Terminal Kanban App written in Python"
 readme = "README.md"
 authors = [
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
 ]
 

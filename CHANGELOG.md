@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.5.2
+- Fix `kanban report` path error if no `-P`-flag provided, with default path
+- Fix `kanban scan` path error if no `-P`-flag provided, with default path
+
 ## Version 0.5.1
 - Fix deploymet issue caused by missing version file
 

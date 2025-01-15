@@ -46,7 +46,7 @@ def parse_args(args):
         "scan", help="scan path for TODOs in files (default: `.`)"
     )
     scan_parser.add_argument(
-        "-p", "--path", required=False, help="path to scan (default: `.`)"
+        "-p", "--path", required=False, help="path to scan (default: `.`)", default="."
     )
 
     # Report
@@ -58,6 +58,7 @@ def parse_args(args):
         "--path",
         required=False,
         help=f"path to save output to (default: {REPORT_FILE_PATH})",
+        default=REPORT_FILE_PATH,
     )
 
     return parser.parse_args(args)
