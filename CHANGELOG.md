@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.6
+- Added proper console clear, to prevent multiple board versions being in view
+
 ## Version 0.5.2
 - Fix `kanban report` path error if no `-P`-flag provided, with default path
 - Fix `kanban scan` path error if no `-P`-flag provided, with default path

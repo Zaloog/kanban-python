@@ -193,6 +193,7 @@ def show_tasks():
     db_data = read_db()
     choices = get_tag_id_choices(db_data, cfg.vis_cols)
     selection_criteria = input_ask_which_tasks_to_show(choices)
+    console.clear()
     for i, task in db_data.items():
         if selection_criteria in [i, task["Tag"]]:
             console.print(
@@ -279,6 +280,7 @@ def add_todos_to_board(path: Path) -> None:
 #####################################################################################
 def change_settings():
     while True:
+        console.clear()
         show_settings()
         settings_selection = input_ask_for_action_settings()
 
@@ -337,5 +339,5 @@ def create_report(output_path: Path = REPORT_FILE_PATH):
     create_report_document(path=output_path, boards_dict=boards_dict)
     console.print(
         "\n[bright_black]You can find your markdown report under:"
-        + f"\n[bold green]{output_path/REPORT_FILE_NAME}"
+        + f"\n[bold green]{output_path / REPORT_FILE_NAME}"
     )

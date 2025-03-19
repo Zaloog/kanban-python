@@ -1,6 +1,6 @@
 [project]
 name = "kanban-python"
-version = "0.5.2"
+version = "0.6.0"
 description = "Terminal Kanban App written in Python"
 readme = "README.md"
 authors = [

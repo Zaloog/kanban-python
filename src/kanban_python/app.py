@@ -26,6 +26,7 @@ def main(args):
 
     if args.command == "configure":
         controls.change_settings()
+        utils.console.clear()
 
     if args.command == "scan":
         controls.add_todos_to_board(path=Path(args.path) or Path.cwd())
@@ -42,16 +43,21 @@ def main(args):
 
         if user_input == 1:
             controls.add_new_task_to_db()
+            utils.console.clear()
         elif user_input == 2:
             controls.update_task_from_db()
+            utils.console.clear()
         elif user_input == 3:
             controls.change_kanban_board()
+            utils.console.clear()
         elif user_input == 4:
             controls.show_tasks()
         elif user_input == 5:
             controls.delete_kanban_board()
+            utils.console.clear()
         elif user_input == 6:
             controls.change_settings()
+            utils.console.clear()
 
 
 def run():
