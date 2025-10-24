@@ -21,6 +21,10 @@
 > A Terminal Kanban Application written in Python to boost your productivity :rocket:
 
 ## Introduction
+> Note: I am no longer actively working on this project (besides bug fixes),
+you might take a look at the next iteration [kanban-tui],
+which offers a better kanban experience with a full TUI build with [textual]
+
 Welcome to **kanban-python**, your Terminal Kanban-Board Manager.
 
 ![header](https://raw.githubusercontent.com/Zaloog/kanban-python/main/images/image_header.PNG)
@@ -208,3 +212,6 @@ needed to continue working with your already created boards if you update from `
 [pipx]: https://github.com/pypa/pipx
 [uv]: https://docs.astral.sh/uv/
 [rye]: https://rye.astral.sh
+
+[kanban-tui]: https://github.com/Zaloog/kanban-tui
+[textual]: https://textual.textualize.io/
