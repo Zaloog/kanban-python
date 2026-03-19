@@ -1,6 +1,6 @@
 [project]
 name = "kanban-python"
-version = "0.6.0"
+version = "0.6.1"
 description = "Terminal Kanban App written in Python"
 readme = "README.md"
 authors = [
@@ -41,8 +41,8 @@ build-backend = "hatchling.build"
 addopts = "--cov src/kanban_python --cov-report term-missing --verbose --color=yes"
 testpaths = ["tests"]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "freezegun>=1.5.1",
     "pre-commit>=4.0.1",
     "pytest>=8.3.3",

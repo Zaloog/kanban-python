@@ -122,7 +122,7 @@ def add_tasks_to_db(tasks: dict | list[dict]) -> None:
     save_db(data=db_data)
 
 
-def read_db(path: str = None) -> dict:
+def read_db(path: str | None = None) -> dict:
     if not path:
         path = cfg.active_board_path
 
@@ -147,7 +147,7 @@ def read_db(path: str = None) -> dict:
 
 
 def read_single_board(path):
-    with open(path, "r") as file:
+    with open(path, "r", encoding="utf-8") as file:
         data = load(file)
     return data
 

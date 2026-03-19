@@ -133,7 +133,7 @@ def test_scan_todos(test_config, tmp_path):
     cfg = test_config
     file_path = tmp_path / "file.py"
     file_path.touch()
-    with open(file_path, "w") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write("# TODO: Pytest is cool")
 
     list_input = [file_path]
