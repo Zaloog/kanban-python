@@ -1,6 +1,9 @@
 # Changelog
 
-## Version 0.6
+## Version 0.6.1
+- Fix encoding to use utf-8 in all file operations
+
+## Version 0.6.0
 - Added proper console clear, to prevent multiple board versions being in view
 
 ## Version 0.5.2

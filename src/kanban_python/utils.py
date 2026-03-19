@@ -123,7 +123,7 @@ def scan_for_todos(
 
         for file_path in file_paths:
             prog.update(task_id=task, advance=1)
-            with open(file_path, "r") as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 try:
                     todos += [
                         (line.strip(), str(Path(file_path).relative_to(rel_path)))
@@ -222,7 +222,7 @@ def create_report_document(path: Path, boards_dict: dict):
             ).date()
             date_dict[completion_date].append(f"- {task['Tag']} {task['Title']}\n")
 
-    with open(path / REPORT_FILE_NAME, "w") as report_file:
+    with open(path / REPORT_FILE_NAME, "w", encoding="utf-8") as report_file:
         last_year = ""
         last_month = ""
         last_day = ""

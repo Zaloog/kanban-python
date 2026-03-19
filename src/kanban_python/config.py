@@ -32,7 +32,7 @@ class KanbanConfig:
         return output
 
     def save(self):
-        with open(self.configpath, "w") as configfile:
+        with open(self.configpath, "w", encoding="utf-8") as configfile:
             self.config.write(configfile)
 
     @property
@@ -153,7 +153,7 @@ def create_init_config(conf_path=CONFIG_PATH, data_path=DATA_PATH):
         data_path.mkdir(exist_ok=True)
         (data_path / KANBAN_BOARDS_FOLDER_NAME).mkdir(exist_ok=True)
 
-    with open(conf_path / CONFIG_FILE_NAME, "w") as configfile:
+    with open(conf_path / CONFIG_FILE_NAME, "w", encoding="utf-8") as configfile:
         config.write(configfile)
     console.print(
         f"Welcome, I Created a new [orange3]{CONFIG_FILE_NAME}[/] file "
