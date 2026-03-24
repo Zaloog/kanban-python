@@ -1,12 +1,12 @@
 [project]
 name = "kanban-python"
-version = "0.6.1"
+version = "0.6.2"
 description = "Terminal Kanban App written in Python"
 readme = "README.md"
 authors = [
     { name = "Zaloog", email = "gramslars@gmail.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { file = "LICENSE.txt" }
 dependencies = [
     "platformdirs>=4.3.6",
@@ -18,11 +18,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
