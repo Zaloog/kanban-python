@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.6.2
+- Drop Python 3.9 Support, update dependencies to fix vulnerability due to filelock package
+
 ## Version 0.6.1
 - Fix encoding to use utf-8 in all file operations
 
