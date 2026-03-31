@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.6.3
+- Update dependencies to fix vulnerability
+
 ## Version 0.6.2
 - Drop Python 3.9 Support, update dependencies to fix vulnerability due to filelock package
 
