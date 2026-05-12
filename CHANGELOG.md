@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.6.4
+- Update dependencies to fix vulnerability
+
 ## Version 0.6.3
 - Update dependencies to fix vulnerability
 
