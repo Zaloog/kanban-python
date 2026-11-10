@@ -100,6 +100,16 @@ def test_check_board_name_valid(name, expected_result):
     assert result is expected_result
 
 
+def test_add_todos_to_board_with_missing_path(test_config, tmp_path, capsys, monkeypatch):
+    from kanban_python import controls
+
+    monkeypatch.setattr(controls, "cfg", test_config)
+    controls.add_todos_to_board(path=tmp_path / "does-not-exist")
+
+    captured = capsys.readouterr()
+    assert "does not exist" in captured.out
+
+
 def test_scan_files(tmp_path, test_config):
     cfg = test_config
 
